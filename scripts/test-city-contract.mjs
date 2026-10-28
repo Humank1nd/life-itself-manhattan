@@ -9,6 +9,7 @@ for (const change of [
   (m) => m.frame.axes.z = 'north',
   (m) => m.frame.origin.lon += 0.1,
   (m) => m.layers.buildings.uri = '../../secret.json',
+  (m) => m.layers.evidence.uri = '../secret.json',
   (m) => m.assets.push({id:'epic',uri:'assets/citysample.glb',format:'glb',rights:'unreal-only',source:'City Sample'}),
   (m) => m.assets.push({id:'unknown',uri:'assets/unknown.glb',format:'glb',rights:'licensed-for-web',source:''}),
 ]) {

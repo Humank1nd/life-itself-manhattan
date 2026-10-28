@@ -207,6 +207,27 @@
               "minLength": 1
             }
           }
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/evidence-v1.json"
+            },
+            "kind": {
+              "const": "time-indexed-photo-and-business-records"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       }
     },

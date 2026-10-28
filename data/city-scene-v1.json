@@ -40,6 +40,11 @@
       "count": 38,
       "kind": "nta-polygons-xz",
       "source": "NYC Open Data"
+    },
+    "evidence": {
+      "uri": "data/evidence-v1.json",
+      "kind": "time-indexed-photo-and-business-records",
+      "source": "Life Itself Manhattan evidence contract"
     }
   },
   "assets": [],

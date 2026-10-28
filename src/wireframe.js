@@ -8,6 +8,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { interpret, runQuery, describe } from './ask.js';
 import { createJournal, projectEnu, JournalEventType, hashWorldState } from './core-journal.js';
 import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS } from './living-city.js';
+import { mountTemporalLayer } from './temporal-layer.js';
 
 const statusEl = document.getElementById('status');
 
@@ -117,6 +118,7 @@ async function loadIsland() {
   worldHash = await hashWorldState(stats);
   await journal.append(JournalEventType.SNAPSHOT, 0, stats);
   await loadAnchors();
+  await loadTemporalEvidence();
   await loadStreets();
 }
 
@@ -233,6 +235,19 @@ async function loadStreets() {
 // (scripts/project-anchors.mjs) into data/anchors-enu.json. Red points at
 // Times Square; click one to read its canonical record. ---
 let islandAnchors = null;
+let temporalLayer = null;
+async function loadTemporalEvidence() {
+  if (!islandAnchors?.length) return;
+  const response = await fetch(cityManifest.layers.evidence.uri);
+  if (!response.ok) throw new Error('Spatiotemporal evidence registry HTTP '+response.status);
+  const evidence = await response.json();
+  temporalLayer = mountTemporalLayer({
+    THREE, scene, camera, anchors:islandAnchors,
+    bins:new Set(islandBuildings.map(b=>b.bin)),
+    evidence, onAnchorPick: selectAnchor
+  });
+  window.islandEvidence = Object.freeze({getMetrics:()=>temporalLayer.getMetrics()});
+}
 
 async function loadAnchors() {
   try {
@@ -274,6 +289,7 @@ async function loadAnchors() {
 }
 
 function selectAnchor(a) {
+  temporalLayer?.setAnchor(a.id);
   if (highlight) { scene.remove(highlight); highlight.geometry.dispose(); }
   const geo = new THREE.EdgesGeometry(new THREE.OctahedronGeometry(16));
   highlight = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xff5340 }));
@@ -329,6 +345,7 @@ function prismPositions(b) {
 }
 
 function selectBuilding(b) {
+  temporalLayer?.setBuilding(b.bin);
   if (highlight) { scene.remove(highlight); highlight.geometry.dispose(); }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(prismPositions(b), 3));
