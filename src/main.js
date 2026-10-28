@@ -33,7 +33,7 @@ viewer.camera.flyTo({
 });
 
 async function loadIsland() {
-  const source = await Cesium.GeoJsonDataSource.load('data/manhattan-footprints.geojson', {
+  const source = await Cesium.GeoJsonDataSource.load('data/manhattan-footprints-slim.geojson', {
     clampToGround: false,
   });
   const entities = source.entities.values;
