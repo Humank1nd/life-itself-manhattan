@@ -1,0 +1,2941 @@
+{
+  "schemaVersion": "life-itself-facade-matches/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "policy": "Only verified independent provenance/pose/visual/historical range and unique winning match can promote. No geotag proximity auto-accept.",
+  "generatedFrom": {
+    "evidence": "data/evidence-v1.json",
+    "instances": "data/facade-instances-v1.json",
+    "versions": "data/times-square-building-versions-v1.json",
+    "corroboration": "data/facade-corroboration-v1.json"
+  },
+  "alignments": [
+    {
+      "photoId": "commons-1284794",
+      "facadeRegionId": "commons-1284794-facade-01",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 17.22,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 22.37,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 27.21,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 29.57,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 57.04,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.73,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-1284794",
+      "facadeRegionId": "commons-1284794-facade-02",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 17.22,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 22.37,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 27.21,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 29.57,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 57.04,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.73,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-1284794",
+      "facadeRegionId": "commons-1284794-facade-03",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 17.22,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 22.37,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 27.21,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 29.57,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 57.04,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.73,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-1284794",
+      "facadeRegionId": "commons-1284794-facade-04",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 17.22,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 22.37,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 27.21,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 29.57,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 57.04,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.73,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1599,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-53032411",
+      "facadeRegionId": "commons-53032411-facade-01",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 18.97,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 20.31,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 23.79,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 25.51,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 65.56,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.84,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-53032411",
+      "facadeRegionId": "commons-53032411-facade-02",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 18.97,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 20.31,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 23.79,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 25.51,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 65.56,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.84,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-53032411",
+      "facadeRegionId": "commons-53032411-facade-03",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 18.97,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 20.31,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 23.79,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 25.51,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 65.56,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.84,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-53032411",
+      "facadeRegionId": "commons-53032411-facade-04",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 18.97,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 20.31,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 23.79,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 25.51,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 65.56,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.84,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-53911963",
+      "facadeRegionId": "commons-53911963-facade-01",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 19.07,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 19.78,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 21.9,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 27.37,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 67.2,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.06,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-53911963",
+      "facadeRegionId": "commons-53911963-facade-02",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 19.07,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 19.78,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 21.9,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 27.37,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 67.2,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.06,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-53911963",
+      "facadeRegionId": "commons-53911963-facade-03",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 19.07,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 19.78,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 21.9,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 27.37,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 67.2,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.06,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-53911963",
+      "facadeRegionId": "commons-53911963-facade-04",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 19.07,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 19.78,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 21.9,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 27.37,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 67.2,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 73.06,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1512,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-60251150",
+      "facadeRegionId": "commons-60251150-facade-01",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 16.77,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 24.2,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 24.22,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 26.11,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 60.88,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 72.89,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-60251150",
+      "facadeRegionId": "commons-60251150-facade-02",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 16.77,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 24.2,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 24.22,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 26.11,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 60.88,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 72.89,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-60251150",
+      "facadeRegionId": "commons-60251150-facade-03",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 16.77,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 24.2,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 24.22,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 26.11,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 60.88,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 72.89,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    },
+    {
+      "photoId": "commons-60251150",
+      "facadeRegionId": "commons-60251150-facade-04",
+      "disposition": "abstain",
+      "reason": "No unique candidate cleared independent pose, per-facade visual, documented historic version and competitor gates.",
+      "candidates": [
+        {
+          "versionId": "nyc-bin-1076844-observed-20261028",
+          "entityId": "nyc-bin-1076844",
+          "bin": "1076844",
+          "footprintDistanceM": 16.77,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024714-observed-20261028",
+          "entityId": "nyc-bin-1024714",
+          "bin": "1024714",
+          "footprintDistanceM": 24.2,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1024727-observed-20261028",
+          "entityId": "nyc-bin-1024727",
+          "bin": "1024727",
+          "footprintDistanceM": 24.22,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022624-observed-20261028",
+          "entityId": "nyc-bin-1022624",
+          "bin": "1022624",
+          "footprintDistanceM": 26.11,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022653-observed-20261028",
+          "entityId": "nyc-bin-1022653",
+          "bin": "1022653",
+          "footprintDistanceM": 60.88,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        },
+        {
+          "versionId": "nyc-bin-1022633-observed-20261028",
+          "entityId": "nyc-bin-1022633",
+          "bin": "1022633",
+          "footprintDistanceM": 72.89,
+          "interpretation": "unverified-geotag-to-footprint-proximity",
+          "evidence": "geotag is NOT necessarily camera location; no visual or orientation match",
+          "autoDecision": {
+            "disposition": "abstain",
+            "score": 0.1593,
+            "failures": [
+              "unseparated-facade",
+              "camera-pose-not-independent",
+              "pose-reprojection-error",
+              "historical-version-not-verified",
+              "insufficient-geometry-overlap",
+              "insufficient-feature-inliers",
+              "feature-ratio-too-low",
+              "low-visibility",
+              "missing-independent-evidence",
+              "projected-facade-not-verified",
+              "confidence-below-0.93",
+              "competitor-evaluation-missing-or-ambiguous"
+            ],
+            "policy": "auto-accept-v1-strict-multisource",
+            "identityVerified": false
+          }
+        }
+      ],
+      "acceptedVersionId": null,
+      "needs": [
+        "individually established facade region",
+        "independent calibrated camera pose",
+        "feature + 3D geometry correspondence and runner-up evaluation",
+        "documented historical building-version validity"
+      ]
+    }
+  ]
+}

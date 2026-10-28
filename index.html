@@ -68,6 +68,12 @@
   .timeline-photo-card img {height:66px;width:94px;object-fit:cover;}
   .timeline-photo-meta {display:flex;flex:1;flex-direction:column;gap:2px;overflow:hidden;}
   .timeline-photo-meta a {color:#82d9f5;}
+  .facade-region-strip{display:flex;gap:6px;max-width:100%;overflow-x:auto;}
+  .facade-region{display:flex;flex-direction:column;gap:4px;min-width:100px;max-width:120px;
+    border:1px solid #476e86;border-radius:6px;padding:4px;font-size:10px;}
+  .facade-region .facade-region-mask{width:94px;height:62px;object-fit:contain;background:#081019;}
+  .facade-region button{font-size:10px;padding:3px 4px!important;}
+  .timeline-photo-card:has(.facade-region-strip){min-width:400px;max-width:580px;}
   .timeline-empty {opacity:.7;margin:4px;}
   #timeline-businesses {font-size:11px;opacity:.85;max-height:55px;overflow:auto;}
   #timeline-businesses a {color:#82d9f5;}
