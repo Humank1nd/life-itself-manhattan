@@ -1,13 +1,26 @@
 import { validateEvidenceGraph, photosInYear, occupanciesInYear, spatialAnchorEdges } from './evidence-graph.js';
 import { validateCatalog, catalogForYear, catalogYears } from './photo-catalog.js';
+import {validateBuildingVersions,validateFacadeInstances,validateFacadeMatches} from './facade-matching.js';
 
 // The timeline is an evidence filter, not a claim that an AI restored history.
 // Anchors identify capture sites; a photo plane is an approximate display card,
 // never a calibrated 3D reconstruction or a world-model training checkpoint.
 export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, evidence,
-  photoCatalog=null, projectEnu=null, origin=null, onAnchorPick }) {
+  photoCatalog=null, facadeInstances=null,facadeMatches=null,buildingVersions=null,
+  projectEnu=null, origin=null, onAnchorPick,onCandidatePick=()=>{} }) {
   validateEvidenceGraph(evidence, anchors, bins);
   const catalogMetrics=photoCatalog ? validateCatalog(photoCatalog):null;
+  const facadeMetrics=facadeInstances&&buildingVersions ? {
+    ...validateFacadeInstances(facadeInstances,new Set(evidence.photos.map(p=>p.id))),
+    ...validateBuildingVersions(buildingVersions)} : null;
+  if(!facadeInstances||!facadeMatches||!buildingVersions)throw new Error('Facade registry unavailable');
+  const matchMetrics=validateFacadeMatches(facadeMatches,facadeInstances,buildingVersions,new Set(evidence.photos.map(p=>p.id)));
+  const alignmentsByPhoto=new Map();
+  for(const m of facadeMatches.alignments){
+    if(!alignmentsByPhoto.has(m.photoId))alignmentsByPhoto.set(m.photoId,[]);
+    alignmentsByPhoto.get(m.photoId).push(m);
+  }
+  const instancesById=new Map((facadeInstances?.instances||[]).map(i=>[i.id,i]));
   if(photoCatalog && (!projectEnu||!origin))throw new Error('photo catalog requires city projection');
   const byId = new Map(anchors.map(a=>[a.id,a]));
   const layer = document.getElementById('timeline');
@@ -123,6 +136,36 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
           info.append(review);
         }
       }
+      const regionMatches=alignmentsByPhoto.get(p.id)||[];
+      if(regionMatches.length) {
+        const title=document.createElement('strong');
+        title.textContent='Façade candidates: '+regionMatches.length+' · IDENTITIES UNVERIFIED';
+        info.append(title);
+        const regionStrip=document.createElement('div');regionStrip.className='facade-region-strip';
+        for(const m of regionMatches) {
+          const region=instancesById.get(m.facadeRegionId);
+          if(!region)continue;
+          const item=document.createElement('div');item.className='facade-region';
+          const mask=document.createElement('img');mask.src=region.maskUri;mask.alt='Unreviewed building-like region '+region.id;
+          mask.loading='lazy';mask.className='facade-region-mask';item.append(mask);
+          const note=document.createElement('span');
+          note.textContent='Region '+region.id.split('-').at(-1)+' · '+m.disposition.toUpperCase();
+          item.append(note);
+          const candidate=m.candidates[0];
+          if(candidate?.bin) {
+            const btn=document.createElement('button');btn.type='button';
+            btn.textContent='Inspect nearest BIN '+candidate.bin;
+            btn.title='Geographic candidate only; no visual or historical match';
+            btn.addEventListener('click',()=>onCandidatePick(candidate.bin));
+            item.append(btn);
+          }
+          regionStrip.append(item);
+        }
+        info.append(regionStrip);
+        const disclaimer=document.createElement('span');
+        disclaimer.textContent='These are panoptic/edge-separated regions, not verified individual buildings. Auto-acceptance requires calibrated pose, distinct façades, feature/geometry agreement, and sourced historical validity.';
+        info.append(disclaimer);
+      }
       card.append(info);
       const move=document.createElement('button');
       move.type='button';move.textContent='Locate';
@@ -202,7 +245,7 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
     setBuilding(bin) { if(!bins.has(bin)) return; buildingBin=bin;anchorId=null;draw(); },
     setYear:updateYear,
     getYear:()=>year,
-    getMetrics:()=>({year,catalogMetrics,photoCount:displayedPhotos,anchoredNodes:anchors.length,edges:adjacency.length}),
+    getMetrics:()=>({year,catalogMetrics,facadeMetrics,matchCount:facadeMatches.alignments.length,acceptedMatches:facadeMatches.alignments.filter(x=>x.acceptedVersionId).length,photoCount:displayedPhotos,anchoredNodes:anchors.length,edges:adjacency.length}),
     dispose() { clearPlates();scene.remove(graphLines);geo.dispose();graphLines.material.dispose(); }
   };
 }

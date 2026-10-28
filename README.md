@@ -128,3 +128,28 @@ match before it becomes a record.
 Run `npm run build:alignment` to recompute the alignments deterministically,
 and `npm run test:alignment` to verify them. See
 `docs/extraction-011-photo-alignment.md`.
+## Times Square individual façade alignment prototype (Extraction 011)
+
+Founder choices: Times Square pilot; distinct candidate façade masks per source photograph;
+time-versioned building identities including the ability to represent separately
+documented demolished predecessors; automated acceptance **only** for uniquely
+high-scoring matches that satisfy independent pose/visual/historical-evidence gates.
+
+Locally generated: **16 candidate façade mask regions** from the original four
+licensed Times Square photos using MIT-licensed OneFormer ADE20K panoptic output
+and tentative vertical seam subdivisions; **622 current NYC footprint snapshots**
+with time-versioned entity structures; **96 proposed region-to-building pairs**.
+**Zero** real identities auto-accepted because the original images lack
+calibrated camera pose, verified single-building instances, independent 2D/3D
+feature correspondence and sourced historical building version intervals.
+Do not interpret masks or geotag distances as confirmed building identity.
+
+`data/facade-corroboration-v1.json` is the optional (currently empty)
+independent visual/pose evidence input; running `npm run build:facades`
+re-evaluates all candidate pairs and auto-promotes only uniquely qualifying
+records. `npm run test:facades` includes synthetic acceptance plus adversarial
+abstention. The 3D browser can highlight suggested nearby buildings in cyan,
+explicitly labeled **PROVISIONAL**. The current city simulation remains intact.
+
+Full architecture, source rights and acceptance limits:
+`docs/extraction-011-facade-alignment.md`. No world model has been trained.

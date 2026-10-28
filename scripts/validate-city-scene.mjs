@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { validateEvidenceGraph } from '../src/evidence-graph.js';
 import { validateCatalog } from '../src/photo-catalog.js';
 import { validateAlignment } from '../src/photo-alignment.js';
+import {validateBuildingVersions,validateFacadeInstances,validateFacadeMatches,validateCorroboration} from '../src/facade-matching.js';
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const check = (x, message) => assert.ok(x, message);
 function dataFile(uri) {
@@ -56,6 +57,15 @@ export function validateManifestShape(m) {
     check(typeof m.layers.photoAlignment.source==='string'&&!!m.layers.photoAlignment.source, 'photo alignment source missing');
     dataFile(m.layers.photoAlignment.uri);
   }
+  for(const [key,uri,kind] of [
+    ['buildingVersions','data/times-square-building-versions-v1.json','bounded-temporal-building-versions'],
+    ['facadeInstances','data/facade-instances-v1.json','unreviewed-panoptic-facade-region-candidates'],
+    ['facadeMatches','data/facade-matches-v1.json','conservative-auto-accept-or-abstain'],
+    ['facadeCorroboration','data/facade-corroboration-v1.json','independently-evidenced-alignment-observations']]) {
+    check(m.layers[key]?.uri===uri && m.layers[key]?.kind===kind,'facade layer contract '+key);
+    check(typeof m.layers[key]?.source==='string'&&!!m.layers[key]?.source,'facade provenance missing '+key);
+    dataFile(uri);
+  }
   check(Array.isArray(m.assets), 'assets must be listed');
   for (const a of m.assets) {
     check(['original','public-domain','licensed-for-web'].includes(a.rights), 'asset rights not approved');
@@ -93,6 +103,15 @@ export function validateCityScene(m) {
   }
   if(m.layers.photoCatalog) validateCatalog(readData(m.layers.photoCatalog.uri));
   if(m.layers.photoAlignment) validateAlignment(readData(m.layers.photoAlignment.uri), new Map(buildings.map((b) => [b.bin, b.yr])));
+  const versions=readData(m.layers.buildingVersions.uri);
+  const instances=readData(m.layers.facadeInstances.uri);
+  const alignments=readData(m.layers.facadeMatches.uri);
+  validateBuildingVersions(versions);
+  validateFacadeInstances(instances,new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)));
+  validateFacadeMatches(alignments,instances,versions,new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)));
+  validateCorroboration(readData(m.layers.facadeCorroboration.uri),
+    new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)),
+    new Set(instances.instances.map(x=>x.id)),new Set(versions.versions.map(x=>x.id)));
   const ntas = readData(m.layers.neighborhoods.uri);
   check(ntas.length === m.layers.neighborhoods.count, 'NTA count mismatch');
   for (const n of ntas) for (const r of n.rings) checkRing(r);

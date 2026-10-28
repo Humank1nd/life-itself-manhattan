@@ -291,6 +291,90 @@
               "minLength": 1
             }
           }
+        },
+        "buildingVersions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/times-square-building-versions-v1.json"
+            },
+            "kind": {
+              "const": "bounded-temporal-building-versions"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "facadeInstances": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/facade-instances-v1.json"
+            },
+            "kind": {
+              "const": "unreviewed-panoptic-facade-region-candidates"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "facadeMatches": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/facade-matches-v1.json"
+            },
+            "kind": {
+              "const": "conservative-auto-accept-or-abstain"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "facadeCorroboration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/facade-corroboration-v1.json"
+            },
+            "kind": {
+              "const": "independently-evidenced-alignment-observations"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       }
     },
