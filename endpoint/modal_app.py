@@ -24,11 +24,15 @@ from endpoint_core import INSTRUCTIONS, parse_and_validate  # noqa: E402
 
 app = modal.App("ask-the-island")
 
+_DIR = os.path.dirname(os.path.abspath(__file__))
 image = (
     modal.Image.debian_slim(python_version="3.12")
     .pip_install("fastapi[standard]", "openai")
-    .add_local_file("endpoint/neighborhoods.json", "/root/neighborhoods.json")
-    .add_local_file("endpoint/endpoint_core.py", "/root/endpoint_core.py")
+    # Absolute paths: relative sources resolve against the caller's working
+    # directory and break when deploying from inside endpoint/ (found live
+    # 2026-10-28: "endpoint/endpoint/endpoint_core.py does not exist").
+    .add_local_file(os.path.join(_DIR, "neighborhoods.json"), "/root/neighborhoods.json")
+    .add_local_file(os.path.join(_DIR, "endpoint_core.py"), "/root/endpoint_core.py")
 )
 
 ALLOWED_ORIGIN = "https://humank1nd.github.io"
