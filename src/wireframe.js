@@ -6,8 +6,28 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { interpret, runQuery, describe } from './ask.js';
+import { StateJournal, JournalEventType, hashWorldState } from './journal.js';
 
 const statusEl = document.getElementById('status');
+
+// --- The island's journal (Extraction 002): the hash-chained StateJournal
+// ported from the quarry (genesis/state_journal.py). Every interaction is
+// one tick, wrapped tick_begin / tick_end the way the runtime wraps a
+// simulation step, with tick_end carrying the world hash. The ground never
+// changes, so the world hash never moves; only the history grows. ---
+const journal = new StateJournal();
+let islandTick = 0;
+let worldHash = null;
+let journalNote = null;
+const journalEl = document.getElementById('journal');
+const shortHash = (h) => (h ? `${h.slice(0, 12)}…` : '—');
+async function renderJournal() {
+  const through = await journal.checksumUntilTick(islandTick);
+  journalEl.textContent = journalNote ||
+    `Journal · ${journal.entries.length} entries · tick ${islandTick} · head ${shortHash(journal.lastChecksum)} · history checksum ${shortHash(through)}`;
+}
+journal.onAppend = () => { renderJournal().catch(() => {}); };
+window.islandJournal = journal; // anyone may audit the chain from the console
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x05070a);
@@ -79,6 +99,16 @@ async function loadIsland() {
   statusEl.textContent =
     `Manhattan wireframe is up: ${buildings.length.toLocaleString()} buildings at real height. ` +
     `Twin Earth ENU frame, origin Times Square. Ground truth: NYC Open Data.`;
+  const stats = {
+    buildings: buildings.length,
+    buildingsWithYear: buildings.filter((b) => b.yr).length,
+    buildingsWithNeighborhood: buildings.filter((b) => b.nb).length,
+    neighborhoods: nbNames.length,
+    origin: { lat: 40.758, lon: -73.9855, name: 'Times Square' },
+    datasets: ['BUILDING 5zhs-2jue', 'BUILDING_P u9wf-3gbt', 'NTA2020 9nt8-h7nd'],
+  };
+  worldHash = await hashWorldState(stats);
+  await journal.append(JournalEventType.SNAPSHOT, 0, stats);
 }
 
 // --- Building selection: click the island, get the building's real record. ---
@@ -127,6 +157,15 @@ function selectBuilding(b) {
     (b.yr ? ` · built ${b.yr}` : ' · year not in the city record') +
     (b.nb ? ` · ${b.nb}` : '') +
     '. Source: NYC Open Data.';
+  if (worldHash) {
+    journalNote = null;
+    const tick = ++islandTick;
+    journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'select' });
+    journal.append(JournalEventType.ACTION, tick, {
+      kind: 'select', bin: b.bin, height_m: b.h, built_year: b.yr, neighborhood: b.nb,
+    });
+    journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
+  }
 }
 
 // --- Ask the Island: a question becomes a query; matches light up gold. ---
@@ -187,6 +226,9 @@ askForm.addEventListener('submit', async (e) => {
   if (!question) return;
   if (!islandBuildings) { answerEl.textContent = 'The island is still drawing itself. One moment.'; return; }
   answerEl.textContent = 'Asking the island…';
+  journalNote = null;
+  const tick = ++islandTick;
+  if (worldHash) await journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'ask' });
   const { query, via } = await interpret(question, nbNames);
   const { matches, stats } = runQuery(islandBuildings, query);
   const cap = query.sort ? 200 : 4000;
@@ -195,6 +237,31 @@ askForm.addEventListener('submit', async (e) => {
   if (stats.count > shown.length && shown.length > 0) text += ` (Lighting up ${shown.length.toLocaleString()} of them.)`;
   answerEl.textContent = text;
   flyToMatches(shown);
+  if (worldHash) {
+    await journal.append(JournalEventType.ACTION, tick, {
+      kind: 'ask', via, question, query, matches: stats.count,
+      sampleBins: shown.slice(0, 5).map((b) => b.bin),
+    });
+    await journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
+  }
+});
+
+document.getElementById('verify').addEventListener('click', async () => {
+  const checked = journal.entries.length;
+  const ok = await journal.verifyChain();
+  const through = await journal.checksumUntilTick(islandTick);
+  journalNote = ok
+    ? `Journal verified · ${checked} entries · chain intact · history through tick ${islandTick}: ${through}`
+    : 'Journal verification FAILED — the chain does not recompute. This history cannot be trusted.';
+  if (worldHash) {
+    const tick = ++islandTick;
+    await journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'verify' });
+    await journal.append(JournalEventType.ACTION, tick, {
+      kind: 'verify', ok, entriesChecked: checked, throughChecksum: through,
+    });
+    await journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
+  }
+  renderJournal().catch(() => {});
 });
 
 for (const chip of document.querySelectorAll('.chip')) {

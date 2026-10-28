@@ -25,6 +25,11 @@
   }
   #answer { margin-top: 8px; opacity: 1; }
   #pick { margin-top: 6px; }
+  #journal { margin-top: 8px; font-size: 12px; opacity: 0.75; word-break: break-all; }
+  #verify {
+    background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0;
+    border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; margin-top: 6px;
+  }
   #chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .chip {
     background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0;
@@ -63,6 +68,8 @@
     <button type="button" class="chip">Buildings built after 2010 in the Financial District</button>
   </div>
   <p id="pick">Click any building to see its record.</p>
+  <p id="journal">Journal: the island's history is starting…</p>
+  <button type="button" id="verify">Verify the island's history</button>
 </div>
 <script type="module" src="src/wireframe.js"></script>
 </body>
