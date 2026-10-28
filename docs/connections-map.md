@@ -29,18 +29,30 @@ zones, and sims are all lat/lon. Its `manhattanStreets.js` waypoints
 project through the verified transform with no adaptation beyond the
 projection itself. Eleven corridors now underlie the island.
 
-## 4. Two local frames, one measured delta — measured
+## 4. Two local frames, one measured delta — fixed at the bridge (2026-10-28)
 
-gods-eye-view's `spatialBridge.js` converts with a flat tangent
+gods-eye-view's `spatialBridge.js` converted with a flat tangent
 approximation (111,320 m/deg) around One World Trade Center, in
 centimeters, for Unreal. The contract frame is the exact ellipsoid
 rotation around Times Square, in meters. Measured at Times Square,
-5.6 km from the bridge's origin: the two frames disagree by **12.04 m**
-— fine inside the bridge's downtown purpose, twenty-four times the
-tightest anchor tolerance at the island's origin. This is the concrete
-case for the Rust core as the single conversion authority: its
-`Origin` is a parameter, so both datums are one function, and the flat
-approximation retires to a documented local adapter.
+5.6 km from the bridge's origin: the two frames disagreed by **12.04 m**
+— and, correcting an earlier qualitative claim in this map, the flat
+ruler was off by **1.47 m at Wall Street**, barely 600 m from its own
+origin, so it was never inside anchor tolerance anywhere that matters.
+
+The fix (gods-eye-view commit `9264301`, local on the founder's
+machine, all 57 life suites still green): `wgs84ToUnrealCm` now runs
+the exact ellipsoid ENU rotation — the Twin Earth transform — keeping
+its WTC datum, its centimeter output, and its signature, so Unreal
+downstream sees no change but true numbers. The Rust core remains the
+single authority the transform is converging on (its `Origin` is a
+parameter, so both datums are one function).
+
+Still carrying the flat constant, by design for now: `cameraSpring.js`,
+`sumoNetwork.js`, and `pedestrianCrowd.js` each hold a local
+`M_PER_DEG = 111320` used for short-range relative offsets, where the
+error runs centimeters-to-decimeters rather than meters. Routing them
+through the shared transform is a later, deliberate pass.
 
 ## 5. Diurnal atmosphere — ready
 
