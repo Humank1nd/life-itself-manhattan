@@ -26,7 +26,15 @@ export function validateEvidenceGraph(graph, anchors, bins = null) {
   for (const p of graph.photos) {
     requireOk(typeof p.id === 'string' && p.id.length && !photoIds.has(p.id), 'duplicate/invalid photo ID');
     photoIds.add(p.id);
-    requireOk(ids.has(p.anchorId), 'photo references unknown surveyed anchor');
+    requireOk((p.anchorId === null && p.location) || ids.has(p.anchorId), 'photo needs surveyed anchor or explicit geotag');
+    if (p.location) {
+      const loc = p.location;
+      requireOk(['lat','lon','x','y','z'].every(k=>Number.isFinite(loc[k])) &&
+        loc.lat >= 40.68 && loc.lat <= 40.89 && loc.lon >= -74.04 && loc.lon <= -73.90,
+        'photo geotag outside Manhattan bounds or missing ENU position');
+      requireOk(loc.accuracy === 'approximate-geotag' &&
+        loc.geotagRole === 'unspecified', 'geotag must not imply calibrated camera');
+    }
     // Historical archives frequently know only the year; never invent Jan 1.
     const precision = p.capturePrecision ?? 'day';
     requireOk(precision === 'day' || precision === 'year', 'capture precision unsupported');
@@ -35,6 +43,16 @@ export function validateEvidenceGraph(graph, anchors, bins = null) {
     requireOk(captureOK && validDate(p.recordedAt), 'photo date invalid');
     requireOk(typeof p.imageUri === 'string' && imagePath.test(p.imageUri), 'photo URI not allowlisted');
     requireOk(rights.has(p.rights) && sourceOk(p.source), 'photo rights or source missing');
+    if (p.license) requireOk(typeof p.license.label === 'string' && !!p.license.label &&
+        typeof p.license.author === 'string' && !!p.license.author, 'photo attribution missing');
+    if (p.modelTrainingPermission != null) requireOk(p.modelTrainingPermission === 'unreviewed' ||
+      p.modelTrainingPermission === 'approved' || p.modelTrainingPermission === 'denied', 'invalid training permissions');
+    if (p.segmentation) {
+      requireOk(p.segmentation.status === 'machine-proposed-unreviewed', 'segmentation is not reviewed evidence');
+      requireOk(/^assets\/evidence\/masks\/[a-z0-9-]+-building\.png$/.test(p.segmentation.maskUri), 'mask path unsafe');
+      requireOk(/^assets\/evidence\/masks\/[a-z0-9-]+-cutout\.png$/.test(p.segmentation.cutoutUri), 'cutout path unsafe');
+      requireOk(p.segmentation.sourceSha256 === p.sha256, 'segmented source digest mismatch');
+    }
     requireOk(status.has(p.status), 'photo evidence state invalid');
     requireOk(conditions.weather.has(p.conditions?.weather) && conditions.lighting.has(p.conditions?.lighting), 'photo conditions invalid');
     requireOk(p.yawDeg === null || (Number.isFinite(p.yawDeg) && p.yawDeg >= -360 && p.yawDeg <= 360), 'invalid camera orientation');

@@ -77,3 +77,18 @@ attributed, rights-cleared images and historical records are supplied.
 No photograph is invented and no world model has been trained.
 See `docs/extraction-008-temporal-evidence.md`. Test with
 `npm run test:evidence`.
+
+## Licensed historical photo atlas — development branch
+
+A new read-only year-filtered photo atlas now includes **four** actual CC BY/CC BY-SA
+Wikimedia Commons images of Times Square (captured 2005, 2006, 2010 and 2015),
+with original photos, citation/credit/license metadata, geotags, and separate
+machine-proposed building-only cutouts. Use the year chips or slider, and toggle
+`Building masks only` to see raw vs. segmented evidence. A source date
+or geotag is not a verified historical reconstruction or exact camera pose.
+No model training has been performed; photo training rights remain unreviewed.
+
+Ingestion: `python3 scripts/ingest-commons-times-square.py --limit 4 --dry-run`.
+Segmentation: `python3 scripts/segment-buildings.py --limit 4`.
+Validation: `npm run test:atlas`.
+Full rights and research constraints: `docs/extraction-009-licensed-photo-atlas.md`.
