@@ -10,10 +10,12 @@ for (const change of [
   (m) => m.frame.origin.lon += 0.1,
   (m) => m.layers.buildings.uri = '../../secret.json',
   (m) => m.layers.evidence.uri = '../secret.json',
+  (m) => m.layers.photoCatalog.uri = '../secret.json',
+  (m) => m.layers.photoLinks.kind = 'verified-visual-match',
   (m) => m.assets.push({id:'epic',uri:'assets/citysample.glb',format:'glb',rights:'unreal-only',source:'City Sample'}),
   (m) => m.assets.push({id:'unknown',uri:'assets/unknown.glb',format:'glb',rights:'licensed-for-web',source:''}),
 ]) {
   const bad = clone(); change(bad);
   assert.throws(() => validateManifestShape(bad));
 }
-console.log('PASS: manifest accepts canon and rejects 6 unsafe/drifted variants');
+console.log('PASS: manifest accepts canon and rejects 8 unsafe/drifted variants');

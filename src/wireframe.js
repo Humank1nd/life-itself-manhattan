@@ -241,10 +241,16 @@ async function loadTemporalEvidence() {
   const response = await fetch(cityManifest.layers.evidence.uri);
   if (!response.ok) throw new Error('Spatiotemporal evidence registry HTTP '+response.status);
   const evidence = await response.json();
+  let photoCatalog = null;
+  try {
+    const catalogRes = await fetch(cityManifest.layers.photoCatalog?.uri || 'data/photo-catalog-v1.json');
+    if(catalogRes.ok) photoCatalog=await catalogRes.json();
+  } catch(error) { console.warn('Optional catalog unavailable:',error); }
   temporalLayer = mountTemporalLayer({
     THREE, scene, camera, anchors:islandAnchors,
     bins:new Set(islandBuildings.map(b=>b.bin)),
-    evidence, onAnchorPick: selectAnchor
+    evidence, photoCatalog, projectEnu, origin:cityManifest.frame.origin,
+    onAnchorPick: selectAnchor
   });
   window.islandEvidence = Object.freeze({getMetrics:()=>temporalLayer.getMetrics()});
 }

@@ -1,0 +1,618 @@
+{
+  "schemaVersion": "life-itself-photo-links/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "sourceCatalog": "data/photo-catalog-v1.json",
+  "semantics": "Candidates only: geotags may identify pictured landmarks rather than camera positions. No semantic match, object tracking, or model training.",
+  "maxDistanceM": 75,
+  "edges": [
+    {
+      "from": "commons-152006481",
+      "to": "commons-15621881",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 15.67,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-152006481",
+      "to": "commons-66537026",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 26.36,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-152006481",
+      "to": "commons-66537691",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 26.36,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-152006481",
+      "to": "commons-82986254",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 19.9,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-152006481",
+      "to": "commons-82986259",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 10.17,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-153095542",
+      "to": "commons-15621881",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 43.54,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-153095542",
+      "to": "commons-82986254",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 36.44,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-154759496",
+      "to": "commons-66537026",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 40.07,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-154759496",
+      "to": "commons-82986259",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 30.96,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-155147623",
+      "to": "commons-19081527",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 7.37,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-155147623",
+      "to": "commons-19081528",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 4.43,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-155147623",
+      "to": "commons-31592320",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 7.52,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-155147623",
+      "to": "commons-31592321",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 7.52,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-15621881",
+      "to": "commons-82986254",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 8.61,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-15621881",
+      "to": "commons-82986259",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 11.96,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-186373787",
+      "to": "commons-31592324",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-186373787",
+      "to": "commons-31592325",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-186373787",
+      "to": "commons-82986257",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 11.33,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-186373787",
+      "to": "commons-82986258",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 15.16,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-186373865",
+      "to": "commons-31592324",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-186373865",
+      "to": "commons-31592325",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-186373865",
+      "to": "commons-82986257",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 11.33,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-186373865",
+      "to": "commons-82986258",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 15.16,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-19081527",
+      "to": "commons-31592320",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 14.86,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-19081528",
+      "to": "commons-31592320",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 11.72,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-19081528",
+      "to": "commons-31592321",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 11.72,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-19511110",
+      "to": "commons-26150967",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 16.2,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-19511110",
+      "to": "commons-53177791",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 4.2,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-19511110",
+      "to": "commons-61899428",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 37.7,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-19511110",
+      "to": "commons-784775",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 58.76,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24267943",
+      "to": "commons-32243322",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 17.21,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24267943",
+      "to": "commons-60251150",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 18.78,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24336752",
+      "to": "commons-8884017",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 25.61,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24417523",
+      "to": "commons-64138062",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 19.71,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24417523",
+      "to": "commons-82986264",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 10.68,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24868254",
+      "to": "commons-26150967",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 15.52,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24868254",
+      "to": "commons-49446897",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 12.5,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24868254",
+      "to": "commons-50919623",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 18.01,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24868254",
+      "to": "commons-50919624",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 18.01,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24868254",
+      "to": "commons-50919625",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 18.01,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-24868254",
+      "to": "commons-51487113",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 27.93,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-26150967",
+      "to": "commons-49446897",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 6.69,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-26150967",
+      "to": "commons-51487113",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 24.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-26150967",
+      "to": "commons-53177791",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 13.74,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592320",
+      "to": "commons-63670072",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 12.06,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592320",
+      "to": "commons-9050927",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 13.34,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592321",
+      "to": "commons-63670072",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 12.06,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592321",
+      "to": "commons-9050927",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 13.34,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-59276738",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-59276741",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-59276754",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-59276756",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-59276770",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-59276773",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-59276774",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-59276793",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-82986261",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 13.05,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592324",
+      "to": "commons-82986262",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 23.84,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-59276738",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-59276741",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-59276754",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-59276756",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-59276770",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-59276773",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-59276774",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-59276793",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 3.73,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-82986261",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 13.05,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-31592325",
+      "to": "commons-82986262",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 23.84,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-32243322",
+      "to": "commons-60251150",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 26.8,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-34143354",
+      "to": "commons-6035627",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 16.21,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-34143354",
+      "to": "commons-6044197",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 16.21,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-38714894",
+      "to": "commons-50919623",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 5.03,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-38714894",
+      "to": "commons-50919624",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 5.03,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-38714894",
+      "to": "commons-50919625",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 5.03,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-38716173",
+      "to": "commons-6035627",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 22.6,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-38716173",
+      "to": "commons-6044197",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 22.6,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-51487113",
+      "to": "commons-54826622",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 30.3,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-54826622",
+      "to": "commons-60246736",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 60.29,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-54826622",
+      "to": "commons-61899428",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 0.02,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-60246725",
+      "to": "commons-7336739",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 22.51,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-60246725",
+      "to": "commons-88130242",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 37.6,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-60246736",
+      "to": "commons-784775",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 37.01,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-60251150",
+      "to": "commons-63670072",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 21.89,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-64138062",
+      "to": "commons-82986264",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 22.48,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-66537026",
+      "to": "commons-7336739",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 28.15,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-66537691",
+      "to": "commons-7336739",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 28.15,
+      "validatedVisualOverlap": false
+    },
+    {
+      "from": "commons-7336739",
+      "to": "commons-88130242",
+      "reason": "candidate-cross-year-nearby-geotags",
+      "distanceM": 39.06,
+      "validatedVisualOverlap": false
+    }
+  ]
+}

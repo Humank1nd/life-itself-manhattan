@@ -228,6 +228,48 @@
               "minLength": 1
             }
           }
+        },
+        "photoCatalog": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/photo-catalog-v1.json"
+            },
+            "kind": {
+              "const": "licensed-metadata-discovery-only"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "photoLinks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/photo-links-v1.json"
+            },
+            "kind": {
+              "const": "unreviewed-spatial-temporal-neighbor-candidates"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       }
     },
