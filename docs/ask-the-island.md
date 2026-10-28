@@ -38,6 +38,20 @@ may return:
 computes the answer's statistics. Matches render as gold wireframes on the
 island (top 200 for superlative questions, up to 4,000 for filters).
 
+## Freeze build (2026-10-28, founder chose "Model endpoint (the freeze)")
+
+The endpoint is built and committed under `endpoint/`: a Modal web app
+(`modal_app.py`) whose transport reuses the DreamSuite cloud provider's
+proven invariants (official host `https://api.meta.ai/v1`, Responses API,
+`store: false`, zero retries, bounded output, server-side credential in a
+Modal secret the founder creates from his own terminal). The model's
+instructions and the reply-validation gate live in `endpoint_core.py`
+(12 local checks pass: unknown neighborhoods dropped, unknown fields
+rejected, prose rejected, bounds clamped). `index.html` carries the
+`window.ASK_ENDPOINT` switch, empty until deploy. Remaining, in order:
+founder confirms the $150 credit on the billing page, creates the secret,
+deploys, and the URL is set. Steps: `endpoint/README.md`.
+
 ## The two interpreters
 
 1. **The Meta model** (the submission configuration). The page POSTs
