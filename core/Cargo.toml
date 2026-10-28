@@ -1,0 +1,10 @@
+[package]
+name = "twin-core"
+version = "0.1.0"
+edition = "2021"
+description = "Life Itself twin core: deterministic geodesy and the hash-chained state journal, in Rust. Ports of the quarry's cesium_bridge.py math and genesis/state_journal.py, proven by parity tests."
+license = "MIT"
+
+[dependencies]
+serde_json = "1"
+sha2 = "0.10"

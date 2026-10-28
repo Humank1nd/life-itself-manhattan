@@ -1,0 +1,315 @@
+{
+  "metadata": {
+    "version": "0.1.0",
+    "coordinate_reference": "WGS84 (EPSG:4326)",
+    "elevation_reference": "EGM96 geoid (meters ASL)",
+    "origin": {
+      "lat": 40.758,
+      "lon": -73.9855,
+      "elev": 10.0,
+      "description": "Times Square center"
+    },
+    "geo_anchors_count": 25,
+    "scale_anchors_count": 10,
+    "total_anchors_count": 35
+  },
+  "anchors": [
+    {
+      "id": "ANC-001",
+      "name": "Broadway / 42nd St — NW corner",
+      "lat": 40.7565,
+      "lon": -73.9861,
+      "elev": 10.2,
+      "tolerance_m": 0.5,
+      "type": "intersection"
+    },
+    {
+      "id": "ANC-002",
+      "name": "Broadway / 42nd St — SE corner",
+      "lat": 40.7562,
+      "lon": -73.9857,
+      "elev": 10.1,
+      "tolerance_m": 0.5,
+      "type": "intersection"
+    },
+    {
+      "id": "ANC-003",
+      "name": "7th Ave / 42nd St — NW corner",
+      "lat": 40.7563,
+      "lon": -73.9873,
+      "elev": 10.0,
+      "tolerance_m": 0.5,
+      "type": "intersection"
+    },
+    {
+      "id": "ANC-004",
+      "name": "7th Ave / 42nd St — SE corner",
+      "lat": 40.756,
+      "lon": -73.9869,
+      "elev": 10.1,
+      "tolerance_m": 0.5,
+      "type": "intersection"
+    },
+    {
+      "id": "ANC-005",
+      "name": "Broadway / 45th St",
+      "lat": 40.7583,
+      "lon": -73.9852,
+      "elev": 10.3,
+      "tolerance_m": 0.5,
+      "type": "intersection"
+    },
+    {
+      "id": "ANC-006",
+      "name": "Broadway / 47th St",
+      "lat": 40.7597,
+      "lon": -73.9843,
+      "elev": 10.5,
+      "tolerance_m": 0.5,
+      "type": "intersection"
+    },
+    {
+      "id": "ANC-007",
+      "name": "7th Ave / 45th St",
+      "lat": 40.7581,
+      "lon": -73.9864,
+      "elev": 10.2,
+      "tolerance_m": 0.5,
+      "type": "intersection"
+    },
+    {
+      "id": "ANC-008",
+      "name": "7th Ave / 47th St",
+      "lat": 40.7595,
+      "lon": -73.9856,
+      "elev": 10.4,
+      "tolerance_m": 0.5,
+      "type": "intersection"
+    },
+    {
+      "id": "ANC-009",
+      "name": "TKTS Red Steps — top edge",
+      "lat": 40.7591,
+      "lon": -73.9851,
+      "elev": 14.8,
+      "tolerance_m": 0.3,
+      "type": "structure"
+    },
+    {
+      "id": "ANC-010",
+      "name": "TKTS Red Steps — bottom edge",
+      "lat": 40.7589,
+      "lon": -73.9849,
+      "elev": 10.6,
+      "tolerance_m": 0.3,
+      "type": "structure"
+    },
+    {
+      "id": "ANC-011",
+      "name": "TKTS Red Steps — center landing",
+      "lat": 40.759,
+      "lon": -73.985,
+      "elev": 12.7,
+      "tolerance_m": 0.3,
+      "type": "structure"
+    },
+    {
+      "id": "ANC-012",
+      "name": "One Times Square — base NE corner",
+      "lat": 40.7568,
+      "lon": -73.9853,
+      "elev": 10.2,
+      "tolerance_m": 0.5,
+      "type": "building-base"
+    },
+    {
+      "id": "ANC-013",
+      "name": "One Times Square — base SW corner",
+      "lat": 40.7566,
+      "lon": -73.9856,
+      "elev": 10.1,
+      "tolerance_m": 0.5,
+      "type": "building-base"
+    },
+    {
+      "id": "ANC-014",
+      "name": "One Times Square — apex (ball drop)",
+      "lat": 40.7567,
+      "lon": -73.9854,
+      "elev": 111.0,
+      "tolerance_m": 2.0,
+      "type": "structure-apex"
+    },
+    {
+      "id": "ANC-015",
+      "name": "44th St & Broadway — curb cut",
+      "lat": 40.7575,
+      "lon": -73.9856,
+      "elev": 10.2,
+      "tolerance_m": 0.3,
+      "type": "curb-cut"
+    },
+    {
+      "id": "ANC-016",
+      "name": "45th St & 7th Ave — curb cut",
+      "lat": 40.7582,
+      "lon": -73.9866,
+      "elev": 10.3,
+      "tolerance_m": 0.3,
+      "type": "curb-cut"
+    },
+    {
+      "id": "ANC-017",
+      "name": "Father Duffy statue — base center",
+      "lat": 40.7593,
+      "lon": -73.9852,
+      "elev": 10.5,
+      "tolerance_m": 0.3,
+      "type": "monument"
+    },
+    {
+      "id": "ANC-018",
+      "name": "Times Square ball drop pole — base",
+      "lat": 40.7567,
+      "lon": -73.9854,
+      "elev": 10.2,
+      "tolerance_m": 0.3,
+      "type": "structure"
+    },
+    {
+      "id": "ANC-019",
+      "name": "42nd / Broadway signal pole",
+      "lat": 40.7564,
+      "lon": -73.986,
+      "elev": 10.1,
+      "tolerance_m": 0.5,
+      "type": "signal"
+    },
+    {
+      "id": "ANC-020",
+      "name": "44th / 7th Ave signal pole",
+      "lat": 40.7576,
+      "lon": -73.9868,
+      "elev": 10.2,
+      "tolerance_m": 0.5,
+      "type": "signal"
+    },
+    {
+      "id": "ANC-021",
+      "name": "46th / Broadway signal pole",
+      "lat": 40.7591,
+      "lon": -73.9848,
+      "elev": 10.4,
+      "tolerance_m": 0.5,
+      "type": "signal"
+    },
+    {
+      "id": "ANC-022",
+      "name": "42nd St station — NW entrance",
+      "lat": 40.7564,
+      "lon": -73.9875,
+      "elev": 10.0,
+      "tolerance_m": 0.5,
+      "type": "subway-entrance"
+    },
+    {
+      "id": "ANC-023",
+      "name": "42nd St station — SE entrance",
+      "lat": 40.756,
+      "lon": -73.9865,
+      "elev": 10.0,
+      "tolerance_m": 0.5,
+      "type": "subway-entrance"
+    },
+    {
+      "id": "ANC-024",
+      "name": "Marriott Marquis — main entrance",
+      "lat": 40.7579,
+      "lon": -73.986,
+      "elev": 10.3,
+      "tolerance_m": 0.5,
+      "type": "building-entrance"
+    },
+    {
+      "id": "ANC-025",
+      "name": "AMC Empire 25 — entrance",
+      "lat": 40.7564,
+      "lon": -73.9859,
+      "elev": 10.2,
+      "tolerance_m": 0.5,
+      "type": "building-entrance"
+    }
+  ],
+  "scale_anchors": [
+    {
+      "id": "SA-01",
+      "name": "Standard door",
+      "dimension": "height",
+      "value_m": 2.1,
+      "tolerance_m": 0.05
+    },
+    {
+      "id": "SA-02",
+      "name": "Standing adult human",
+      "dimension": "height",
+      "value_m": 1.75,
+      "tolerance_m": 0.15
+    },
+    {
+      "id": "SA-03",
+      "name": "Yellow taxi",
+      "dimension": "length",
+      "value_m": 4.8,
+      "tolerance_m": 0.1
+    },
+    {
+      "id": "SA-04",
+      "name": "Traffic signal head",
+      "dimension": "mount_height",
+      "value_m": 5.5,
+      "tolerance_m": 0.2
+    },
+    {
+      "id": "SA-05",
+      "name": "Fire hydrant",
+      "dimension": "height",
+      "value_m": 0.76,
+      "tolerance_m": 0.05
+    },
+    {
+      "id": "SA-06",
+      "name": "NYC curb",
+      "dimension": "step_height",
+      "value_m": 0.15,
+      "tolerance_m": 0.02
+    },
+    {
+      "id": "SA-07",
+      "name": "Crosswalk stripe",
+      "dimension": "width",
+      "value_m": 0.3,
+      "tolerance_m": 0.05
+    },
+    {
+      "id": "SA-08",
+      "name": "Streetlight pole",
+      "dimension": "height",
+      "value_m": 8.0,
+      "tolerance_m": 0.3
+    },
+    {
+      "id": "SA-09",
+      "name": "MTA subway entrance canopy",
+      "dimension": "clearance_height",
+      "value_m": 2.4,
+      "tolerance_m": 0.2
+    },
+    {
+      "id": "SA-10",
+      "name": "US mailbox",
+      "dimension": "height",
+      "value_m": 1.1,
+      "tolerance_m": 0.05
+    }
+  ]
+}
