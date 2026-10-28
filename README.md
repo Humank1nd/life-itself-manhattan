@@ -21,17 +21,22 @@ Manhattan is every record whose BIN falls in 1000000–1999999. Reproduce the pu
 node scripts/fetch-data.mjs
 ```
 
-The fetched GeoJSON lands in `data/` and is committed to this repo, so the live demo is self-contained. It is public city data, re-pullable at any time from the commands in the script.
+The fetched GeoJSON lands in `data/` and is not committed; it is public city data, re-pullable at any time from the commands in the script.
 
 ## Running it
 
 Serve the folder with any static server and open `index.html`:
 
 ```
-python3 -m http.server 8000
+npm run serve
 ```
 
-The viewer loads the footprint geometry, extrudes each building by its real roof height, and opens over Manhattan.
+## The stack
+
+- **Node 24** runs the data pipeline: `scripts/fetch-data.mjs` pulls the island from NYC Open Data; `scripts/project-enu.mjs` projects it into the Twin Earth runtime frame (WGS84 → ECEF → ENU, origin Times Square, meters, Y-up), following the geospatial transform contract in `life-itself-product-twin-earth-nyc`.
+- **three.js** draws the wireframe (`index.html` + `src/wireframe.js`): every building as a wireframe prism at its real roof height, one draw call for the whole island, colored by height.
+- **Rust** is the planned home of the geometry pipeline, following the Rust/WASM pattern of DreamSuite's `dreamrooms-core`; the Node pipeline ships this week and defines the data contract the Rust port will take over.
+- `cesium.html` + `src/main.js` keep the first CesiumJS extrusion viewer for comparison.
 
 ## Status
 
