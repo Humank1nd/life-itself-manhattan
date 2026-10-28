@@ -85,6 +85,11 @@
       "uri": "data/spatial-memory-v1.json",
       "kind": "source-grounded-plane-and-photo-retrieval",
       "source": "NYC 2026 building snapshot, Commons licensed photo metadata, Life Itself retrieval adapter"
+    },
+    "worldModelPilot": {
+      "uri": "data/lingbot-conditioning-pilot-v1.json",
+      "kind": "local-optional-lingbot-packet-not-generated",
+      "source": "Life Itself 2005 source-grounded photo reference + synthetic camera path"
     }
   },
   "assets": [],

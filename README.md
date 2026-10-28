@@ -175,3 +175,24 @@ Run `npm run build:memory` to rebuild the source snapshot and
 `npm run test:memory` for gated retrieval tests. See
 `docs/extraction-012-spatial-memory.md` for evidence, sources, and remaining
 Quest/lingbot integration blockers.
+
+## Optional LingBot conditioning pilot — Extraction 013
+
+We now have a reproducible **one source photograph + three controlled camera
+waypoints** metadata packet for the 2005 Times Square pilot. The exact Houston
+bridge only accepts `prompt`, `init_image_hex`, `pose_cm`, `camera_path`,
+`frames`, `seed` and `photosensitivity_safe`, so this integration
+does **not** feed the plane graph directly into LingBot or generate a world.
+The source-grounded 3D memory remains a separate, authoritative sidecar.
+
+Use `npm run pilot:prepare` to regenerate `data/lingbot-conditioning-pilot-v1.json`
+without contacting the service. `npm run pilot:health` checks
+`127.0.0.1:8013/health` only. The service currently reported
+`weights_ready=false`, so model inference remains blocked. A real
+one-off local generation additionally requires explicit rights and
+inference flags (see `docs/extraction-013-lingbot-conditioning.md`).
+No training, AWS spend or model checkpoint download occurs here.
+
+The spatial memory browser panel adds **Prepare LingBot 2005 pilot**, a
+read-only metadata preview that does not trigger generation. Use
+`npm run test:lingbot` for protocol and safety tests.

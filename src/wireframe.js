@@ -269,7 +269,7 @@ async function loadTemporalEvidence() {
   if(!memoryRes.ok)throw new Error('Spatial memory layer unavailable: '+memoryRes.status);
   const memory=await memoryRes.json();
   spatialMemoryController=mountSpatialMemoryViewer({
-    THREE,scene,camera,controls,memory,yearProvider:()=>temporalLayer.getYear()
+    THREE,scene,camera,controls,memory,evidence,yearProvider:()=>temporalLayer.getYear()
   });
   window.islandMemory=Object.freeze({summary:()=>spatialMemoryController.summary()});
 }
