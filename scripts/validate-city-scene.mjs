@@ -4,6 +4,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateEvidenceGraph } from '../src/evidence-graph.js';
+import { validateCatalog } from '../src/photo-catalog.js';
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const check = (x, message) => assert.ok(x, message);
 function dataFile(uri) {
@@ -35,6 +36,18 @@ export function validateManifestShape(m) {
     check(m.layers.evidence.kind === 'time-indexed-photo-and-business-records', 'evidence layer contract mismatch');
     check(typeof m.layers.evidence.source === 'string' && !!m.layers.evidence.source, 'evidence source missing');
     dataFile(m.layers.evidence.uri);
+  }
+  if (m.layers.photoCatalog) {
+    check(m.layers.photoCatalog.uri === 'data/photo-catalog-v1.json' &&
+      m.layers.photoCatalog.kind === 'licensed-metadata-discovery-only', 'photo catalog contract mismatch');
+    check(typeof m.layers.photoCatalog.source==='string'&&!!m.layers.photoCatalog.source, 'photo catalog source missing');
+    dataFile(m.layers.photoCatalog.uri);
+  }
+  if(m.layers.photoLinks) {
+    check(m.layers.photoLinks.uri==='data/photo-links-v1.json' &&
+      m.layers.photoLinks.kind==='unreviewed-spatial-temporal-neighbor-candidates', 'photo links contract mismatch');
+    check(typeof m.layers.photoLinks.source==='string'&&!!m.layers.photoLinks.source, 'photo links source missing');
+    dataFile(m.layers.photoLinks.uri);
   }
   check(Array.isArray(m.assets), 'assets must be listed');
   for (const a of m.assets) {
@@ -71,6 +84,7 @@ export function validateCityScene(m) {
   if (m.layers.evidence) {
     validateEvidenceGraph(readData(m.layers.evidence.uri), anchors.anchors, ids);
   }
+  if(m.layers.photoCatalog) validateCatalog(readData(m.layers.photoCatalog.uri));
   const ntas = readData(m.layers.neighborhoods.uri);
   check(ntas.length === m.layers.neighborhoods.count, 'NTA count mismatch');
   for (const n of ntas) for (const r of n.rings) checkRing(r);

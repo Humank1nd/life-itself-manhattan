@@ -92,3 +92,24 @@ Ingestion: `python3 scripts/ingest-commons-times-square.py --limit 4 --dry-run`.
 Segmentation: `python3 scripts/segment-buildings.py --limit 4`.
 Validation: `npm run test:atlas`.
 Full rights and research constraints: `docs/extraction-009-licensed-photo-atlas.md`.
+
+## Scaled Commons discovery catalog — feature branch (Extraction 010)
+
+**284** reusable-license metadata candidates were indexed from **300** Commons
+Times Square category files (12 historical categories). **186** have usable
+original-date metadata, **76** have unverified Commons geotags, and **66** have
+both. These 66 are shown as **catalog-only previews** on the timeline; they
+have not been downloaded or independently approved as geographic/historical
+evidence. The original four locally licensed images and building masks remain.
+
+Run `python3 scripts/discover-commons-catalog.py --max-files 360 --per-category 85`
+to refresh metadata using the official Commons API (no bulk image downloads).
+Run `npm run build:photo-links` to recompute **87** candidate cross-year
+geographic links within 75m; no visual similarity or shared object is claimed.
+Run `npm run test:catalog` to verify the catalog, rights restrictions, geospatial
+transform parity, and synthetic adversarial contracts.
+
+The draft is not a trained or trained-on world model. Each preview is flagged
+unreviewed and explicitly ineligible for automatic training. See
+`docs/extraction-010-time-catalog.md` for history, rights, source limitations,
+NYPL API retirement and AWS expenditure gates.

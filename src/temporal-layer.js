@@ -1,15 +1,20 @@
 import { validateEvidenceGraph, photosInYear, occupanciesInYear, spatialAnchorEdges } from './evidence-graph.js';
+import { validateCatalog, catalogForYear, catalogYears } from './photo-catalog.js';
 
 // The timeline is an evidence filter, not a claim that an AI restored history.
 // Anchors identify capture sites; a photo plane is an approximate display card,
 // never a calibrated 3D reconstruction or a world-model training checkpoint.
-export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, evidence, onAnchorPick }) {
+export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, evidence,
+  photoCatalog=null, projectEnu=null, origin=null, onAnchorPick }) {
   validateEvidenceGraph(evidence, anchors, bins);
+  const catalogMetrics=photoCatalog ? validateCatalog(photoCatalog):null;
+  if(photoCatalog && (!projectEnu||!origin))throw new Error('photo catalog requires city projection');
   const byId = new Map(anchors.map(a=>[a.id,a]));
   const layer = document.getElementById('timeline');
   const yearSlider = document.getElementById('timeline-year');
   const yearLabel = document.getElementById('timeline-year-label');
   const summary = document.getElementById('timeline-summary');
+  const catalogCount=document.getElementById('timeline-catalog-count');
   const cards = document.getElementById('timeline-photos');
   const yearPresets = document.getElementById('timeline-year-presets');
   const businessList = document.getElementById('timeline-businesses');
@@ -19,7 +24,7 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
   const buildingToggle = document.getElementById('timeline-building-only');
   const yearPrevious = document.getElementById('timeline-prev');
   const yearNext = document.getElementById('timeline-next');
-  let anchorId = null, buildingBin = null, year = Number(yearSlider.value), generation = 0;
+  let anchorId = null, buildingBin = null, year = Number(yearSlider.value), generation = 0, displayedPhotos = 0;
   let photoMeshes = [];
   const adjacency = spatialAnchorEdges(anchors,2);
   const vertices = [];
@@ -93,7 +98,10 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
       const info=document.createElement('div'); info.className='timeline-photo-meta';
       const title=document.createElement('strong');
       title.textContent=(p.caption||p.id)+' · '+(p.capturePrecision==='year' ? String(p.capturedYear)+' (year only)' : p.capturedAt);info.append(title);
-      const located=document.createElement('span');located.textContent=(a.name||'Approximate mapped geotag')+' · '+p.status;info.append(located);
+      const located=document.createElement('span');
+      located.textContent=(a.name||'Approximate mapped geotag')+' · '+
+        (p.isCatalog ? 'UNREVIEWED CATALOG / may depict landmark, not camera position' : p.status);
+      info.append(located);
       const conditionLine=document.createElement('span');
       conditionLine.textContent='Weather: '+p.conditions.weather+' · Light: '+p.conditions.lighting;
       info.append(conditionLine);
@@ -127,13 +135,18 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
   function draw() {
     yearLabel.textContent=String(year);
     yearSlider.value=String(year);
-    const photos=photosInYear(evidence,year).filter(p=>
+    const discovered=photoCatalog ? catalogForYear(photoCatalog,year,projectEnu,origin) : [];
+    const trustedIds=new Set(evidence.photos.map(p=>p.id));
+    const photos=[...photosInYear(evidence,year),...discovered.filter(p=>!trustedIds.has(p.id))].filter(p=>
       (anchorId===null || p.anchorId===anchorId ||
       (p.location && Math.hypot(p.location.x-byId.get(anchorId).x,p.location.z-byId.get(anchorId).z)<=85)) &&
       (buildingBin===null||p.buildingBin===buildingBin));
     const occupancy=occupanciesInYear(evidence,year,buildingBin);
     const pastBusiness = buildingBin!==null ? occupancy.length+' sourced occupancy record(s) overlap '+year : occupancy.length+' occupancy record(s) overlap '+year+' (island-wide)';
-    summary.textContent=photos.length+' photograph(s) captured in '+year+' · '+pastBusiness+'. Licensed observations only; pose is approximate. Sources preserved.';
+    const pending=photos.filter(p=>p.isCatalog).length;
+    summary.textContent=photos.length+' dated photo(s) in '+year+' ('+pending+
+      ' catalog-only, unreviewed) · '+pastBusiness+
+      '. Geotags approximate, copyright attribution retained; no training approval.';
     locationLabel.textContent = anchorId ? ('Location: '+byId.get(anchorId).name) :
       buildingBin ? ('Building BIN '+buildingBin) : 'Manhattan geotagged photos + 25 surveyed anchors';
     yearPrevious.disabled=year<=Number(yearSlider.min);
@@ -152,6 +165,7 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
       }
     }
     const selectedPhotos=buildingToggle.checked ? photos.filter(p=>p.segmentation?.cutoutUri) : photos;
+    displayedPhotos=selectedPhotos.length;
     if(buildingToggle.checked) summary.textContent += ' Showing '+selectedPhotos.length+' proposed building masks; missing masks are hidden, not reconstructed.';
     renderCards(selectedPhotos);
     clearPlates();
@@ -159,7 +173,8 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
   }
   const updateYear=v=> {year=Math.max(Number(yearSlider.min),Math.min(Number(yearSlider.max),Math.trunc(Number(v))));draw();};
   // Derived from genuine capture years; do not interpolate missing history.
-  const availableYears=[...new Set(evidence.photos.map(p=>p.capturePrecision==='year'?p.capturedYear:Number(p.capturedAt.slice(0,4))))].sort((a,b)=>a-b);
+  const availableYears=[...new Set([...evidence.photos.map(p=>p.capturePrecision==='year'?p.capturedYear:Number(p.capturedAt.slice(0,4))),
+    ...(photoCatalog?catalogYears(photoCatalog):[])])].sort((a,b)=>a-b);
   if(availableYears.length) {
     yearPresets.textContent='Photos from: ';
     for(const y of availableYears) {
@@ -168,6 +183,12 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
       btn.addEventListener('click',()=>updateYear(y));yearPresets.append(btn);
     }
   } else yearPresets.textContent='No imported photo years yet';
+  catalogCount.textContent=catalogMetrics ?
+    'Discovery queue: '+catalogMetrics.candidates+' licensed metadata candidates · '+
+    catalogMetrics.dated+' with date metadata · '+catalogMetrics.mapped+
+    ' with coordinates · '+catalogMetrics.mappedAndDated+
+    ' with both (preview-only, unreviewed). Original archive records are preserved.' :
+    'Discovery queue unavailable; only locally sourced evidence is shown.';
   yearSlider.addEventListener('input',()=>updateYear(yearSlider.value));
   yearPrevious.addEventListener('click',()=>updateYear(year-1));
   yearNext.addEventListener('click',()=>updateYear(year+1));
@@ -181,9 +202,7 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
     setBuilding(bin) { if(!bins.has(bin)) return; buildingBin=bin;anchorId=null;draw(); },
     setYear:updateYear,
     getYear:()=>year,
-    getMetrics:()=>({year,photoCount:photosInYear(evidence,year).filter(p=>
-      (anchorId===null||p.anchorId===anchorId||(p.location&&Math.hypot(p.location.x-byId.get(anchorId).x,p.location.z-byId.get(anchorId).z)<=85)) &&
-      (buildingBin===null||p.buildingBin===buildingBin)).length,anchoredNodes:anchors.length,edges:adjacency.length}),
+    getMetrics:()=>({year,catalogMetrics,photoCount:displayedPhotos,anchoredNodes:anchors.length,edges:adjacency.length}),
     dispose() { clearPlates();scene.remove(graphLines);geo.dispose();graphLines.material.dispose(); }
   };
 }

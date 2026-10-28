@@ -45,6 +45,16 @@
       "uri": "data/evidence-v1.json",
       "kind": "time-indexed-photo-and-business-records",
       "source": "Life Itself Manhattan evidence contract"
+    },
+    "photoCatalog": {
+      "uri": "data/photo-catalog-v1.json",
+      "kind": "licensed-metadata-discovery-only",
+      "source": "Wikimedia Commons Action API"
+    },
+    "photoLinks": {
+      "uri": "data/photo-links-v1.json",
+      "kind": "unreviewed-spatial-temporal-neighbor-candidates",
+      "source": "deterministic catalog geographic neighbor builder"
     }
   },
   "assets": [],
