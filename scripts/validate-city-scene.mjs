@@ -5,6 +5,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateEvidenceGraph } from '../src/evidence-graph.js';
 import { validateCatalog } from '../src/photo-catalog.js';
+import { validateAlignment } from '../src/photo-alignment.js';
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const check = (x, message) => assert.ok(x, message);
 function dataFile(uri) {
@@ -49,6 +50,12 @@ export function validateManifestShape(m) {
     check(typeof m.layers.photoLinks.source==='string'&&!!m.layers.photoLinks.source, 'photo links source missing');
     dataFile(m.layers.photoLinks.uri);
   }
+  if(m.layers.photoAlignment) {
+    check(m.layers.photoAlignment.uri==='data/photo-alignment-v1.json' &&
+      m.layers.photoAlignment.kind==='proposed-geometry-time-candidates', 'photo alignment contract mismatch');
+    check(typeof m.layers.photoAlignment.source==='string'&&!!m.layers.photoAlignment.source, 'photo alignment source missing');
+    dataFile(m.layers.photoAlignment.uri);
+  }
   check(Array.isArray(m.assets), 'assets must be listed');
   for (const a of m.assets) {
     check(['original','public-domain','licensed-for-web'].includes(a.rights), 'asset rights not approved');
@@ -85,6 +92,7 @@ export function validateCityScene(m) {
     validateEvidenceGraph(readData(m.layers.evidence.uri), anchors.anchors, ids);
   }
   if(m.layers.photoCatalog) validateCatalog(readData(m.layers.photoCatalog.uri));
+  if(m.layers.photoAlignment) validateAlignment(readData(m.layers.photoAlignment.uri), new Map(buildings.map((b) => [b.bin, b.yr])));
   const ntas = readData(m.layers.neighborhoods.uri);
   check(ntas.length === m.layers.neighborhoods.count, 'NTA count mismatch');
   for (const n of ntas) for (const r of n.rings) checkRing(r);

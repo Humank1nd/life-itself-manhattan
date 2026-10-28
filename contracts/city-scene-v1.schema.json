@@ -270,6 +270,27 @@
               "minLength": 1
             }
           }
+        },
+        "photoAlignment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/photo-alignment-v1.json"
+            },
+            "kind": {
+              "const": "proposed-geometry-time-candidates"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       }
     },

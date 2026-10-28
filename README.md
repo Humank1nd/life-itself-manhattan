@@ -113,3 +113,18 @@ The draft is not a trained or trained-on world model. Each preview is flagged
 unreviewed and explicitly ineligible for automatic training. See
 `docs/extraction-010-time-catalog.md` for history, rights, source limitations,
 NYPL API retirement and AWS expenditure gates.
+
+## Photograph-to-building alignment (Extraction 011)
+
+Every dated, geotagged photograph — the **4** evidence photos and the **66**
+dated, geotagged catalog records — now carries up to five **proposed**
+building candidates in `data/photo-alignment-v1.json`: **350** candidate
+pairs, each scored by footprint distance and height and hard-filtered so no
+building is ever proposed for a photograph taken before it was built. Every
+candidate carries its reasons in plain words. Nothing is visually verified
+and nothing is written back into the evidence registry: a human confirms a
+match before it becomes a record.
+
+Run `npm run build:alignment` to recompute the alignments deterministically,
+and `npm run test:alignment` to verify them. See
+`docs/extraction-011-photo-alignment.md`.

@@ -55,6 +55,11 @@
       "uri": "data/photo-links-v1.json",
       "kind": "unreviewed-spatial-temporal-neighbor-candidates",
       "source": "deterministic catalog geographic neighbor builder"
+    },
+    "photoAlignment": {
+      "uri": "data/photo-alignment-v1.json",
+      "kind": "proposed-geometry-time-candidates",
+      "source": "deterministic photo-to-building alignment builder"
     }
   },
   "assets": [],
