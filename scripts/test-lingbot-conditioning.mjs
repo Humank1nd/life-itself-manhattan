@@ -55,14 +55,33 @@ const fake=async(url,options)=>{
   posts++;lastPost=JSON.parse(options.body);
   assert.equal(options.method,'POST');
   return {status:200,json:async()=>({status:'WORLDMODEL_FRAMES_RETURNED',
-   frames:[{index:0,path:'SYNTHETIC_FIXTURE_ONLY'}],video:null})};
+   frames_hex_png:['89504e470d0a1a0a'+'00'.repeat(28)],
+   photosensitivity_safe:true,
+   peak_interframe_delta:0.2,chunk_dir:'/tmp/SYNTHETIC_FIXTURE_ONLY'})};
  }
  throw new Error('unexpected URL '+url);
 };
 const mock=await runLingbotOnce(packet,hex,{fetcher:fake,approvedLocalInference:true,rightsReviewed:true});
 assert.equal(mock.status,'provider-reported-frames');
 assert.equal(mock.frameCount,1);
+assert.equal(mock.providerPersistedFrames,true);
 assert.equal(posts,1);
+const fakeOldShape=async(url,options)=>{
+ if(url.endsWith('/health'))return {status:200,json:async()=>({status:'healthy',weights_ready:true})};
+ return {status:200,json:async()=>({status:'WORLDMODEL_FRAMES_RETURNED',
+  frames:[{index:0}],video:null})};
+};
+const obsolete=await runLingbotOnce(packet,hex,{fetcher:fakeOldShape,
+ approvedLocalInference:true,rightsReviewed:true});
+assert.equal(obsolete.status,'invalid-provider-frames','wrong response shape must fail closed');
+const fakeInvalid=async(url,options)=>{
+ if(url.endsWith('/health'))return {status:200,json:async()=>({status:'healthy',weights_ready:true})};
+ return {status:200,json:async()=>({status:'WORLDMODEL_FRAMES_RETURNED',
+  frames_hex_png:['not_png']})};
+};
+const invalid=await runLingbotOnce(packet,hex,{fetcher:fakeInvalid,
+ approvedLocalInference:true,rightsReviewed:true});
+assert.equal(invalid.status,'invalid-provider-frames');
 assert.equal(lastPost.camera_path[2].x,-250);
 assert.equal(lastPost.init_image_hex,hex);
 const bad=structuredClone(packet);bad.camera.sourceImagePoseMatched=true;

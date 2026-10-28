@@ -182,3 +182,24 @@ No training, AWS spend or model checkpoint download occurs here.
 The spatial memory browser panel adds **Prepare LingBot 2005 pilot**, a
 read-only metadata preview that does not trigger generation. Use
 `npm run test:lingbot` for protocol and safety tests.
+
+## Phase 014 — REA-audited LingBot interoperability (draft)
+
+REA (Reverse Engineer Anything) **v6.7.0**, already installed on Houston, was
+used for evidence-backed static analysis of the Manhattan JavaScript adapter.
+The actual Dream Caesar Python server response was then compared to that
+analysis and its source, revealing the provider's response contains
+`frames_hex_png`, **not** the previously assumed `frames` array. The
+adapter now validates the actual response and rejects obsolete/malformed
+mock frames.
+
+Use `npm run check:lingbot` to inspect local weight/shard, T5/VAE/tokenizer,
+GPU, disk and license readiness **without downloading or deleting anything**.
+Houston's root disk was critically full (~92 MiB free), the service lacked
+weights and FlashAttention, and single-8GB-GPU inference remains unproven.
+Commercial use of LingBot's CC BY-NC-SA 4.0 model needs separate authorization.
+
+See `docs/extraction-014-rea-lingbot-recovery.md` for the original REA
+Evidence ID, source code SHA-256 ledger, model architecture, dry-run/test
+evidence, unsupported REA WASM analysis dependency and clean-room provider
+replacement plan. No new model training or production behavior is enabled.

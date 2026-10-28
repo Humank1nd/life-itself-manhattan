@@ -143,7 +143,21 @@ export async function runLingbotOnce(packet,initImageHex,{fetcher=fetch,base=LOO
   const reply=await response.json();
   if(response.status!==200||reply?.status!=='WORLDMODEL_FRAMES_RETURNED')
     return {status:'provider-failure',httpStatus:response.status,posted:true};
+  // Verified against the actual Dream Caesar serve_worldmodel.py:
+  // {"status":"WORLDMODEL_FRAMES_RETURNED","frames_hex_png":[...],
+  //  "photosensitivity_safe":bool,"peak_interframe_delta":...,"chunk_dir":...}
+  // A successful status without valid frame bytes must NOT count as generation.
+  const frames=reply.frames_hex_png;
+  const signature='89504e470d0a1a0a';
+  if(!Array.isArray(frames)||frames.length<1||frames.length>64||
+     !frames.every(hex=>typeof hex==='string'&&hex.length>=64&&
+       hex.length%2===0&&hex.startsWith(signature)&&
+       /^[0-9a-f]+$/i.test(hex))){
+    return {status:'invalid-provider-frames',httpStatus:response.status,
+      posted:true,frameCount:0};
+  }
   return {status:'provider-reported-frames',posted:true,
-    frameCount:Array.isArray(reply.frames)?reply.frames.length:null,
+    frameCount:frames.length,
+    providerPersistedFrames:typeof reply.chunk_dir==='string'&&reply.chunk_dir.length>0,
     historicalTruth:'not-verified',modelTraining:'not-permitted'};
 }
