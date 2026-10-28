@@ -21,7 +21,7 @@ Manhattan is every record whose BIN falls in 1000000–1999999. Reproduce the pu
 node scripts/fetch-data.mjs
 ```
 
-The fetched GeoJSON lands in `data/` and is not committed; it is public city data, re-pullable at any time from the commands in the script.
+The fetched GeoJSON lands in `data/` and is committed to this repo, so the live demo is self-contained. It is public city data, re-pullable at any time from the commands in the script.
 
 ## Running it
 
