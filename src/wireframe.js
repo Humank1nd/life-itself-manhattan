@@ -110,6 +110,29 @@ async function loadIsland() {
   worldHash = await hashWorldState(stats);
   await journal.append(JournalEventType.SNAPSHOT, 0, stats);
   await loadAnchors();
+  await loadStreets();
+}
+
+// --- Extraction 004: the surveyed street corridors come home.
+// gods-eye-view/src/life/manhattanStreets.js holds real WGS84 waypoints
+// for eleven downtown corridors (Broadway, Wall Street, Maiden Lane,
+// and a Times Square Broadway segment among them), authored for the
+// twin's traffic layer. Projected through the verified transform into
+// data/streets-enu.json; drawn as ground lines the buildings stand on.
+async function loadStreets() {
+  try {
+    const res = await fetch('data/streets-enu.json');
+    if (!res.ok) return;
+    const corridors = await res.json();
+    const names = Object.keys(corridors);
+    const mat = new THREE.LineBasicMaterial({ color: 0x4a6fa5, transparent: true, opacity: 0.8 });
+    for (const name of names) {
+      const pts = corridors[name].map(([x, z]) => new THREE.Vector3(x, 1, z));
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      scene.add(new THREE.Line(geo, mat));
+    }
+    statusEl.textContent += ` ${names.length} surveyed street corridors underlie downtown.`;
+  } catch { /* corridors are an overlay; the island stands without them */ }
 }
 
 // --- The docking: Twin Earth NYC's surveyed anchors stand on the island.
