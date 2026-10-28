@@ -109,6 +109,53 @@ async function loadIsland() {
   };
   worldHash = await hashWorldState(stats);
   await journal.append(JournalEventType.SNAPSHOT, 0, stats);
+  await loadAnchors();
+}
+
+// --- The docking: Twin Earth NYC's surveyed anchors stand on the island.
+// The registry is the founder's (twin-earth-nyc, data/anchors.json),
+// extracted verbatim; positions were projected by the verified transform
+// (scripts/project-anchors.mjs) into data/anchors-enu.json. Red points at
+// Times Square; click one to read its canonical record. ---
+let islandAnchors = null;
+
+async function loadAnchors() {
+  try {
+    const res = await fetch('data/anchors-enu.json');
+    if (!res.ok) return;
+    islandAnchors = await res.json();
+    const pos = new Float32Array(islandAnchors.length * 3);
+    islandAnchors.forEach((a, i) => {
+      pos[i * 3] = a.x; pos[i * 3 + 1] = Math.max(a.y, 0) + 2; pos[i * 3 + 2] = a.z;
+    });
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const points = new THREE.Points(geo, new THREE.PointsMaterial({
+      color: 0xff5340, size: 9, sizeAttenuation: false, transparent: true, opacity: 0.95,
+    }));
+    scene.add(points);
+    statusEl.textContent += ` ${islandAnchors.length} Twin Earth survey anchors stand at Times Square, in red.`;
+  } catch { /* anchors are an overlay; the island stands without them */ }
+}
+
+function selectAnchor(a) {
+  if (highlight) { scene.remove(highlight); highlight.geometry.dispose(); }
+  const geo = new THREE.EdgesGeometry(new THREE.OctahedronGeometry(16));
+  highlight = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xff5340 }));
+  highlight.position.set(a.x, Math.max(a.y, 0) + 2, a.z);
+  scene.add(highlight);
+  pickEl.textContent =
+    `Anchor ${a.id} · ${a.name} · ${a.type} · surveyed tolerance ±${a.tolerance_m} m. ` +
+    'Source: Twin Earth NYC anchor registry.';
+  if (worldHash) {
+    journalNote = null;
+    const tick = ++islandTick;
+    journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'select' });
+    journal.append(JournalEventType.ACTION, tick, {
+      kind: 'anchor', id: a.id, name: a.name, tolerance_m: a.tolerance_m,
+    });
+    journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
+  }
 }
 
 // --- Building selection: click the island, get the building's real record. ---
@@ -285,6 +332,14 @@ renderer.domElement.addEventListener('pointerup', (e) => {
   raycaster.setFromCamera(ndc, camera);
   const hit = new THREE.Vector3();
   if (!raycaster.ray.intersectPlane(groundPlane, hit)) return;
+  if (islandAnchors) {
+    let aBest = null, aD = 60; // meters — anchors are sparse, surveyed points
+    for (const a of islandAnchors) {
+      const d = Math.hypot(a.x - hit.x, a.z - hit.z);
+      if (d < aD) { aD = d; aBest = a; }
+    }
+    if (aBest) { selectAnchor(aBest); return; }
+  }
   const gx = Math.floor(hit.x / CELL), gz = Math.floor(hit.z / CELL);
   let best = null, bestD = 75; // meters
   for (let a = -1; a <= 1; a++) for (let bCell = -1; bCell <= 1; bCell++) {

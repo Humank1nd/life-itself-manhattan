@@ -52,3 +52,7 @@ record.
 2. Twin Earth NYC's twelve JSON schemas become the core's type layer.
 3. The Unreal/Cesium lane consumes the same core when it resumes; the
    Python quarry remains the parity oracle.
+
+## Docking addendum (2026-10-28)
+
+The 25 geo anchors now also stand on the live island: `data/anchors-enu.json` carries the registry records joined with their projected positions; the page renders them as red points at Times Square, and clicking one reads its canonical record (id, name, type, surveyed tolerance) and journals the reading as a selection tick. The 10 scale anchors have no position and remain registry-only.
