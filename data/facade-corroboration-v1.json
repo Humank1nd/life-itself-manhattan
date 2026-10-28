@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "life-itself-facade-corroboration/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "purpose": "Optional independent camera-pose, image correspondence and historical version measurements for strict automatic identity assessment",
+  "records": [],
+  "note": "No camera calibrations, individually verified facade masks, visual feature sets or historical version attestations available. Leave empty; do not create implied evidence."
+}

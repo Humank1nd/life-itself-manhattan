@@ -55,6 +55,26 @@
       "uri": "data/photo-links-v1.json",
       "kind": "unreviewed-spatial-temporal-neighbor-candidates",
       "source": "deterministic catalog geographic neighbor builder"
+    },
+    "buildingVersions": {
+      "uri": "data/times-square-building-versions-v1.json",
+      "kind": "bounded-temporal-building-versions",
+      "source": "Life Itself Times Square alignment pilot"
+    },
+    "facadeInstances": {
+      "uri": "data/facade-instances-v1.json",
+      "kind": "unreviewed-panoptic-facade-region-candidates",
+      "source": "Life Itself Times Square alignment pilot"
+    },
+    "facadeMatches": {
+      "uri": "data/facade-matches-v1.json",
+      "kind": "conservative-auto-accept-or-abstain",
+      "source": "Life Itself Times Square alignment pilot"
+    },
+    "facadeCorroboration": {
+      "uri": "data/facade-corroboration-v1.json",
+      "kind": "independently-evidenced-alignment-observations",
+      "source": "Life Itself conservative auto-accept policy / empty pending real evidence"
     }
   },
   "assets": [],

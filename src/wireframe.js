@@ -246,11 +246,20 @@ async function loadTemporalEvidence() {
     const catalogRes = await fetch(cityManifest.layers.photoCatalog?.uri || 'data/photo-catalog-v1.json');
     if(catalogRes.ok) photoCatalog=await catalogRes.json();
   } catch(error) { console.warn('Optional catalog unavailable:',error); }
+  const [instancesRes,matchesRes,versionsRes]=await Promise.all([
+    fetch(cityManifest.layers.facadeInstances.uri),fetch(cityManifest.layers.facadeMatches.uri),
+    fetch(cityManifest.layers.buildingVersions.uri)
+  ]);
+  if(!instancesRes.ok||!matchesRes.ok||!versionsRes.ok)throw new Error('Facade alignment registry missing');
+  const [facadeInstances,facadeMatches,buildingVersions]=await Promise.all([
+    instancesRes.json(),matchesRes.json(),versionsRes.json()
+  ]);
   temporalLayer = mountTemporalLayer({
     THREE, scene, camera, anchors:islandAnchors,
     bins:new Set(islandBuildings.map(b=>b.bin)),
-    evidence, photoCatalog, projectEnu, origin:cityManifest.frame.origin,
-    onAnchorPick: selectAnchor
+    evidence, photoCatalog, facadeInstances,facadeMatches,buildingVersions,
+    projectEnu, origin:cityManifest.frame.origin,
+    onAnchorPick: selectAnchor, onCandidatePick: previewCandidateBuilding
   });
   window.islandEvidence = Object.freeze({getMetrics:()=>temporalLayer.getMetrics()});
 }
@@ -350,6 +359,17 @@ function prismPositions(b) {
   return new Float32Array(pts);
 }
 
+// A proposed match is NOT a confirmed building association. Highlight only.
+function previewCandidateBuilding(bin) {
+  const b=islandBuildings?.find(x=>x.bin===bin);
+  if(!b)return;
+  if(highlight){scene.remove(highlight);highlight.geometry.dispose();highlight.material.dispose();}
+  highlight=new THREE.LineSegments(new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial({color:0x65e7fd,transparent:true,opacity:.95}));
+  highlight.geometry.setAttribute('position',new THREE.BufferAttribute(prismPositions(b),3));
+  scene.add(highlight);
+  pickEl.textContent='PROVISIONAL building suggestion '+bin+' · location proximity only; NOT a visual or historical match. See photo’s proposed regions.';
+}
 function selectBuilding(b) {
   temporalLayer?.setBuilding(b.bin);
   if (highlight) { scene.remove(highlight); highlight.geometry.dispose(); }
