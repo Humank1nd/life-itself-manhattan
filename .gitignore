@@ -1,4 +1,3 @@
-# Fetched city data is re-pullable public data (scripts/fetch-data.mjs); keep the repo lean.
-data/*.geojson
+# Fetched city data is committed so the live demo is self-contained.
 node_modules/
 .DS_Store
