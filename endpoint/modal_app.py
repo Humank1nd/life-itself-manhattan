@@ -79,8 +79,14 @@ def ask_api():
                 store=False,
                 max_output_tokens=300,
             )
-        except Exception:
-            # Sanitized on purpose: auth/billing/rate details never leak.
+        except Exception as e:
+            # Sanitized to the client on purpose: auth/billing/rate details
+            # never leak. Server-side we log only the exception type and HTTP
+            # status (never the key, headers, or message body) so a failed
+            # freeze test can be told apart: 401 = secret/key, 404 = model id.
+            import sys
+            print(f"ask: meta call failed: {type(e).__name__} "
+                  f"status={getattr(e, 'status_code', None)}", file=sys.stderr)
             return JSONResponse({"error": "model unavailable"}, status_code=502)
         if getattr(resp, "status", None) != "completed" or not getattr(resp, "output_text", None):
             return JSONResponse({"error": "model reply incomplete"}, status_code=502)
