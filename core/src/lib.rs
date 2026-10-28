@@ -16,3 +16,6 @@
 pub mod canonical;
 pub mod geo;
 pub mod journal;
+
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;

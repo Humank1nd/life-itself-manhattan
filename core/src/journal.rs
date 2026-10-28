@@ -57,6 +57,24 @@ pub struct JournalEntry {
     pub recorded_at: f64,
 }
 
+/// Wall-clock seconds for recorded_at. That field is unhashed metadata
+/// (the source's design), so the clock's absence on wasm32 — where std
+/// has no SystemTime and panics — costs the chain nothing: browser
+/// entries record 0.0 and determinism is untouched.
+fn now_seconds() -> f64 {
+    #[cfg(target_arch = "wasm32")]
+    {
+        0.0
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map(|d| d.as_secs_f64())
+            .unwrap_or(0.0)
+    }
+}
+
 #[derive(Debug, Default)]
 pub struct StateJournal {
     entries: Vec<JournalEntry>,
@@ -86,10 +104,7 @@ impl StateJournal {
             payload,
             previous_hash,
             checksum,
-            recorded_at: SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .map(|d| d.as_secs_f64())
-                .unwrap_or(0.0),
+            recorded_at: now_seconds(),
         };
         self.entries.push(entry.clone());
         entry

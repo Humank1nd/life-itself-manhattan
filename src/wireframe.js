@@ -6,9 +6,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { interpret, runQuery, describe } from './ask.js';
-import { StateJournal, JournalEventType, hashWorldState } from './journal.js';
-import { evaluateAtmosphere } from './atmosphere.js';
-import { loadBoundaries } from './boundaries.js';
+import { createJournal, projectEnu, JournalEventType, hashWorldState } from './core-journal.js';
 
 const statusEl = document.getElementById('status');
 
@@ -17,7 +15,7 @@ const statusEl = document.getElementById('status');
 // one tick, wrapped tick_begin / tick_end the way the runtime wraps a
 // simulation step, with tick_end carrying the world hash. The ground never
 // changes, so the world hash never moves; only the history grows. ---
-const journal = new StateJournal();
+const journal = await createJournal();
 let islandTick = 0;
 let worldHash = null;
 let journalNote = null;
@@ -25,22 +23,15 @@ const journalEl = document.getElementById('journal');
 const shortHash = (h) => (h ? `${h.slice(0, 12)}…` : '—');
 async function renderJournal() {
   const through = await journal.checksumUntilTick(islandTick);
-  journalEl.textContent =
-    journalNote ||
-    `Journal · ${journal.entries.length} entries · tick ${islandTick} · head ${shortHash(journal.lastChecksum)} · history checksum ${shortHash(through)}`;
+  journalEl.textContent = journalNote ||
+    `${journal.engine === 'rust' ? 'Journal · Rust core' : 'Journal'} · ${journal.entries.length} entries · tick ${islandTick} · head ${shortHash(journal.lastChecksum)} · history checksum ${shortHash(through)}`;
 }
-journal.onAppend = () => {
-  renderJournal().catch(() => {});
-};
+journal.onAppend = () => { renderJournal().catch(() => {}); };
 window.islandJournal = journal; // anyone may audit the chain from the console
 
-// --- Extraction 005: Diurnal Atmosphere (from gods-eye-view/src/life) ---
-let currentHours = 12.0;
-let atmo = evaluateAtmosphere(currentHours);
-
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(atmo.bgHex);
-scene.fog = new THREE.Fog(atmo.fogHex, 18000, 42000);
+scene.background = new THREE.Color(0x05070a);
+scene.fog = new THREE.Fog(0x05070a, 18000, 42000);
 
 const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 1, 120000);
 camera.position.set(6800, 4300, 15200);
@@ -55,59 +46,71 @@ controls.target.set(0, 0, -2600);
 controls.enableDamping = true;
 controls.maxDistance = 45000;
 
-const grid = new THREE.GridHelper(26000, 52, atmo.gridHex, 0x111a24);
+const grid = new THREE.GridHelper(26000, 52, 0x1d2b3a, 0x111a24);
 grid.position.z = -2600;
 scene.add(grid);
 
-let streetMat = null;
-let boundaryLines = null;
-let boundaryMat = null;
-let buildingGeo = null;
-let buildingHeightT = null;
-
-function updateBuildingColors() {
-  if (!buildingGeo || !buildingHeightT) return;
-  const colArr = buildingGeo.attributes.color.array;
-  const low = new THREE.Color(atmo.lowWireHex);
-  const high = new THREE.Color(atmo.highWireHex);
-  const c = new THREE.Color();
-  for (let i = 0; i < buildingHeightT.length; i++) {
-    c.copy(low).lerp(high, buildingHeightT[i]);
-    colArr[i * 3] = c.r;
-    colArr[i * 3 + 1] = c.g;
-    colArr[i * 3 + 2] = c.b;
-  }
-  buildingGeo.attributes.color.needsUpdate = true;
+// Wire color ramps with height: deep blue at the street, pale ice at the towers.
+const LOW = new THREE.Color(0x2b6cb0);
+const HIGH = new THREE.Color(0xaee7ff);
+function colorFor(h, out) {
+  const t = Math.min(h / 300, 1);
+  out.copy(LOW).lerp(HIGH, t);
+  return out;
 }
 
-export function setAtmosphere(hours) {
-  currentHours = hours;
-  atmo = evaluateAtmosphere(hours);
-  scene.background.setHex(atmo.bgHex);
-  scene.fog.color.setHex(atmo.fogHex);
-  if (streetMat) streetMat.color.setHex(atmo.streetHex);
-  if (boundaryMat) boundaryMat.color.setHex(atmo.boundaryHex);
-  grid.material.color.setHex(atmo.gridHex);
-  updateBuildingColors();
+async function loadIsland() {
+  const res = await fetch('data/manhattan-enu.json');
+  if (!res.ok) throw new Error(`data HTTP ${res.status}`);
+  const buildings = await res.json();
 
-  const labelEl = document.getElementById('atmo-label');
-  if (labelEl) labelEl.textContent = atmo.label;
-  document.querySelectorAll('.atmo-chip').forEach((btn) => {
-    btn.classList.toggle('active', parseFloat(btn.dataset.hours) === hours);
-  });
-
-  if (worldHash) {
-    journalNote = null;
-    const tick = ++islandTick;
-    journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'atmosphere' });
-    journal.append(JournalEventType.ACTION, tick, {
-      kind: 'atmosphere',
-      hours,
-      phase: atmo.phase,
-      label: atmo.label,
-    });
-    journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
+  let vertCount = 0;
+  for (const b of buildings) for (const ring of b.rings) vertCount += ring.length * 6;
+  const positions = new Float32Array(vertCount * 3);
+  const colors = new Float32Array(vertCount * 3);
+  let p = 0;
+  const c = new THREE.Color();
+  function push(x1, y1, z1, x2, y2, z2, col) {
+    positions[p] = x1; positions[p + 1] = y1; positions[p + 2] = z1;
+    positions[p + 3] = x2; positions[p + 4] = y2; positions[p + 5] = z2;
+    colors[p] = col.r; colors[p + 1] = col.g; colors[p + 2] = col.b;
+    colors[p + 3] = col.r; colors[p + 4] = col.g; colors[p + 5] = col.b;
+    p += 6;
   }
+  for (const b of buildings) {
+    colorFor(b.h, c);
+    for (const ring of b.rings) {
+      const n = ring.length;
+      for (let i = 0; i < n; i++) {
+        const [x1, z1] = ring[i];
+        const [x2, z2] = ring[(i + 1) % n];
+        push(x1, 0, z1, x2, 0, z2, c);          // ground loop
+        push(x1, b.h, z1, x2, b.h, z2, c);      // roof loop
+        push(x1, 0, z1, x1, b.h, z1, c);        // vertical
+      }
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const lines = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85 }));
+  scene.add(lines);
+  buildPickIndex(buildings);
+  statusEl.textContent =
+    `Manhattan wireframe is up: ${buildings.length.toLocaleString()} buildings at real height. ` +
+    `Twin Earth ENU frame, origin Times Square. Ground truth: NYC Open Data.`;
+  const stats = {
+    buildings: buildings.length,
+    buildingsWithYear: buildings.filter((b) => b.yr).length,
+    buildingsWithNeighborhood: buildings.filter((b) => b.nb).length,
+    neighborhoods: nbNames.length,
+    origin: { lat: 40.758, lon: -73.9855, name: 'Times Square' },
+    datasets: ['BUILDING 5zhs-2jue', 'BUILDING_P u9wf-3gbt', 'NTA2020 9nt8-h7nd'],
+  };
+  worldHash = await hashWorldState(stats);
+  await journal.append(JournalEventType.SNAPSHOT, 0, stats);
+  await loadAnchors();
+  await loadStreets();
 }
 
 // --- Extraction 004: the surveyed street corridors come home.
@@ -122,20 +125,14 @@ async function loadStreets() {
     if (!res.ok) return;
     const corridors = await res.json();
     const names = Object.keys(corridors);
-    streetMat = new THREE.LineBasicMaterial({
-      color: atmo.streetHex,
-      transparent: true,
-      opacity: 0.85,
-    });
+    const mat = new THREE.LineBasicMaterial({ color: 0x4a6fa5, transparent: true, opacity: 0.8 });
     for (const name of names) {
       const pts = corridors[name].map(([x, z]) => new THREE.Vector3(x, 1, z));
       const geo = new THREE.BufferGeometry().setFromPoints(pts);
-      scene.add(new THREE.Line(geo, streetMat));
+      scene.add(new THREE.Line(geo, mat));
     }
     statusEl.textContent += ` ${names.length} surveyed street corridors underlie downtown.`;
-  } catch {
-    /* corridors are an overlay; the island stands without them */
-  }
+  } catch { /* corridors are an overlay; the island stands without them */ }
 }
 
 // --- The docking: Twin Earth NYC's surveyed anchors stand on the island.
@@ -149,37 +146,43 @@ async function loadAnchors() {
   try {
     const res = await fetch('data/anchors-enu.json');
     if (!res.ok) return;
-    islandAnchors = await res.json();
+    const anchorsData = await res.json();
+    islandAnchors = anchorsData.anchors;
     const pos = new Float32Array(islandAnchors.length * 3);
     islandAnchors.forEach((a, i) => {
-      pos[i * 3] = a.x;
-      pos[i * 3 + 1] = Math.max(a.y, 0) + 2;
-      pos[i * 3 + 2] = a.z;
+      pos[i * 3] = a.x; pos[i * 3 + 1] = Math.max(a.y, 0) + 2; pos[i * 3 + 2] = a.z;
     });
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const points = new THREE.Points(
-      geo,
-      new THREE.PointsMaterial({
-        color: 0xff5340,
-        size: 9,
-        sizeAttenuation: false,
-        transparent: true,
-        opacity: 0.95,
-      })
-    );
+    const points = new THREE.Points(geo, new THREE.PointsMaterial({
+      color: 0xff5340, size: 9, sizeAttenuation: false, transparent: true, opacity: 0.95,
+    }));
     scene.add(points);
     statusEl.textContent += ` ${islandAnchors.length} Twin Earth survey anchors stand at Times Square, in red.`;
-  } catch {
-    /* anchors are an overlay; the island stands without them */
-  }
+    // The core re-projects every anchor in this browser and measures
+    // itself against the stored positions; the check is journaled.
+    let maxDelta = 0, checked = 0;
+    for (const a of islandAnchors) {
+      const p = projectEnu(anchorsData.origin, a.lat, a.lon, a.elev);
+      if (!p) break;
+      maxDelta = Math.max(maxDelta, Math.abs(p[0] - a.x), Math.abs(p[1] + a.z), Math.abs(p[2] - a.y));
+      checked++;
+    }
+    if (checked && worldHash) {
+      const tick = ++islandTick;
+      await journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'core-check' });
+      await journal.append(JournalEventType.ACTION, tick, {
+        kind: 'core-check', engine: journal.engine, anchorsChecked: checked,
+        maxDeltaM: Math.round(maxDelta * 1e6) / 1e6,
+      });
+      await journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
+      statusEl.textContent += ` The Rust core re-projected the anchors in this browser: max drift ${(maxDelta * 1000).toFixed(1)} mm.`;
+    }
+  } catch { /* anchors are an overlay; the island stands without them */ }
 }
 
 function selectAnchor(a) {
-  if (highlight) {
-    scene.remove(highlight);
-    highlight.geometry.dispose();
-  }
+  if (highlight) { scene.remove(highlight); highlight.geometry.dispose(); }
   const geo = new THREE.EdgesGeometry(new THREE.OctahedronGeometry(16));
   highlight = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xff5340 }));
   highlight.position.set(a.x, Math.max(a.y, 0) + 2, a.z);
@@ -192,93 +195,10 @@ function selectAnchor(a) {
     const tick = ++islandTick;
     journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'select' });
     journal.append(JournalEventType.ACTION, tick, {
-      kind: 'anchor',
-      id: a.id,
-      name: a.name,
-      tolerance_m: a.tolerance_m,
+      kind: 'anchor', id: a.id, name: a.name, tolerance_m: a.tolerance_m,
     });
     journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
   }
-}
-
-async function loadIsland() {
-  // Load official 2020 NTA boundaries & shoreline perimeter
-  try {
-    const bound = await loadBoundaries(atmo.boundaryHex);
-    boundaryLines = bound.lines;
-    boundaryMat = bound.material;
-    scene.add(boundaryLines);
-  } catch (err) {
-    console.warn('Boundaries overlay skipped:', err);
-  }
-
-  const res = await fetch('data/manhattan-enu.json');
-  if (!res.ok) throw new Error(`data HTTP ${res.status}`);
-  const buildings = await res.json();
-
-  let vertCount = 0;
-  for (const b of buildings) for (const ring of b.rings) vertCount += ring.length * 6;
-  const positions = new Float32Array(vertCount * 3);
-  const colors = new Float32Array(vertCount * 3);
-  buildingHeightT = new Float32Array(vertCount);
-
-  let p = 0;
-  let tIdx = 0;
-  const low = new THREE.Color(atmo.lowWireHex);
-  const high = new THREE.Color(atmo.highWireHex);
-  const c = new THREE.Color();
-
-  function push(x1, y1, z1, x2, y2, z2, t) {
-    positions[p] = x1; positions[p + 1] = y1; positions[p + 2] = z1;
-    positions[p + 3] = x2; positions[p + 4] = y2; positions[p + 5] = z2;
-    c.copy(low).lerp(high, t);
-    colors[p] = c.r; colors[p + 1] = c.g; colors[p + 2] = c.b;
-    colors[p + 3] = c.r; colors[p + 4] = c.g; colors[p + 5] = c.b;
-    buildingHeightT[tIdx++] = t;
-    buildingHeightT[tIdx++] = t;
-    p += 6;
-  }
-
-  for (const b of buildings) {
-    const t = Math.min(b.h / 300, 1);
-    for (const ring of b.rings) {
-      const n = ring.length;
-      for (let i = 0; i < n; i++) {
-        const [x1, z1] = ring[i];
-        const [x2, z2] = ring[(i + 1) % n];
-        push(x1, 0, z1, x2, 0, z2, 0);          // ground loop (base height)
-        push(x1, b.h, z1, x2, b.h, z2, t);      // roof loop (top height)
-        push(x1, 0, z1, x1, b.h, z1, t * 0.5);  // vertical edge
-      }
-    }
-  }
-
-  buildingGeo = new THREE.BufferGeometry();
-  buildingGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  buildingGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  const lines = new THREE.LineSegments(
-    buildingGeo,
-    new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85 })
-  );
-  scene.add(lines);
-  buildPickIndex(buildings);
-
-  statusEl.textContent =
-    `Manhattan wireframe is up: ${buildings.length.toLocaleString()} buildings at real height. ` +
-    `Twin Earth ENU frame, origin Times Square. Ground truth: NYC Open Data.`;
-
-  const stats = {
-    buildings: buildings.length,
-    buildingsWithYear: buildings.filter((b) => b.yr).length,
-    buildingsWithNeighborhood: buildings.filter((b) => b.nb).length,
-    neighborhoods: nbNames.length,
-    origin: { lat: 40.758, lon: -73.9855, name: 'Times Square' },
-    datasets: ['BUILDING 5zhs-2jue', 'BUILDING_P u9wf-3gbt', 'NTA2020 9nt8-h7nd'],
-  };
-  worldHash = await hashWorldState(stats);
-  await journal.append(JournalEventType.SNAPSHOT, 0, stats);
-  await loadAnchors();
-  await loadStreets();
 }
 
 // --- Building selection: click the island, get the building's real record. ---
@@ -294,9 +214,7 @@ function buildPickIndex(buildings) {
   for (let i = 0; i < buildings.length; i++) {
     const ring = buildings[i].rings[0];
     let cx = 0, cz = 0;
-    for (const [x, z] of ring) {
-      cx += x; cz += z;
-    }
+    for (const [x, z] of ring) { cx += x; cz += z; }
     cx /= ring.length; cz /= ring.length;
     buildings[i].cx = cx; buildings[i].cz = cz;
     const key = `${Math.floor(cx / CELL)},${Math.floor(cz / CELL)}`;
@@ -319,10 +237,7 @@ function prismPositions(b) {
 }
 
 function selectBuilding(b) {
-  if (highlight) {
-    scene.remove(highlight);
-    highlight.geometry.dispose();
-  }
+  if (highlight) { scene.remove(highlight); highlight.geometry.dispose(); }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(prismPositions(b), 3));
   highlight = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xffd76a }));
@@ -351,44 +266,30 @@ let matchLines = null;
 let nbNames = [];
 
 function showMatches(matches, cap) {
-  if (matchLines) {
-    scene.remove(matchLines);
-    matchLines.geometry.dispose();
-    matchLines = null;
-  }
+  if (matchLines) { scene.remove(matchLines); matchLines.geometry.dispose(); matchLines = null; }
   const shown = matches.slice(0, cap);
   if (!shown.length) return shown;
   let total = 0;
   const chunks = [];
-  for (const b of shown) {
-    const arr = prismPositions(b);
-    chunks.push(arr);
-    total += arr.length;
-  }
+  for (const b of shown) { const arr = prismPositions(b); chunks.push(arr); total += arr.length; }
   const all = new Float32Array(total);
   let o = 0;
-  for (const arr of chunks) {
-    all.set(arr, o);
-    o += arr.length;
-  }
+  for (const arr of chunks) { all.set(arr, o); o += arr.length; }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(all, 3));
-  matchLines = new THREE.LineSegments(
-    geo,
-    new THREE.LineBasicMaterial({ color: 0xffd76a, transparent: true, opacity: 0.95 })
-  );
+  matchLines = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xffd76a, transparent: true, opacity: 0.95 }));
   scene.add(matchLines);
   return shown;
 }
 
 // Camera flight: after an answer, glide to frame the lit buildings.
+// (Idea adopted from the parallel local build, founder's ruling 2026-10-28;
+// implementation is this repo's own.)
 let flight = null;
 function flyToMatches(shown) {
   if (!shown.length) return;
   let cx = 0, cz = 0;
-  for (const b of shown) {
-    cx += b.cx; cz += b.cz;
-  }
+  for (const b of shown) { cx += b.cx; cz += b.cz; }
   cx /= shown.length; cz /= shown.length;
   let r = 0;
   for (const b of shown) r = Math.max(r, Math.hypot(b.cx - cx, b.cz - cz));
@@ -397,14 +298,7 @@ function flyToMatches(shown) {
   const toTgt = new THREE.Vector3(cx, 0, cz);
   const toPos = toTgt.clone().add(dir.multiplyScalar(dist));
   toPos.y = Math.max(toPos.y, dist * 0.45);
-  flight = {
-    t0: performance.now(),
-    dur: 1400,
-    fromPos: camera.position.clone(),
-    toPos,
-    fromTgt: controls.target.clone(),
-    toTgt,
-  };
+  flight = { t0: performance.now(), dur: 1400, fromPos: camera.position.clone(), toPos, fromTgt: controls.target.clone(), toTgt };
   controls.enabled = false;
 }
 function stepFlight() {
@@ -413,20 +307,14 @@ function stepFlight() {
   t = 1 - Math.pow(1 - t, 3); // easeOutCubic
   camera.position.lerpVectors(flight.fromPos, flight.toPos, t);
   controls.target.lerpVectors(flight.fromTgt, flight.toTgt, t);
-  if (t >= 1) {
-    flight = null;
-    controls.enabled = true;
-  }
+  if (t >= 1) { flight = null; controls.enabled = true; }
 }
 
 askForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const question = askInput.value.trim();
   if (!question) return;
-  if (!islandBuildings) {
-    answerEl.textContent = 'The island is still drawing itself. One moment.';
-    return;
-  }
+  if (!islandBuildings) { answerEl.textContent = 'The island is still drawing itself. One moment.'; return; }
   answerEl.textContent = 'Asking the island…';
   journalNote = null;
   const tick = ++islandTick;
@@ -436,17 +324,12 @@ askForm.addEventListener('submit', async (e) => {
   const cap = query.sort ? 200 : 4000;
   const shown = showMatches(matches, cap);
   let text = describe(query, stats, via);
-  if (stats.count > shown.length && shown.length > 0)
-    text += ` (Lighting up ${shown.length.toLocaleString()} of them.)`;
+  if (stats.count > shown.length && shown.length > 0) text += ` (Lighting up ${shown.length.toLocaleString()} of them.)`;
   answerEl.textContent = text;
   flyToMatches(shown);
   if (worldHash) {
     await journal.append(JournalEventType.ACTION, tick, {
-      kind: 'ask',
-      via,
-      question,
-      query,
-      matches: stats.count,
+      kind: 'ask', via, question, query, matches: stats.count,
       sampleBins: shown.slice(0, 5).map((b) => b.bin),
     });
     await journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
@@ -464,10 +347,7 @@ document.getElementById('verify').addEventListener('click', async () => {
     const tick = ++islandTick;
     await journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'verify' });
     await journal.append(JournalEventType.ACTION, tick, {
-      kind: 'verify',
-      ok,
-      entriesChecked: checked,
-      throughChecksum: through,
+      kind: 'verify', ok, entriesChecked: checked, throughChecksum: through,
     });
     await journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
   }
@@ -478,14 +358,6 @@ for (const chip of document.querySelectorAll('.chip')) {
   chip.addEventListener('click', () => {
     askInput.value = chip.textContent.trim();
     askForm.requestSubmit();
-  });
-}
-
-// Diurnal Time Chips
-for (const btn of document.querySelectorAll('.atmo-chip')) {
-  btn.addEventListener('click', () => {
-    const h = parseFloat(btn.dataset.hours);
-    setAtmosphere(h);
   });
 }
 
@@ -503,7 +375,6 @@ renderer.domElement.addEventListener('pointerup', (e) => {
   raycaster.setFromCamera(ndc, camera);
   const hit = new THREE.Vector3();
   if (!raycaster.ray.intersectPlane(groundPlane, hit)) return;
-
   if (islandAnchors) {
     let aBest = null, aD = 60; // meters — anchors are sparse, surveyed points
     for (const a of islandAnchors) {
@@ -512,7 +383,6 @@ renderer.domElement.addEventListener('pointerup', (e) => {
     }
     if (aBest) { selectAnchor(aBest); return; }
   }
-
   const gx = Math.floor(hit.x / CELL), gz = Math.floor(hit.z / CELL);
   let best = null, bestD = 75; // meters
   for (let a = -1; a <= 1; a++) for (let bCell = -1; bCell <= 1; bCell++) {

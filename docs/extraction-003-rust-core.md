@@ -56,3 +56,31 @@ record.
 ## Docking addendum (2026-10-28)
 
 The 25 geo anchors now also stand on the live island: `data/anchors-enu.json` carries the registry records joined with their projected positions; the page renders them as red points at Times Square, and clicking one reads its canonical record (id, name, type, surveyed tolerance) and journals the reading as a selection tick. The 10 scale anchors have no position and remain registry-only.
+
+## Addendum (2026-10-28): the core drives the page
+
+The WASM binding is built and committed at `pkg/` (wasm-bindgen
+0.2.129; recipe: `cargo build --target wasm32-unknown-unknown
+--release`, then `wasm-bindgen --target web --out-dir ../pkg` on the
+release artifact). The page reaches the core through
+`src/core-journal.js`:
+
+- The island's journal now runs in Rust. Its checksums are the same
+  values the Python source produces — the machine changed, the chain
+  did not. `src/journal.js` remains as the fallback if the WASM ever
+  fails to load, and the journal line in the HUD says which engine is
+  driving.
+- At load, the core re-projects all 25 anchors in the visitor's own
+  browser and measures itself against the stored positions; the check
+  is written into the journal as its own tick.
+
+Two platform lessons, both caught by testing the compiled artifact:
+ticks cross the boundary as i32 because wasm-bindgen maps i64 to
+BigInt and the island's ticks are plain counters; and `SystemTime`
+panics on wasm32, so browser entries carry recorded_at 0.0 — the field
+is unhashed by the source's design, so determinism is untouched.
+
+Proof: `scripts/test-wasm.mjs` runs the compiled core (nodejs-target
+build of the same crate) against the parity fixtures — 5 checks
+passed, entry checksums identical to the Python fixture, anchor
+reproduction max delta 1.4e-9 m.
