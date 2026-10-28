@@ -64,9 +64,11 @@ for (const f of src.features) {
   }
   if (!rings.length) continue;
   const feet = parseFloat(f.properties && f.properties.height_roof);
+  const yr = parseInt(f.properties && f.properties.construction_year, 10);
   out.push({
     bin: f.properties && f.properties.bin,
     h: Number.isFinite(feet) && feet > 0 ? Math.round(feet * FEET_TO_METERS * 10) / 10 : 10,
+    yr: Number.isFinite(yr) && yr > 1600 ? yr : null,
     rings,
   });
 }

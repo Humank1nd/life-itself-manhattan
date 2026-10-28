@@ -74,10 +74,82 @@ async function loadIsland() {
   geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   const lines = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85 }));
   scene.add(lines);
+  buildPickIndex(buildings);
   statusEl.textContent =
     `Manhattan wireframe is up: ${buildings.length.toLocaleString()} buildings at real height. ` +
     `Twin Earth ENU frame, origin Times Square. Ground truth: NYC Open Data.`;
 }
+
+// --- Building selection: click the island, get the building's real record. ---
+const pickEl = document.getElementById('pick');
+const CELL = 100; // meters
+const pickGrid = new Map();
+let islandBuildings = null;
+let highlight = null;
+
+function buildPickIndex(buildings) {
+  islandBuildings = buildings;
+  for (let i = 0; i < buildings.length; i++) {
+    const ring = buildings[i].rings[0];
+    let cx = 0, cz = 0;
+    for (const [x, z] of ring) { cx += x; cz += z; }
+    cx /= ring.length; cz /= ring.length;
+    buildings[i].cx = cx; buildings[i].cz = cz;
+    const key = `${Math.floor(cx / CELL)},${Math.floor(cz / CELL)}`;
+    if (!pickGrid.has(key)) pickGrid.set(key, []);
+    pickGrid.get(key).push(i);
+  }
+}
+
+function prismPositions(b) {
+  const pts = [];
+  for (const ring of b.rings) {
+    const n = ring.length;
+    for (let i = 0; i < n; i++) {
+      const [x1, z1] = ring[i];
+      const [x2, z2] = ring[(i + 1) % n];
+      pts.push(x1, 0, z1, x2, 0, z2, x1, b.h, z1, x2, b.h, z2, x1, 0, z1, x1, b.h, z1);
+    }
+  }
+  return new Float32Array(pts);
+}
+
+function selectBuilding(b) {
+  if (highlight) { scene.remove(highlight); highlight.geometry.dispose(); }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(prismPositions(b), 3));
+  highlight = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xffd76a }));
+  scene.add(highlight);
+  pickEl.textContent =
+    `Building ${b.bin} · ${b.h.toFixed(1)} m tall` +
+    (b.yr ? ` · built ${b.yr}` : ' · year not in the city record') +
+    '. Source: NYC Open Data.';
+}
+
+const raycaster = new THREE.Raycaster();
+const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+let downX = 0, downY = 0;
+renderer.domElement.addEventListener('pointerdown', (e) => { downX = e.clientX; downY = e.clientY; });
+renderer.domElement.addEventListener('pointerup', (e) => {
+  if (!islandBuildings) return;
+  if (Math.hypot(e.clientX - downX, e.clientY - downY) > 5) return; // it was a drag
+  const ndc = new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  raycaster.setFromCamera(ndc, camera);
+  const hit = new THREE.Vector3();
+  if (!raycaster.ray.intersectPlane(groundPlane, hit)) return;
+  const gx = Math.floor(hit.x / CELL), gz = Math.floor(hit.z / CELL);
+  let best = null, bestD = 75; // meters
+  for (let a = -1; a <= 1; a++) for (let bCell = -1; bCell <= 1; bCell++) {
+    const cell = pickGrid.get(`${gx + a},${gz + bCell}`);
+    if (!cell) continue;
+    for (const i of cell) {
+      const b = islandBuildings[i];
+      const d = Math.hypot(b.cx - hit.x, b.cz - hit.z);
+      if (d < bestD) { bestD = d; best = b; }
+    }
+  }
+  if (best) selectBuilding(best);
+});
 
 loadIsland().catch((err) => {
   console.error(err);
