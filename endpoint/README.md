@@ -4,7 +4,7 @@ A small Modal web endpoint. The page POSTs `{ "question": "..." }` to
 `/ask`; the endpoint asks the Meta model (Muse Spark, via the Meta Model
 API) to translate the question into the structured query JSON from
 `docs/ask-the-island.md`, validates the reply in `endpoint_core.py`, and
-returns `{ "query": { ... } }`. The browser executes the query over the
+returns the query JSON object itself. The browser executes the query over the
 real records. If the endpoint is down, slow, or answers nonsense, the page
 falls back to its local interpreter — the island never goes mute.
 

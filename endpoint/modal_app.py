@@ -38,13 +38,13 @@ image = (
 ALLOWED_ORIGIN = "https://humank1nd.github.io"
 
 
-@app.function(image=image, secrets=[modal.Secret.from_name("meta-model-api")])
+@app.function(image=image, secrets=[modal.Secret.from_name("meta-model-api")], timeout=180)
 @modal.asgi_app()
 def ask_api():
     from fastapi import FastAPI, Request
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse
-    from openai import OpenAI
+    from openai import AsyncOpenAI
 
     web = FastAPI()
     web.add_middleware(
@@ -53,10 +53,17 @@ def ask_api():
         allow_methods=["POST", "GET"],
         allow_headers=["Content-Type"],
     )
-    client = OpenAI(
+    # AsyncOpenAI + an explicit timeout: the sync client inside an async
+    # handler blocks the server's only worker for the whole model call, and
+    # the SDK's default timeout is 10 minutes — together they wedged the
+    # first redeploy (found live 2026-10-28: /health silent behind a stuck
+    # /ask). 60s is generous for this translation; the page gives up at 25s
+    # and answers locally regardless.
+    client = AsyncOpenAI(
         base_url="https://api.meta.ai/v1",
         api_key=os.environ["META_API_KEY"],
         max_retries=0,
+        timeout=60.0,
     )
     model = os.environ.get("META_MODEL", "muse-spark-1.3")
 
@@ -72,7 +79,7 @@ def ask_api():
         if not question:
             return JSONResponse({"error": "empty question"}, status_code=400)
         try:
-            resp = client.responses.create(
+            resp = await client.responses.create(
                 model=model,
                 instructions=INSTRUCTIONS,
                 input=question,
@@ -94,6 +101,8 @@ def ask_api():
             query = parse_and_validate(resp.output_text)
         except ValueError:
             return JSONResponse({"error": "model reply failed validation"}, status_code=422)
-        return {"query": query}
+        # Bare query object: the page's interpreter contract takes the query
+        # JSON itself, not a wrapper (contract fixed 2026-10-28).
+        return query
 
     return web

@@ -86,6 +86,7 @@ export async function interpret(question, nbNames) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question }),
+        signal: AbortSignal.timeout(25000), // a slow model never keeps the island waiting
       });
       if (res.ok) {
         const q = await res.json();
