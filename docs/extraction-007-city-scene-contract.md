@@ -47,3 +47,10 @@ into the browser project. No external 3D assets are currently bundled.
 
 This file records implemented interfaces and proposed later work. It does
 not claim Unreal feature parity or a completed headset build.
+
+## Additive temporal evidence reference (Extraction 008)
+
+A later feature branch adds `layers.evidence` to City Scene v1 as an optional
+extension and validates `data/evidence-v1.json` separately. This is a
+reference-based spatial/temporal knowledge graph, **not** new ground truth,
+not an Obsidian core code port, and not a trained generative model.

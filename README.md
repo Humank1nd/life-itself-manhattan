@@ -62,3 +62,18 @@ Validation: npm run validate:city && npm run test:city
 
 Unreal Engine City Sample is reference-only here. No Unreal-only assets are
 bundled, and any future web asset requires documented rights and provenance.
+
+## Time-aware evidence rail (feature branch)
+
+The same survey anchors now support an Obsidian-style 3D geographic graph,
+with a bottom-of-screen **year slider** filtering only photos actually captured
+in that year. Clicking a building also shows sourced tenant/business records
+whose validity interval overlaps that year. The browser can display a photo
+as a translucent local-asset plane near its reference anchor, but that does
+not establish a calibrated camera pose or actual depth.
+
+The new `data/evidence-v1.json` is intentionally empty until properly
+attributed, rights-cleared images and historical records are supplied.
+No photograph is invented and no world model has been trained.
+See `docs/extraction-008-temporal-evidence.md`. Test with
+`npm run test:evidence`.

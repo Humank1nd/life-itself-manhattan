@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "life-itself-evidence/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "anchorLayer": "data/anchors-enu.json",
+  "photos": [],
+  "occupancies": [],
+  "notes": "No photographed observations or tenant claims have been ingested. Do not fabricate dates, imagery or business history."
+}

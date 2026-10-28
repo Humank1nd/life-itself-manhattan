@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { validateEvidenceGraph } from '../src/evidence-graph.js';
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const check = (x, message) => assert.ok(x, message);
 function dataFile(uri) {
@@ -29,6 +30,11 @@ export function validateManifestShape(m) {
     check(Number.isSafeInteger(layer.count) && layer.count > 0, 'bad count: ' + name);
     check(typeof layer.source === 'string' && !!layer.source, 'missing provenance: ' + name);
     dataFile(layer.uri);
+  }
+  if (m.layers.evidence) {
+    check(m.layers.evidence.kind === 'time-indexed-photo-and-business-records', 'evidence layer contract mismatch');
+    check(typeof m.layers.evidence.source === 'string' && !!m.layers.evidence.source, 'evidence source missing');
+    dataFile(m.layers.evidence.uri);
   }
   check(Array.isArray(m.assets), 'assets must be listed');
   for (const a of m.assets) {
@@ -62,6 +68,9 @@ export function validateCityScene(m) {
   check(anchors.anchors.length === m.layers.anchors.count, 'anchor count mismatch');
   check(anchors.origin.lat === m.frame.origin.lat && anchors.origin.lon === m.frame.origin.lon && anchors.origin.elev === m.frame.origin.elev, 'anchor origin drift');
   for (const a of anchors.anchors) check([a.x, a.y, a.z, a.lat, a.lon, a.elev, a.tolerance_m].every(Number.isFinite), 'invalid anchor');
+  if (m.layers.evidence) {
+    validateEvidenceGraph(readData(m.layers.evidence.uri), anchors.anchors, ids);
+  }
   const ntas = readData(m.layers.neighborhoods.uri);
   check(ntas.length === m.layers.neighborhoods.count, 'NTA count mismatch');
   for (const n of ntas) for (const r of n.rings) checkRing(r);
