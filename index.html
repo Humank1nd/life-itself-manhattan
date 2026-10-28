@@ -14,6 +14,17 @@
   }
   #hud h1 { font-size: 16px; margin: 0 0 4px; }
   #hud p { font-size: 13px; margin: 0; opacity: 0.85; }
+  #atmo {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px;
+  }
+  #atmo-label { opacity: 0.85; font-weight: 500; }
+  #atmo-chips { display: flex; gap: 4px; }
+  .atmo-chip {
+    background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0;
+    border-radius: 999px; padding: 2px 8px; font-size: 11px; cursor: pointer;
+  }
+  .atmo-chip.active { background: #2b6cb0; color: #ffffff; }
   #ask { display: flex; gap: 6px; margin-top: 10px; }
   #ask-input {
     flex: 1; min-width: 0; background: #0d1420; color: #f2f2f2;
@@ -56,6 +67,14 @@
 <div id="hud">
   <h1>Life Itself — Manhattan</h1>
   <p id="status">Drawing the island…</p>
+  <div id="atmo">
+    <span id="atmo-label">12:00 Solar Daylight</span>
+    <div id="atmo-chips">
+      <button type="button" class="atmo-chip active" data-hours="12">☀️ Noon</button>
+      <button type="button" class="atmo-chip" data-hours="18.5">🌅 Dusk</button>
+      <button type="button" class="atmo-chip" data-hours="23">🌙 Night</button>
+    </div>
+  </div>
   <form id="ask" autocomplete="off">
     <input id="ask-input" type="text" placeholder="Ask the island: pre-war buildings under 50 feet in the East Village">
     <button type="submit">Ask</button>
