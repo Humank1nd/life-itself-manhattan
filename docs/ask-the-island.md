@@ -52,6 +52,23 @@ rejected, prose rejected, bounds clamped). `index.html` carries the
 founder confirms the $150 credit on the billing page, creates the secret,
 deploys, and the URL is set. Steps: `endpoint/README.md`.
 
+**ACTIVATED (2026-10-28, verified end to end).** Credits confirmed on the
+billing page ($149.31 remaining, card on file). Secret created by the
+founder; endpoint deployed at
+`https://humank1nd--ask-the-island-ask-api.us-east.modal.run`; the page's
+`ASK_ENDPOINT` points at its `/ask`. Live proof, from outside, against the
+public URL: "pre-war buildings under 50 feet in the East Village" →
+`{"nb": "East Village", "yrMax": 1944, "hMax": 15.24}` (the exact query
+whose execution over the records yields 589 buildings), and "oldest
+buildings in Harlem" → `{"nbPrefix": "Harlem", "sort": "oldest"}`. The
+road here is recorded honestly: a first secret stored the literal word
+KEY (401s), a second stored an empty value (the SDK raised at client
+construction and crash-looped the container, silencing even /health), and
+a 300-token output budget starved a reasoning model that spends ~640
+tokens thinking before it answers. Fixes: credential built per request
+and never at app start, output budget 2048, page-side 25 s cap with local
+fallback.
+
 ## The two interpreters
 
 1. **The Meta model** (the submission configuration). The page POSTs

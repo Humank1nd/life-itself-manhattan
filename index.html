@@ -32,10 +32,10 @@
   }
 </style>
 <script>
-  // Ask the Island model endpoint. Empty = the island answers with its local
-  // interpreter. Set to the deployed Modal URL (see endpoint/README.md) at the
-  // demo freeze so the Meta model reads the questions live.
-  window.ASK_ENDPOINT = "";
+  // Ask the Island model endpoint (deployed on Modal; the credential lives
+  // server-side in a Modal secret — see endpoint/README.md). If the endpoint
+  // is slow or down, the island answers with its local interpreter instead.
+  window.ASK_ENDPOINT = "https://humank1nd--ask-the-island-ask-api.us-east.modal.run/ask";
 </script>
 <script type="importmap">
 {
