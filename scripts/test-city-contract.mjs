@@ -17,10 +17,11 @@ for (const change of [
   (m) => m.layers.buildingVersions.uri='../../secret.json',
   (m) => m.layers.facadeMatches.kind='always-approved',
   (m) => m.layers.facadeCorroboration.uri='../fake.json',
+  (m) => m.layers.spatialMemory.kind='world-model-trained',
   (m) => m.assets.push({id:'epic',uri:'assets/citysample.glb',format:'glb',rights:'unreal-only',source:'City Sample'}),
   (m) => m.assets.push({id:'unknown',uri:'assets/unknown.glb',format:'glb',rights:'licensed-for-web',source:''}),
 ]) {
   const bad = clone(); change(bad);
   assert.throws(() => validateManifestShape(bad));
 }
-console.log('PASS: manifest accepts canon and rejects 12 unsafe/drifted variants');
+console.log('PASS: manifest accepts canon and rejects 13 unsafe/drifted variants');

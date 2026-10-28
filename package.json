@@ -17,7 +17,9 @@
     "build:alignment": "node scripts/build-photo-alignment.mjs",
     "test:alignment": "node scripts/test-photo-alignment.mjs",
     "test:facades": "node scripts/test-facade-matching.mjs",
-    "build:facades": "node scripts/build-building-versions.mjs && node scripts/build-facade-matches.mjs"
+    "build:facades": "node scripts/build-building-versions.mjs && node scripts/build-facade-matches.mjs",
+    "test:memory": "node scripts/test-spatial-memory.mjs",
+    "build:memory": "node scripts/build-spatial-memory.mjs"
   },
   "type": "module",
   "version": "0.1.0"

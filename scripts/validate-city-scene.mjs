@@ -7,6 +7,7 @@ import { validateEvidenceGraph } from '../src/evidence-graph.js';
 import { validateCatalog } from '../src/photo-catalog.js';
 import { validateAlignment } from '../src/photo-alignment.js';
 import {validateBuildingVersions,validateFacadeInstances,validateFacadeMatches,validateCorroboration} from '../src/facade-matching.js';
+import {validateSpatialMemory} from '../src/spatial-memory.js';
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const check = (x, message) => assert.ok(x, message);
 function dataFile(uri) {
@@ -66,6 +67,11 @@ export function validateManifestShape(m) {
     check(typeof m.layers[key]?.source==='string'&&!!m.layers[key]?.source,'facade provenance missing '+key);
     dataFile(uri);
   }
+  check(m.layers.spatialMemory?.uri==='data/spatial-memory-v1.json'&&
+    m.layers.spatialMemory?.kind==='source-grounded-plane-and-photo-retrieval'&&
+    typeof m.layers.spatialMemory?.source==='string'&&!!m.layers.spatialMemory.source,
+    'spatial memory contract mismatch');
+  dataFile(m.layers.spatialMemory.uri);
   check(Array.isArray(m.assets), 'assets must be listed');
   for (const a of m.assets) {
     check(['original','public-domain','licensed-for-web'].includes(a.rights), 'asset rights not approved');
@@ -109,6 +115,7 @@ export function validateCityScene(m) {
   validateBuildingVersions(versions);
   validateFacadeInstances(instances,new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)));
   validateFacadeMatches(alignments,instances,versions,new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)));
+  validateSpatialMemory(readData(m.layers.spatialMemory.uri));
   validateCorroboration(readData(m.layers.facadeCorroboration.uri),
     new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)),
     new Set(instances.instances.map(x=>x.id)),new Set(versions.versions.map(x=>x.id)));

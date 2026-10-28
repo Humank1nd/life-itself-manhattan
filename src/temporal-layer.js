@@ -7,7 +7,7 @@ import {validateBuildingVersions,validateFacadeInstances,validateFacadeMatches} 
 // never a calibrated 3D reconstruction or a world-model training checkpoint.
 export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, evidence,
   photoCatalog=null, facadeInstances=null,facadeMatches=null,buildingVersions=null,
-  projectEnu=null, origin=null, onAnchorPick,onCandidatePick=()=>{} }) {
+  projectEnu=null, origin=null, onAnchorPick,onCandidatePick=()=>{},onYearChanged=()=>{} }) {
   validateEvidenceGraph(evidence, anchors, bins);
   const catalogMetrics=photoCatalog ? validateCatalog(photoCatalog):null;
   const facadeMetrics=facadeInstances&&buildingVersions ? {
@@ -213,6 +213,7 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
     renderCards(selectedPhotos);
     clearPlates();
     addPlates(selectedPhotos);
+    onYearChanged(year);
   }
   const updateYear=v=> {year=Math.max(Number(yearSlider.min),Math.min(Number(yearSlider.max),Math.trunc(Number(v))));draw();};
   // Derived from genuine capture years; do not interpolate missing history.

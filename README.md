@@ -153,3 +153,25 @@ explicitly labeled **PROVISIONAL**. The current city simulation remains intact.
 
 Full architecture, source rights and acceptance limits:
 `docs/extraction-011-facade-alignment.md`. No world model has been trained.
+
+## Research-grounded spatial memory — Extraction 012 (draft)
+
+A new optional **Spatial memory** panel in the historical timeline can:
+focus Times Square, retrieve dated photo source references near the current
+camera direction and location, and display bounded wire outlines from the
+**current (2026 only)** geometry snapshot. The underlying, deterministic
+source-grounded index contains **6,623 current wall-plane references** and
+**69 distinct dated photo observations**, preserving explicit geotag
+uncertainty, source attribution, source references and training ineligibility.
+
+This is not PPMem / GEAR inference, trained world-model weights, camera
+calibration, historic 3D reconstruction, or verified photo-to-building alignment.
+The design borrows published principles: oriented planes as compact structural
+memory; geometry-guided addressing of prior observations; and a separation of
+executable world state from optional neural rendering. Occlusion and true
+camera pose remain unknown. No third-party inference code was copied.
+
+Run `npm run build:memory` to rebuild the source snapshot and
+`npm run test:memory` for gated retrieval tests. See
+`docs/extraction-012-spatial-memory.md` for evidence, sources, and remaining
+Quest/lingbot integration blockers.

@@ -76,6 +76,15 @@
   .timeline-photo-card:has(.facade-region-strip){min-width:400px;max-width:580px;}
   .timeline-empty {opacity:.7;margin:4px;}
   #timeline-businesses {font-size:11px;opacity:.85;max-height:55px;overflow:auto;}
+  #spatial-memory{border-top:1px solid #345167;margin-top:6px;padding-top:6px;}
+  #spatial-memory > summary{font-weight:650;cursor:pointer;}
+  #spatial-memory-controls{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:5px;}
+  #spatial-memory-status{color:#bee2eb;max-width:880px;margin:5px 0;}
+  #spatial-memory-results{display:flex;gap:5px;overflow-x:auto;max-height:130px;}
+  .spatial-memory-result{padding:5px;border:1px solid #365064;border-radius:6px;
+    display:flex;flex-direction:column;gap:2px;min-width:164px;max-width:220px;}
+  .spatial-memory-result span{font-size:10px;opacity:.8;}
+  .spatial-memory-result a{color:#99dcff;}
   #timeline-businesses a {color:#82d9f5;}
   @media(max-width:550px) {
     #timeline {left:4px;right:4px;bottom:4px;max-height:34vh;}
@@ -144,6 +153,16 @@
   <p id="timeline-catalog-count" aria-label="Photo discovery and review status"></p>
   <p id="timeline-summary" aria-live="polite"></p>
   <div id="timeline-businesses" aria-label="Building occupancy history"></div>
+  <details id="spatial-memory">
+    <summary>Spatial memory · current geometry + historical photo references</summary>
+    <div id="spatial-memory-controls">
+      <button type="button" id="spatial-memory-focus">Focus Times Square</button>
+      <button type="button" id="spatial-memory-retrieve">Retrieve current view</button>
+      <label><input type="checkbox" id="spatial-memory-geometry"> Show current geometry planes (2026 only)</label>
+    </div>
+    <p id="spatial-memory-status" aria-live="polite">Initializing source-grounded spatial index…</p>
+    <div id="spatial-memory-results" aria-label="Dated spatial photo references"></div>
+  </details>
   <div id="timeline-photos" aria-label="Photos captured during the selected year"></div>
 </section>
 <script type="module" src="src/wireframe.js"></script>
