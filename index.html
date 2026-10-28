@@ -10,10 +10,21 @@
     position: absolute; top: 12px; left: 12px; z-index: 10;
     background: rgba(10, 12, 16, 0.78); color: #f2f2f2;
     font-family: system-ui, sans-serif; padding: 10px 14px; border-radius: 8px;
-    max-width: 360px; line-height: 1.45;
+    max-width: 460px; line-height: 1.45;
   }
   #hud h1 { font-size: 16px; margin: 0 0 4px; }
   #hud p { font-size: 13px; margin: 0; opacity: 0.85; }
+  #ask { display: flex; gap: 6px; margin-top: 10px; }
+  #ask-input {
+    flex: 1; min-width: 0; background: #0d1420; color: #f2f2f2;
+    border: 1px solid #2b6cb0; border-radius: 6px; padding: 7px 9px; font-size: 13px;
+  }
+  #ask button {
+    background: #2b6cb0; color: #fff; border: 0; border-radius: 6px;
+    padding: 7px 12px; font-size: 13px; cursor: pointer;
+  }
+  #answer { margin-top: 8px; opacity: 1; }
+  #pick { margin-top: 6px; }
 </style>
 <script type="importmap">
 {
@@ -29,6 +40,11 @@
 <div id="hud">
   <h1>Life Itself — Manhattan</h1>
   <p id="status">Drawing the island…</p>
+  <form id="ask" autocomplete="off">
+    <input id="ask-input" type="text" placeholder="Ask the island: pre-war buildings under 50 feet in the East Village">
+    <button type="submit">Ask</button>
+  </form>
+  <p id="answer"></p>
   <p id="pick">Click any building to see its record.</p>
 </div>
 <script type="module" src="src/wireframe.js"></script>

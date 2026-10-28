@@ -19,6 +19,14 @@ const pulls = [
       'https://data.cityofnewyork.us/resource/u9wf-3gbt.geojson' +
       `?$select=the_geom,bin,construction_year,feature_code,height_roof,ground_elevation,last_status_type&$where=${WHERE}&$order=bin&$limit=50000`,
   },
+  {
+    // 2020 Neighborhood Tabulation Areas (9nt8-h7nd), Manhattan borough only —
+    // real neighborhood boundaries so "in the East Village" is a fact.
+    name: 'manhattan-ntas.geojson',
+    url:
+      'https://data.cityofnewyork.us/resource/9nt8-h7nd.geojson' +
+      `?$select=ntaname,nta2020,ntatype,the_geom&$where=${encodeURIComponent("boroname in('Manhattan')")}&$limit=500`,
+  },
 ];
 
 await mkdir('data', { recursive: true });

@@ -5,6 +5,7 @@
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { interpret, runQuery, describe } from './ask.js';
 
 const statusEl = document.getElementById('status');
 
@@ -89,6 +90,7 @@ let highlight = null;
 
 function buildPickIndex(buildings) {
   islandBuildings = buildings;
+  nbNames = [...new Set(buildings.map((b) => b.nb).filter(Boolean))];
   for (let i = 0; i < buildings.length; i++) {
     const ring = buildings[i].rings[0];
     let cx = 0, cz = 0;
@@ -121,10 +123,50 @@ function selectBuilding(b) {
   highlight = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xffd76a }));
   scene.add(highlight);
   pickEl.textContent =
-    `Building ${b.bin} · ${b.h.toFixed(1)} m tall` +
+    `Building ${b.bin} · ${Math.round(b.h / 0.3048).toLocaleString()} ft tall` +
     (b.yr ? ` · built ${b.yr}` : ' · year not in the city record') +
+    (b.nb ? ` · ${b.nb}` : '') +
     '. Source: NYC Open Data.';
 }
+
+// --- Ask the Island: a question becomes a query; matches light up gold. ---
+const answerEl = document.getElementById('answer');
+const askForm = document.getElementById('ask');
+const askInput = document.getElementById('ask-input');
+let matchLines = null;
+let nbNames = [];
+
+function showMatches(matches, cap) {
+  if (matchLines) { scene.remove(matchLines); matchLines.geometry.dispose(); matchLines = null; }
+  const shown = matches.slice(0, cap);
+  if (!shown.length) return 0;
+  let total = 0;
+  const chunks = [];
+  for (const b of shown) { const arr = prismPositions(b); chunks.push(arr); total += arr.length; }
+  const all = new Float32Array(total);
+  let o = 0;
+  for (const arr of chunks) { all.set(arr, o); o += arr.length; }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(all, 3));
+  matchLines = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xffd76a, transparent: true, opacity: 0.95 }));
+  scene.add(matchLines);
+  return shown.length;
+}
+
+askForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const question = askInput.value.trim();
+  if (!question) return;
+  if (!islandBuildings) { answerEl.textContent = 'The island is still drawing itself. One moment.'; return; }
+  answerEl.textContent = 'Asking the island…';
+  const { query, via } = await interpret(question, nbNames);
+  const { matches, stats } = runQuery(islandBuildings, query);
+  const cap = query.sort ? 200 : 4000;
+  const shown = showMatches(matches, cap);
+  let text = describe(query, stats, via);
+  if (stats.count > shown && shown > 0) text += ` (Lighting up ${shown.toLocaleString()} of them.)`;
+  answerEl.textContent = text;
+});
 
 const raycaster = new THREE.Raycaster();
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);

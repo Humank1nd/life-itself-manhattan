@@ -14,6 +14,7 @@ Ground truth is NYC Open Data, the city's current BUILDING and BUILDING_P datase
 
 - Building footprints (polygons, roof height, construction year, ground elevation)
 - Building points (one record per building, same attributes)
+- 2020 Neighborhood Tabulation Areas (dataset 9nt8-h7nd) — the city's real neighborhood boundaries; each building is assigned its neighborhood by point-in-polygon during projection, so "in the East Village" is a fact, not a guess (44,929 of 45,172 buildings carry a neighborhood; the rest stand on piers and shorelines outside every boundary)
 
 Manhattan is every record whose BIN falls in 1000000–1999999. Reproduce the pull:
 
@@ -21,7 +22,7 @@ Manhattan is every record whose BIN falls in 1000000–1999999. Reproduce the pu
 node scripts/fetch-data.mjs
 ```
 
-The fetched GeoJSON lands in `data/` and is not committed; it is public city data, re-pullable at any time from the commands in the script.
+The fetched data is committed under `data/` so the live demo is self-contained; it is public city data, re-pullable at any time from the commands in the script.
 
 ## Running it
 
@@ -35,6 +36,7 @@ npm run serve
 
 - **Node 24** runs the data pipeline: `scripts/fetch-data.mjs` pulls the island from NYC Open Data; `scripts/project-enu.mjs` projects it into the Twin Earth runtime frame (WGS84 → ECEF → ENU, origin Times Square, meters, Y-up), following the geospatial transform contract in `life-itself-product-twin-earth-nyc`. The transform itself is an extraction from the Life Itself core repo's `multiverse/vision/cesium_bridge.py`, verified against its source: see `docs/extraction-001-geospatial-bridge.md`.
 - **three.js** draws the wireframe (`index.html` + `src/wireframe.js`): every building as a wireframe prism at its real roof height, one draw call for the whole island, colored by height.
+- **Ask the Island** (`src/ask.js`): ask the island a question in plain words; the question becomes a structured query over the real records, matches light up gold, and every number in the answer is computed from the records. The design and the Meta model contract live in `docs/ask-the-island.md`.
 - **Rust** is the planned home of the geometry pipeline, following the Rust/WASM pattern of DreamSuite's `dreamrooms-core`; the Node pipeline ships this week and defines the data contract the Rust port will take over.
 - `cesium.html` + `src/main.js` keep the first CesiumJS extrusion viewer for comparison.
 
