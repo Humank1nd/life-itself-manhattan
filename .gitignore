@@ -1,0 +1,4 @@
+# Fetched city data is re-pullable public data (scripts/fetch-data.mjs); keep the repo lean.
+data/*.geojson
+node_modules/
+.DS_Store
