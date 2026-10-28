@@ -53,23 +53,31 @@ def ask_api():
         allow_methods=["POST", "GET"],
         allow_headers=["Content-Type"],
     )
-    # AsyncOpenAI + an explicit timeout: the sync client inside an async
-    # handler blocks the server's only worker for the whole model call, and
-    # the SDK's default timeout is 10 minutes — together they wedged the
-    # first redeploy (found live 2026-10-28: /health silent behind a stuck
-    # /ask). 60s is generous for this translation; the page gives up at 25s
-    # and answers locally regardless.
-    client = AsyncOpenAI(
-        base_url="https://api.meta.ai/v1",
-        api_key=os.environ["META_API_KEY"],
-        max_retries=0,
-        timeout=60.0,
-    )
     model = os.environ.get("META_MODEL", "muse-spark-1.3")
+
+    def make_client():
+        # Built per request, never at app start: a credential problem must
+        # fail ONE request with a clean error, not crash-loop the container
+        # (found live 2026-10-28: an empty secret value raised at client
+        # construction inside the app factory, so /health hung too and
+        # Modal's proxy held every request in silence).
+        # AsyncOpenAI + an explicit timeout: the sync client inside an async
+        # handler blocks the server's only worker for the whole model call,
+        # and the SDK's default timeout is 10 minutes. 60s is generous for
+        # this translation; the page gives up at 25s and answers locally.
+        key = os.environ.get("META_API_KEY", "").strip()
+        if not key:
+            return None
+        return AsyncOpenAI(
+            base_url="https://api.meta.ai/v1",
+            api_key=key,
+            max_retries=0,
+            timeout=60.0,
+        )
 
     @web.get("/health")
     def health():
-        # No model call. Safe to poll; spends nothing.
+        # No model call, no credential dependency. Safe to poll; spends nothing.
         return {"ok": True, "model": model}
 
     @web.post("/ask")
@@ -78,6 +86,9 @@ def ask_api():
         question = str(body.get("question", "")).strip()[:300]
         if not question:
             return JSONResponse({"error": "empty question"}, status_code=400)
+        client = make_client()
+        if client is None:
+            return JSONResponse({"error": "endpoint not configured"}, status_code=500)
         try:
             resp = await client.responses.create(
                 model=model,
