@@ -95,7 +95,10 @@ def ask_api():
                 instructions=INSTRUCTIONS,
                 input=question,
                 store=False,
-                max_output_tokens=300,
+                # Muse Spark reasons before it answers; the budget must cover
+                # the reasoning as well as the tiny JSON reply. 300 starved it
+                # (found live 2026-10-28: status "incomplete", no output).
+                max_output_tokens=2048,
             )
         except Exception as e:
             # Sanitized to the client on purpose: auth/billing/rate details
@@ -107,6 +110,10 @@ def ask_api():
                   f"status={getattr(e, 'status_code', None)}", file=sys.stderr)
             return JSONResponse({"error": "model unavailable"}, status_code=502)
         if getattr(resp, "status", None) != "completed" or not getattr(resp, "output_text", None):
+            import sys
+            print(f"ask: reply incomplete: status={getattr(resp, 'status', None)} "
+                  f"details={getattr(resp, 'incomplete_details', None)} "
+                  f"has_text={bool(getattr(resp, 'output_text', None))}", file=sys.stderr)
             return JSONResponse({"error": "model reply incomplete"}, status_code=502)
         try:
             query = parse_and_validate(resp.output_text)
