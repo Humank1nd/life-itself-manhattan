@@ -81,6 +81,8 @@
   #spatial-memory-controls{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:5px;}
   #spatial-memory-status{color:#bee2eb;max-width:880px;margin:5px 0;}
   #spatial-memory-results{display:flex;gap:5px;overflow-x:auto;max-height:130px;}
+  #world-model-controls{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:6px;border-top:1px solid #345167;padding-top:6px;}
+  #world-model-status{font-size:11px;color:#b8d6e4;flex:1;}
   .spatial-memory-result{padding:5px;border:1px solid #365064;border-radius:6px;
     display:flex;flex-direction:column;gap:2px;min-width:164px;max-width:220px;}
   .spatial-memory-result span{font-size:10px;opacity:.8;}
@@ -161,6 +163,10 @@
       <label><input type="checkbox" id="spatial-memory-geometry"> Show current geometry planes (2026 only)</label>
     </div>
     <p id="spatial-memory-status" aria-live="polite">Initializing source-grounded spatial index…</p>
+    <div id="world-model-controls">
+      <button type="button" id="world-model-prepare">Prepare LingBot 2005 pilot</button>
+      <span id="world-model-status" aria-live="polite">No conditioning packet prepared. No world-model generation is active.</span>
+    </div>
     <div id="spatial-memory-results" aria-label="Dated spatial photo references"></div>
   </details>
   <div id="timeline-photos" aria-label="Photos captured during the selected year"></div>

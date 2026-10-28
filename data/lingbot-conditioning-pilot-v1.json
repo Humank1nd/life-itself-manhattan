@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "life-itself-world-conditioning/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "status": "prepared-not-generated",
+  "year": 2005,
+  "seed": 20261028,
+  "framesRequested": 9,
+  "photo": {
+    "id": "commons-1284794",
+    "capturedAt": "2005-12-08",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:NYC_Times_Square_wide_angle.jpg",
+    "sourceTitle": "File:NYC Times Square wide angle.jpg",
+    "author": "Daniel Schwen",
+    "license": "CC BY-SA 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+    "localAsset": "assets/evidence/commons-1284794.jpg",
+    "sha256": "2c09fb4d7f1b3b59f1c60ee24c222aa8201255d3bf15e5ee3ac54df8dd01143f",
+    "trainingPermission": "unreviewed",
+    "cameraPose": "unknown",
+    "approximateGeotag": {
+      "lat": 40.75804611,
+      "lon": -73.985514
+    }
+  },
+  "worldMemory": {
+    "retrievedPhotoIds": [
+      "commons-1284794"
+    ],
+    "retrievedCurrentGeometryPlanes": 0,
+    "historicalGeometry": "unavailable",
+    "geometryIsAuthoritativeForYear": false,
+    "occlusion": "unknown",
+    "actualVisualCorrespondence": "not-established"
+  },
+  "camera": {
+    "origin": "Times Square Twin Earth ENU origin",
+    "poseStatus": "synthetic-unverified-demo-path",
+    "sourceImagePoseMatched": false,
+    "transformation": "ENU [east,up,-north] m -> UE [east,south,up] cm, uncalibrated orientation",
+    "enuWaypointsM": [
+      [
+        -5,
+        1.68,
+        0
+      ],
+      [
+        -3.75,
+        1.68,
+        0
+      ],
+      [
+        -2.5,
+        1.68,
+        0
+      ]
+    ],
+    "providerWaypointsCm": [
+      {
+        "x": -500,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      {
+        "x": -375,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      {
+        "x": -250,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      }
+    ],
+    "motionDescription": "3 positions, +2.5m eastward; camera faces UE +X (yaw 0)",
+    "speed": "not-verified"
+  },
+  "provider": {
+    "kind": "lingbot-world-local-bridge-8013",
+    "supportedInputs": [
+      "prompt",
+      "init_image_hex",
+      "pose_cm",
+      "camera_path",
+      "frames",
+      "seed",
+      "photosensitivity_safe"
+    ],
+    "unsupportedStructuredInputs": [
+      "source-grounded planes",
+      "historical version graph",
+      "licensed attribution graph"
+    ],
+    "prompt": "Experimental Manhattan Times Square 2005 visual continuation from one licensed reference photograph. Controlled smooth lateral camera movement of 2.5 meters in a local coordinate frame. No claim of authentic 2005 facades, exact camera calibration, or verified historic reconstruction. Preserve source-appearance continuity where visible; do not treat generated details as ground truth."
+  },
+  "policy": {
+    "modelTraining": "not-authorized",
+    "generation": "blocked-until-local-service-ready-and-license-reviewed",
+    "generatedOutputIsHistoricalEvidence": false
+  }
+}

@@ -375,6 +375,27 @@
               "minLength": 1
             }
           }
+        },
+        "worldModelPilot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/lingbot-conditioning-pilot-v1.json"
+            },
+            "kind": {
+              "const": "local-optional-lingbot-packet-not-generated"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       }
     },

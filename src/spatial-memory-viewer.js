@@ -1,15 +1,18 @@
 // Source-aware, budgeted spatial-memory viewer. Never generates historical images.
 import {createSpatialMemoryIndex,retrieveSpatialMemory} from './spatial-memory.js';
+import {createTimesSquareConditioning} from './world-model-conditioning.js';
 export function mountSpatialMemoryViewer({THREE,scene,camera,controls,documentRef=document,
- memory,yearProvider=()=>2026}){
+ memory,evidence,yearProvider=()=>2026}){
  const index=createSpatialMemoryIndex(memory);
  const status=documentRef.getElementById('spatial-memory-status');
  const button=documentRef.getElementById('spatial-memory-retrieve');
  const focusButton=documentRef.getElementById('spatial-memory-focus');
  const geometry=documentRef.getElementById('spatial-memory-geometry');
  const results=documentRef.getElementById('spatial-memory-results');
- if(!status||!button||!focusButton||!geometry||!results)throw new Error('spatial memory panel missing');
- let rendered=null,lastResult=null;
+ const pilotButton=documentRef.getElementById('world-model-prepare');
+ const pilotStatus=documentRef.getElementById('world-model-status');
+ if(!status||!button||!focusButton||!geometry||!results||!pilotButton||!pilotStatus)throw new Error('spatial memory panel missing');
+ let rendered=null,lastResult=null,lastPacket=null;
  const clearGeometry=()=>{
   if(!rendered)return;
   scene.remove(rendered);
@@ -68,6 +71,18 @@ export function mountSpatialMemoryViewer({THREE,scene,camera,controls,documentRe
   return result;
  }
  button.addEventListener('click',retrieve);
+ pilotButton.addEventListener('click',()=>{
+  lastPacket=null;
+  if(yearProvider()!==2005){
+   pilotStatus.textContent='Select 2005 in the timeline first. No model was contacted.';
+   return;
+  }
+  const packet=createTimesSquareConditioning(memory,evidence,{year:2005});
+  lastPacket=packet;
+  pilotStatus.textContent='Prepared source '+packet.photo.id+' ('+packet.photo.capturedAt+
+   '), '+packet.camera.providerWaypointsCm.length+
+   ' controlled camera waypoints. Historic geometry: unavailable. Local inference is disabled until the weights and reuse review gates pass. No request sent.';
+ });
  geometry.addEventListener('change',()=>{if(lastResult)drawGeometry(lastResult);else retrieve();});
  focusButton.addEventListener('click',()=>{
   // No camera flight or game state mutation; focus only in local view controller.
@@ -81,10 +96,13 @@ export function mountSpatialMemoryViewer({THREE,scene,camera,controls,documentRe
   lastYear:lastResult?.year??null,
   lastPhotos:lastResult?.photos.length??0,
   lastPlanes:lastResult?.planes.length??0,
-  historicalGeometryShown:!!lastResult&&lastResult.year!==2026&&lastResult.planes.length>0});
+  historicalGeometryShown:!!lastResult&&lastResult.year!==2026&&lastResult.planes.length>0,
+  pilotPrepared:!!lastPacket,pilotPhotoId:lastPacket?.photo.id??null,pilotWaypointCount:lastPacket?.camera.providerWaypointsCm.length??0});
  status.textContent='Ready: '+index.stats.photos+' dated photo references and '+
    index.stats.planes+' current geometry planes indexed. Select year, focus and retrieve.';
- return {retrieve,summary,onYearChanged:()=>{clearGeometry();lastResult=null;geometry.checked=false;
+ return {retrieve,summary,onYearChanged:()=>{clearGeometry();lastResult=null;lastPacket=null;
+  pilotStatus.textContent='No conditioning packet prepared. No world-model generation is active.';
+  geometry.checked=false;
   geometry.disabled=yearProvider()!==2026;
   status.textContent='Year changed to '+yearProvider()+'. Retrieve this view to update memory.';
   results.replaceChildren();},
