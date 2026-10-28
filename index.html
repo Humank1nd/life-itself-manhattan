@@ -25,6 +25,11 @@
   }
   #answer { margin-top: 8px; opacity: 1; }
   #pick { margin-top: 6px; }
+  #chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip {
+    background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0;
+    border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer;
+  }
 </style>
 <script type="importmap">
 {
@@ -45,6 +50,12 @@
     <button type="submit">Ask</button>
   </form>
   <p id="answer"></p>
+  <div id="chips">
+    <button type="button" class="chip">Pre-war buildings under 50 feet in the East Village</button>
+    <button type="button" class="chip">Tallest building in Manhattan</button>
+    <button type="button" class="chip">Oldest buildings in Harlem</button>
+    <button type="button" class="chip">Buildings built after 2010 in the Financial District</button>
+  </div>
   <p id="pick">Click any building to see its record.</p>
 </div>
 <script type="module" src="src/wireframe.js"></script>

@@ -139,7 +139,7 @@ let nbNames = [];
 function showMatches(matches, cap) {
   if (matchLines) { scene.remove(matchLines); matchLines.geometry.dispose(); matchLines = null; }
   const shown = matches.slice(0, cap);
-  if (!shown.length) return 0;
+  if (!shown.length) return shown;
   let total = 0;
   const chunks = [];
   for (const b of shown) { const arr = prismPositions(b); chunks.push(arr); total += arr.length; }
@@ -150,7 +150,35 @@ function showMatches(matches, cap) {
   geo.setAttribute('position', new THREE.BufferAttribute(all, 3));
   matchLines = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xffd76a, transparent: true, opacity: 0.95 }));
   scene.add(matchLines);
-  return shown.length;
+  return shown;
+}
+
+// Camera flight: after an answer, glide to frame the lit buildings.
+// (Idea adopted from the parallel local build, founder's ruling 2026-10-28;
+// implementation is this repo's own.)
+let flight = null;
+function flyToMatches(shown) {
+  if (!shown.length) return;
+  let cx = 0, cz = 0;
+  for (const b of shown) { cx += b.cx; cz += b.cz; }
+  cx /= shown.length; cz /= shown.length;
+  let r = 0;
+  for (const b of shown) r = Math.max(r, Math.hypot(b.cx - cx, b.cz - cz));
+  const dist = THREE.MathUtils.clamp(r * 2.4, 700, 16000);
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  const toTgt = new THREE.Vector3(cx, 0, cz);
+  const toPos = toTgt.clone().add(dir.multiplyScalar(dist));
+  toPos.y = Math.max(toPos.y, dist * 0.45);
+  flight = { t0: performance.now(), dur: 1400, fromPos: camera.position.clone(), toPos, fromTgt: controls.target.clone(), toTgt };
+  controls.enabled = false;
+}
+function stepFlight() {
+  if (!flight) return;
+  let t = Math.min((performance.now() - flight.t0) / flight.dur, 1);
+  t = 1 - Math.pow(1 - t, 3); // easeOutCubic
+  camera.position.lerpVectors(flight.fromPos, flight.toPos, t);
+  controls.target.lerpVectors(flight.fromTgt, flight.toTgt, t);
+  if (t >= 1) { flight = null; controls.enabled = true; }
 }
 
 askForm.addEventListener('submit', async (e) => {
@@ -164,14 +192,25 @@ askForm.addEventListener('submit', async (e) => {
   const cap = query.sort ? 200 : 4000;
   const shown = showMatches(matches, cap);
   let text = describe(query, stats, via);
-  if (stats.count > shown && shown > 0) text += ` (Lighting up ${shown.toLocaleString()} of them.)`;
+  if (stats.count > shown.length && shown.length > 0) text += ` (Lighting up ${shown.length.toLocaleString()} of them.)`;
   answerEl.textContent = text;
+  flyToMatches(shown);
 });
+
+for (const chip of document.querySelectorAll('.chip')) {
+  chip.addEventListener('click', () => {
+    askInput.value = chip.textContent.trim();
+    askForm.requestSubmit();
+  });
+}
 
 const raycaster = new THREE.Raycaster();
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 let downX = 0, downY = 0;
-renderer.domElement.addEventListener('pointerdown', (e) => { downX = e.clientX; downY = e.clientY; });
+renderer.domElement.addEventListener('pointerdown', (e) => {
+  downX = e.clientX; downY = e.clientY;
+  if (flight) { flight = null; controls.enabled = true; } // a grab cancels the flight
+});
 renderer.domElement.addEventListener('pointerup', (e) => {
   if (!islandBuildings) return;
   if (Math.hypot(e.clientX - downX, e.clientY - downY) > 5) return; // it was a drag
@@ -205,6 +244,7 @@ addEventListener('resize', () => {
 });
 
 renderer.setAnimationLoop(() => {
+  stepFlight();
   controls.update();
   renderer.render(scene, camera);
 });

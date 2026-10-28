@@ -36,7 +36,7 @@ npm run serve
 
 - **Node 24** runs the data pipeline: `scripts/fetch-data.mjs` pulls the island from NYC Open Data; `scripts/project-enu.mjs` projects it into the Twin Earth runtime frame (WGS84 → ECEF → ENU, origin Times Square, meters, Y-up), following the geospatial transform contract in `life-itself-product-twin-earth-nyc`. The transform itself is an extraction from the Life Itself core repo's `multiverse/vision/cesium_bridge.py`, verified against its source: see `docs/extraction-001-geospatial-bridge.md`.
 - **three.js** draws the wireframe (`index.html` + `src/wireframe.js`): every building as a wireframe prism at its real roof height, one draw call for the whole island, colored by height.
-- **Ask the Island** (`src/ask.js`): ask the island a question in plain words; the question becomes a structured query over the real records, matches light up gold, and every number in the answer is computed from the records. The design and the Meta model contract live in `docs/ask-the-island.md`.
+- **Ask the Island** (`src/ask.js`): ask the island a question in plain words (or tap a preset question chip); the question becomes a structured query over the real records, matches light up gold, the camera glides to frame them, and every number in the answer is computed from the records. The design and the Meta model contract live in `docs/ask-the-island.md`.
 - **Rust** is the planned home of the geometry pipeline, following the Rust/WASM pattern of DreamSuite's `dreamrooms-core`; the Node pipeline ships this week and defines the data contract the Rust port will take over.
 - `cesium.html` + `src/main.js` keep the first CesiumJS extrusion viewer for comparison.
 

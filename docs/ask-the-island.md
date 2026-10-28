@@ -55,3 +55,14 @@ island (top 200 for superlative questions, up to 4,000 for filters).
 Verified locally against the real records (2026-10-28): "pre-war buildings
 under 50 feet in the East Village" → 589 buildings, oldest built 1795;
 "tallest building in Manhattan" → BIN 1090180, 1,550 ft, built 2020.
+The East Village answer was also confirmed on the live page the same day.
+
+## Adopted ideas (2026-10-28, founder's ruling)
+
+A parallel implementation was built in a local clone on the founder's
+laptop by another agent and never pushed. The founder reviewed the
+comparison and ruled: keep this build; adopt two presentation ideas from
+it — preset question chips and the camera flying to frame an answer's
+buildings. Both were implemented fresh in this repo (`src/wireframe.js`,
+`index.html`); none of its code, era labels, bounding-box regions, live-by-
+default model wiring, or in-browser key storage came over.
