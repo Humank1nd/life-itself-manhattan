@@ -9,6 +9,7 @@ import { interpret, runQuery, describe } from './ask.js';
 import { createJournal, projectEnu, JournalEventType, hashWorldState } from './core-journal.js';
 import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS } from './living-city.js';
 import { mountTemporalLayer } from './temporal-layer.js';
+import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 
 const statusEl = document.getElementById('status');
 
@@ -236,6 +237,7 @@ async function loadStreets() {
 // Times Square; click one to read its canonical record. ---
 let islandAnchors = null;
 let temporalLayer = null;
+let spatialMemoryController = null;
 async function loadTemporalEvidence() {
   if (!islandAnchors?.length) return;
   const response = await fetch(cityManifest.layers.evidence.uri);
@@ -259,9 +261,17 @@ async function loadTemporalEvidence() {
     bins:new Set(islandBuildings.map(b=>b.bin)),
     evidence, photoCatalog, facadeInstances,facadeMatches,buildingVersions,
     projectEnu, origin:cityManifest.frame.origin,
-    onAnchorPick: selectAnchor, onCandidatePick: previewCandidateBuilding
+    onAnchorPick: selectAnchor, onCandidatePick: previewCandidateBuilding,
+    onYearChanged:()=>spatialMemoryController?.onYearChanged()
   });
   window.islandEvidence = Object.freeze({getMetrics:()=>temporalLayer.getMetrics()});
+  const memoryRes=await fetch(cityManifest.layers.spatialMemory.uri);
+  if(!memoryRes.ok)throw new Error('Spatial memory layer unavailable: '+memoryRes.status);
+  const memory=await memoryRes.json();
+  spatialMemoryController=mountSpatialMemoryViewer({
+    THREE,scene,camera,controls,memory,yearProvider:()=>temporalLayer.getYear()
+  });
+  window.islandMemory=Object.freeze({summary:()=>spatialMemoryController.summary()});
 }
 
 async function loadAnchors() {

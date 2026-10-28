@@ -75,6 +75,11 @@
       "uri": "data/facade-corroboration-v1.json",
       "kind": "independently-evidenced-alignment-observations",
       "source": "Life Itself conservative auto-accept policy / empty pending real evidence"
+    },
+    "spatialMemory": {
+      "uri": "data/spatial-memory-v1.json",
+      "kind": "source-grounded-plane-and-photo-retrieval",
+      "source": "NYC 2026 building snapshot, Commons licensed photo metadata, Life Itself retrieval adapter"
     }
   },
   "assets": [],
