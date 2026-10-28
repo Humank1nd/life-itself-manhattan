@@ -1,3 +1,5 @@
 # Fetched city data is committed so the live demo is self-contained.
 node_modules/
+__pycache__/
 .DS_Store
+
