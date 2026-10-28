@@ -36,6 +36,9 @@
   }
   #answer { margin-top: 8px; opacity: 1; }
   #pick { margin-top: 6px; }
+  #city-status { margin-top: 8px; font-size: 12px; opacity: 0.85; }
+  #city-toggle { margin-top: 5px; background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0; border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+  #city-toggle:disabled { opacity: 0.5; cursor: default; }
   #journal { margin-top: 8px; font-size: 12px; opacity: 0.75; word-break: break-all; }
   #verify {
     background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0;
@@ -86,6 +89,8 @@
     <button type="button" class="chip">Oldest buildings in Harlem</button>
     <button type="button" class="chip">Buildings built after 2010 in the Financial District</button>
   </div>
+  <p id="city-status" aria-live="polite">Living City: loading surveyed corridors…</p>
+  <button type="button" id="city-toggle" disabled>Pause living city</button>
   <p id="pick">Click any building to see its record.</p>
   <p id="journal">Journal: the island's history is starting…</p>
   <button type="button" id="verify">Verify the island's history</button>

@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { interpret, runQuery, describe } from './ask.js';
 import { createJournal, projectEnu, JournalEventType, hashWorldState } from './core-journal.js';
+import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS } from './living-city.js';
 
 const statusEl = document.getElementById('status');
 
@@ -59,8 +60,14 @@ function colorFor(h, out) {
   return out;
 }
 
+let cityManifest = null;
 async function loadIsland() {
-  const res = await fetch('data/manhattan-enu.json');
+  const manifestRes = await fetch('data/city-scene-v1.json');
+  if (!manifestRes.ok) throw new Error(`city contract HTTP ${manifestRes.status}`);
+  cityManifest = await manifestRes.json();
+  if (cityManifest.schemaVersion !== 'life-itself-city-scene/1.0.0' ||
+      cityManifest.frame?.axes?.z !== '-north') throw new Error('Unsupported city scene coordinate contract');
+  const res = await fetch(cityManifest.layers.buildings.uri);
   if (!res.ok) throw new Error(`data HTTP ${res.status}`);
   const buildings = await res.json();
 
@@ -113,6 +120,87 @@ async function loadIsland() {
   await loadStreets();
 }
 
+// --- Extraction 006: deterministic living city on the surveyed corridors.
+// An in-browser preview, not a server-side always-on simulation or a full
+// building-aware pathfinding/collision engine. See docs/extraction-006-living-city.md.
+let livingCity = null;
+let livingCityPoints = null;
+let livingCityTimer = null;
+let livingCityBusy = false;
+let cityPaused = false;
+const cityStatusEl = document.getElementById('city-status');
+const cityToggleEl = document.getElementById('city-toggle');
+function showCityState() {
+  if (!livingCity) return;
+  const s = citySummary(livingCity);
+  cityStatusEl.textContent =
+    'Living City · ' + s.people + ' simulated walkers on ' + livingCity.lanes.length +
+    ' sidewalk lanes · ' + s.zones + ' simulated zones · city tick ' + s.tick +
+    ' (hour ' + s.simHour + ':00, happiness ' + s.happiness + '/100)' +
+    (cityPaused ? ' · PAUSED' : '');
+}
+function renderCityPeople() {
+  if (!livingCityPoints || !livingCity) return;
+  const buffer = livingCityPoints.geometry.attributes.position;
+  livingCity.pedestrians.forEach((ped, i) => {
+    buffer.setXYZ(i, ped.x, 3, ped.z);
+  });
+  buffer.needsUpdate = true;
+}
+async function advanceCityTick() {
+  if (!livingCity || cityPaused || livingCityBusy || !worldHash || document.hidden) return;
+  livingCityBusy = true;
+  const tick = ++islandTick;
+  try {
+    await journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'city_tick' });
+    tickLivingCity(livingCity);
+    const summary = citySummary(livingCity);
+    const stateHash = await hashWorldState(citySnapshot(livingCity));
+    await journal.append(JournalEventType.ACTION, tick, {
+      kind: 'city_tick',
+      simTick: summary.tick,
+      hour: summary.simHour,
+      walkers: summary.people,
+      zones: summary.zones,
+      city_state_hash: stateHash,
+    });
+    // Existing world_hash remains the immutable NYC ground-data digest.
+    // The mutable simulation gets its own hash in the ACTION record above.
+    await journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
+    renderCityPeople();
+    showCityState();
+  } catch (err) {
+    cityPaused = true;
+    cityStatusEl.textContent = 'Living City paused after a simulation error. See console.';
+    cityToggleEl.textContent = 'Resume living city';
+    console.error('Living City tick failed:', err);
+  } finally {
+    livingCityBusy = false;
+  }
+}
+function startLivingCity(corridors) {
+  livingCity = createLivingCity(corridors);
+  const positions = new Float32Array(livingCity.pedestrians.length * 3);
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  livingCityPoints = new THREE.Points(geometry, new THREE.PointsMaterial({
+    color: 0x7effb2, size: 5, sizeAttenuation: false, depthTest: false,
+  }));
+  livingCityPoints.renderOrder = 5;
+  scene.add(livingCityPoints);
+  renderCityPeople();
+  showCityState();
+  cityToggleEl.disabled = false;
+  if (livingCityTimer !== null) clearInterval(livingCityTimer);
+  livingCityTimer = setInterval(() => { advanceCityTick().catch(console.error); }, TICK_MS);
+}
+cityToggleEl.addEventListener('click', () => {
+  if (!livingCity) return;
+  cityPaused = !cityPaused;
+  cityToggleEl.textContent = cityPaused ? 'Resume living city' : 'Pause living city';
+  showCityState();
+});
+
 // --- Extraction 004: the surveyed street corridors come home.
 // gods-eye-view/src/life/manhattanStreets.js holds real WGS84 waypoints
 // for eleven downtown corridors (Broadway, Wall Street, Maiden Lane,
@@ -121,8 +209,8 @@ async function loadIsland() {
 // data/streets-enu.json; drawn as ground lines the buildings stand on.
 async function loadStreets() {
   try {
-    const res = await fetch('data/streets-enu.json');
-    if (!res.ok) return;
+    const res = await fetch(cityManifest.layers.streets.uri);
+    if (!res.ok) throw new Error(`streets HTTP ${res.status}`);
     const corridors = await res.json();
     const names = Object.keys(corridors);
     const mat = new THREE.LineBasicMaterial({ color: 0x4a6fa5, transparent: true, opacity: 0.8 });
@@ -132,7 +220,11 @@ async function loadStreets() {
       scene.add(new THREE.Line(geo, mat));
     }
     statusEl.textContent += ` ${names.length} surveyed street corridors underlie downtown.`;
-  } catch { /* corridors are an overlay; the island stands without them */ }
+    startLivingCity(corridors);
+  } catch (err) {
+    cityStatusEl.textContent = 'Living City unavailable: corridor overlay could not be loaded.';
+    console.warn('Living City corridor load failed:', err);
+  }
 }
 
 // --- The docking: Twin Earth NYC's surveyed anchors stand on the island.
@@ -144,8 +236,8 @@ let islandAnchors = null;
 
 async function loadAnchors() {
   try {
-    const res = await fetch('data/anchors-enu.json');
-    if (!res.ok) return;
+    const res = await fetch(cityManifest.layers.anchors.uri);
+    if (!res.ok) throw new Error(`anchors HTTP ${res.status}`);
     const anchorsData = await res.json();
     islandAnchors = anchorsData.anchors;
     const pos = new Float32Array(islandAnchors.length * 3);

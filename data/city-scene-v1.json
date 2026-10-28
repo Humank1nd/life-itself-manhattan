@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "life-itself-city-scene/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "frame": {
+    "crs": "WGS84",
+    "origin": {
+      "lat": 40.758,
+      "lon": -73.9855,
+      "elev": 10
+    },
+    "units": "meters",
+    "axes": {
+      "x": "east",
+      "y": "up",
+      "z": "-north"
+    }
+  },
+  "layers": {
+    "buildings": {
+      "uri": "data/manhattan-enu.json",
+      "count": 45172,
+      "kind": "building-rings-xz-roof-height-y",
+      "idField": "bin",
+      "source": "NYC Open Data"
+    },
+    "streets": {
+      "uri": "data/streets-enu.json",
+      "count": 11,
+      "kind": "named-polylines-xz",
+      "source": "gods-eye-view"
+    },
+    "anchors": {
+      "uri": "data/anchors-enu.json",
+      "count": 25,
+      "kind": "twin-earth-anchors",
+      "source": "Twin Earth NYC"
+    },
+    "neighborhoods": {
+      "uri": "data/manhattan-boundaries-enu.json",
+      "count": 38,
+      "kind": "nta-polygons-xz",
+      "source": "NYC Open Data"
+    }
+  },
+  "assets": [],
+  "assetPolicy": "Only owned or appropriately licensed web assets. Unreal City Sample is reference-only; no Unreal-only content.",
+  "simulation": {
+    "module": "src/living-city.js",
+    "tickMs": 5000,
+    "seed": 20261028,
+    "journal": "src/core-journal.js"
+  },
+  "provenance": {
+    "previous": [
+      "Humank1nd/life-itself",
+      "Humank1nd/twin-earth-nyc",
+      "gods-eye-view"
+    ],
+    "eventWork": "World manifest and browser adaptation; pre-existing data and algorithms are identified per layer"
+  }
+}

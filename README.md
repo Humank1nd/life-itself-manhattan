@@ -43,3 +43,22 @@ npm run serve
 ## Status
 
 Event-window build in progress. Deadline: November 4, 2026, 9:00 PM ET.
+
+
+## City Scene Contract v1 — living city development branch
+
+The city data shared by the browser viewer and future IWSDK/Unreal reference
+tools is described by data/city-scene-v1.json. It points to the existing
+NYC Open Data buildings, surveyed God’s Eye View streets, Twin Earth NYC
+anchors, and NTA boundaries. See docs/extraction-007-city-scene-contract.md.
+
+The browser's initial living-city adapter animates 96 deterministic walkers
+on 22 sidewalk lanes (from 11 surveyed corridors) and advances five simulated
+city zones once every five seconds, with mutable city-state hashes recorded
+in the journal. It is a lightweight street preview, not the original complete
+Unreal crowd engine, collision system, or headset-verified experience.
+
+Validation: npm run validate:city && npm run test:city
+
+Unreal Engine City Sample is reference-only here. No Unreal-only assets are
+bundled, and any future web asset requires documented rights and provenance.

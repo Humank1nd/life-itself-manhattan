@@ -1,0 +1,297 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Life Itself City Scene Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "worldId",
+    "frame",
+    "layers",
+    "assets",
+    "assetPolicy",
+    "simulation",
+    "provenance"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "life-itself-city-scene/1.0.0"
+    },
+    "worldId": {
+      "type": "string"
+    },
+    "frame": {
+      "type": "object",
+      "required": [
+        "crs",
+        "origin",
+        "units",
+        "axes"
+      ],
+      "properties": {
+        "crs": {
+          "const": "WGS84"
+        },
+        "origin": {
+          "type": "object",
+          "required": [
+            "lat",
+            "lon",
+            "elev"
+          ],
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lon": {
+              "type": "number"
+            },
+            "elev": {
+              "type": "number"
+            }
+          }
+        },
+        "units": {
+          "const": "meters"
+        },
+        "axes": {
+          "type": "object",
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
+          "properties": {
+            "x": {
+              "const": "east"
+            },
+            "y": {
+              "const": "up"
+            },
+            "z": {
+              "const": "-north"
+            }
+          }
+        }
+      }
+    },
+    "layers": {
+      "type": "object",
+      "required": [
+        "buildings",
+        "streets",
+        "anchors",
+        "neighborhoods"
+      ],
+      "properties": {
+        "buildings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "count",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "type": "string",
+              "pattern": "^data/[a-z0-9-]+\\.json$"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "kind": {
+              "type": "string",
+              "minLength": 1
+            },
+            "idField": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "streets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "count",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "type": "string",
+              "pattern": "^data/[a-z0-9-]+\\.json$"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "kind": {
+              "type": "string",
+              "minLength": 1
+            },
+            "idField": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "anchors": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "count",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "type": "string",
+              "pattern": "^data/[a-z0-9-]+\\.json$"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "kind": {
+              "type": "string",
+              "minLength": 1
+            },
+            "idField": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "neighborhoods": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "count",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "type": "string",
+              "pattern": "^data/[a-z0-9-]+\\.json$"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "kind": {
+              "type": "string",
+              "minLength": 1
+            },
+            "idField": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "uri",
+          "format",
+          "rights",
+          "source"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "format": {
+            "enum": [
+              "glb",
+              "gltf",
+              "ktx2"
+            ]
+          },
+          "rights": {
+            "enum": [
+              "original",
+              "public-domain",
+              "licensed-for-web"
+            ]
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assetPolicy": {
+      "type": "string"
+    },
+    "simulation": {
+      "type": "object",
+      "required": [
+        "module",
+        "tickMs",
+        "seed",
+        "journal"
+      ],
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "tickMs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "journal": {
+          "type": "string"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "previous",
+        "eventWork"
+      ],
+      "properties": {
+        "previous": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "eventWork": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
