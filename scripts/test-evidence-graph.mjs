@@ -5,8 +5,9 @@ const anchors=JSON.parse(readFileSync(new URL('../data/anchors-enu.json',import.
 const bins=new Set(JSON.parse(readFileSync(new URL('../data/manhattan-enu.json',import.meta.url),'utf8')).map(b=>b.bin));
 const bin=bins.values().next().value;
 const original=JSON.parse(readFileSync(new URL('../data/evidence-v1.json',import.meta.url),'utf8'));
-assert.deepEqual(validateEvidenceGraph(original,anchors,bins),{photos:0,occupancies:0});
-assert.equal(photosInYear(original,1995).length,0);
+const empty={...original,photos:[],occupancies:[]};
+assert.deepEqual(validateEvidenceGraph(empty,anchors,bins),{photos:0,occupancies:0});
+assert.equal(photosInYear(empty,1995).length,0);
 assert.ok(spatialAnchorEdges(anchors).length>=anchors.length-1);
 const p=(id,date,anchorId='ANC-001')=>({id,anchorId,imageUri:'assets/evidence/test-photo.jpg',
 capturedAt:date,recordedAt:'2026-10-28',rights:'original',status:'documented',
@@ -15,7 +16,7 @@ yawDeg:null,buildingBin:bin,caption:'Synthetic test'});
 const o=(id,from,to)=>({id,buildingBin:bin,businessName:'SYNTHETIC BUSINESS',validFrom:from,validTo:to,
 recordedAt:'2026-10-28',status:'reported',source:{title:'SYNTHETIC TEST ONLY',url:'https://example.com/test'}});
 const yearOnly={...p('year-only','2001-01-01'),capturedAt:null,capturedYear:1995,capturePrecision:'year'};
-const test={...original,photos:[p('old','1995-12-31'),p('new','1996-01-01'),p('far','1995-02-03','ANC-002'),yearOnly],
+const test={...empty,photos:[p('old','1995-12-31'),p('new','1996-01-01'),p('far','1995-02-03','ANC-002'),yearOnly],
 occupancies:[o('tenant-a','1990-06-01','1996-06-01'),o('tenant-b','1996-06-01',null)]};
 assert.deepEqual(validateEvidenceGraph(test,anchors,bins),{photos:4,occupancies:2});
 assert.deepEqual(photosInYear(test,1995).map(x=>x.id),['far','old','year-only']);

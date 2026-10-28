@@ -11,10 +11,12 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
   const yearLabel = document.getElementById('timeline-year-label');
   const summary = document.getElementById('timeline-summary');
   const cards = document.getElementById('timeline-photos');
+  const yearPresets = document.getElementById('timeline-year-presets');
   const businessList = document.getElementById('timeline-businesses');
   const locationLabel = document.getElementById('timeline-location');
   const resetBtn = document.getElementById('timeline-all');
   const toggle = document.getElementById('timeline-graph-toggle');
+  const buildingToggle = document.getElementById('timeline-building-only');
   const yearPrevious = document.getElementById('timeline-prev');
   const yearNext = document.getElementById('timeline-next');
   let anchorId = null, buildingBin = null, year = Number(yearSlider.value), generation = 0;
@@ -47,9 +49,9 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
   function addPlates(photos) {
     const activeGeneration = generation;
     for (let idx=0;idx<photos.length;idx++) {
-      const p=photos[idx], a=byId.get(p.anchorId);
+      const p=photos[idx], a=p.location || byId.get(p.anchorId);
       if (!a) continue;
-      loader.load(p.imageUri,texture=>{
+      loader.load(buildingToggle.checked ? p.segmentation?.cutoutUri : p.imageUri,texture=>{
         if (activeGeneration!==generation) { texture.dispose(); return; }
         texture.colorSpace = THREE.SRGBColorSpace;
         const aspect = Math.max(0.5,Math.min(2.0,texture.image.width/texture.image.height));
@@ -83,36 +85,57 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
       cards.append(p);return;
     }
     for (const p of photos) {
-      const a=byId.get(p.anchorId);
+      const a=p.location || byId.get(p.anchorId);
       const card=document.createElement('article'); card.className='timeline-photo-card';
       const img=document.createElement('img');
-      img.src=p.imageUri; img.alt=p.caption || ('Photo from '+(p.capturePrecision==='year'?'year '+p.capturedYear:p.capturedAt));
+      img.src=(buildingToggle.checked ? p.segmentation?.cutoutUri : p.imageUri); img.alt=p.caption || ('Photo from '+(p.capturePrecision==='year'?'year '+p.capturedYear:p.capturedAt));
       img.loading='lazy'; card.append(img);
       const info=document.createElement('div'); info.className='timeline-photo-meta';
       const title=document.createElement('strong');
       title.textContent=(p.caption||p.id)+' · '+(p.capturePrecision==='year' ? String(p.capturedYear)+' (year only)' : p.capturedAt);info.append(title);
-      const located=document.createElement('span');located.textContent=a.name+' · '+p.status;info.append(located);
+      const located=document.createElement('span');located.textContent=(a.name||'Approximate mapped geotag')+' · '+p.status;info.append(located);
       const conditionLine=document.createElement('span');
       conditionLine.textContent='Weather: '+p.conditions.weather+' · Light: '+p.conditions.lighting;
       info.append(conditionLine);
       const source=document.createElement('a');source.href=p.source.url;source.rel='noopener noreferrer';
       source.target='_blank';source.textContent='Source: '+p.source.title;
-      info.append(source);card.append(info);
+      info.append(source);
+      if(p.license) {
+        const credit=document.createElement('span');
+        credit.textContent='© / credit: '+p.license.author+' · '+p.license.label+' · '+p.license.modifications;
+        info.append(credit);
+        if(/^https:\/\/creativecommons\.org\/licenses\/|^https:\/\/creativecommons\.org\/publicdomain\//.test(p.license.url)) {
+          const terms=document.createElement('a');
+          terms.href=p.license.url;terms.target='_blank';terms.rel='noopener noreferrer';
+          terms.textContent='License terms';info.append(terms);
+        }
+        if(p.segmentation) {
+          const review=document.createElement('span');
+          review.textContent='Building mask: automated / unreviewed; occluded façades are NOT restored';
+          info.append(review);
+        }
+      }
+      card.append(info);
       const move=document.createElement('button');
       move.type='button';move.textContent='Locate';
-      move.addEventListener('click',()=>onAnchorPick(a));card.append(move);
+      if(p.anchorId) move.addEventListener('click',()=>onAnchorPick(byId.get(p.anchorId)));
+      else move.disabled=true;
+      card.append(move);
       cards.append(card);
     }
   }
   function draw() {
     yearLabel.textContent=String(year);
     yearSlider.value=String(year);
-    const photos=photosInYear(evidence,year,anchorId).filter(p=>buildingBin===null||p.buildingBin===buildingBin);
+    const photos=photosInYear(evidence,year).filter(p=>
+      (anchorId===null || p.anchorId===anchorId ||
+      (p.location && Math.hypot(p.location.x-byId.get(anchorId).x,p.location.z-byId.get(anchorId).z)<=85)) &&
+      (buildingBin===null||p.buildingBin===buildingBin));
     const occupancy=occupanciesInYear(evidence,year,buildingBin);
     const pastBusiness = buildingBin!==null ? occupancy.length+' sourced occupancy record(s) overlap '+year : occupancy.length+' occupancy record(s) overlap '+year+' (island-wide)';
-    summary.textContent=photos.length+' photograph(s) captured in '+year+' · '+pastBusiness+'. Source status stays attached to each record.';
+    summary.textContent=photos.length+' photograph(s) captured in '+year+' · '+pastBusiness+'. Licensed observations only; pose is approximate. Sources preserved.';
     locationLabel.textContent = anchorId ? ('Location: '+byId.get(anchorId).name) :
-      buildingBin ? ('Building BIN '+buildingBin) : 'All 25 surveyed locations';
+      buildingBin ? ('Building BIN '+buildingBin) : 'Manhattan geotagged photos + 25 surveyed anchors';
     yearPrevious.disabled=year<=Number(yearSlider.min);
     yearNext.disabled=year>=Number(yearSlider.max);
     resetBtn.hidden=anchorId===null&&buildingBin===null;
@@ -128,15 +151,28 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
         item.append(link);businessList.append(item);
       }
     }
-    renderCards(photos);
+    const selectedPhotos=buildingToggle.checked ? photos.filter(p=>p.segmentation?.cutoutUri) : photos;
+    if(buildingToggle.checked) summary.textContent += ' Showing '+selectedPhotos.length+' proposed building masks; missing masks are hidden, not reconstructed.';
+    renderCards(selectedPhotos);
     clearPlates();
-    addPlates(photos);
+    addPlates(selectedPhotos);
   }
   const updateYear=v=> {year=Math.max(Number(yearSlider.min),Math.min(Number(yearSlider.max),Math.trunc(Number(v))));draw();};
+  // Derived from genuine capture years; do not interpolate missing history.
+  const availableYears=[...new Set(evidence.photos.map(p=>p.capturePrecision==='year'?p.capturedYear:Number(p.capturedAt.slice(0,4))))].sort((a,b)=>a-b);
+  if(availableYears.length) {
+    yearPresets.textContent='Photos from: ';
+    for(const y of availableYears) {
+      const btn=document.createElement('button');btn.type='button';btn.textContent=String(y);
+      btn.setAttribute('aria-label','Show photographs captured in '+y);
+      btn.addEventListener('click',()=>updateYear(y));yearPresets.append(btn);
+    }
+  } else yearPresets.textContent='No imported photo years yet';
   yearSlider.addEventListener('input',()=>updateYear(yearSlider.value));
   yearPrevious.addEventListener('click',()=>updateYear(year-1));
   yearNext.addEventListener('click',()=>updateYear(year+1));
   toggle.addEventListener('change',()=>{graphLines.visible=toggle.checked;});
+  buildingToggle.addEventListener('change',draw);
   resetBtn.addEventListener('click',()=>{anchorId=null;buildingBin=null;draw();});
   layer.hidden=false;
   draw();
@@ -145,7 +181,9 @@ export function mountTemporalLayer({ THREE, scene, camera, anchors, bins, eviden
     setBuilding(bin) { if(!bins.has(bin)) return; buildingBin=bin;anchorId=null;draw(); },
     setYear:updateYear,
     getYear:()=>year,
-    getMetrics:()=>({year,photoCount:photosInYear(evidence,year,anchorId).filter(p=>buildingBin===null||p.buildingBin===buildingBin).length,anchoredNodes:anchors.length,edges:adjacency.length}),
+    getMetrics:()=>({year,photoCount:photosInYear(evidence,year).filter(p=>
+      (anchorId===null||p.anchorId===anchorId||(p.location&&Math.hypot(p.location.x-byId.get(anchorId).x,p.location.z-byId.get(anchorId).z)<=85)) &&
+      (buildingBin===null||p.buildingBin===buildingBin)).length,anchoredNodes:anchors.length,edges:adjacency.length}),
     dispose() { clearPlates();scene.remove(graphLines);geo.dispose();graphLines.material.dispose(); }
   };
 }

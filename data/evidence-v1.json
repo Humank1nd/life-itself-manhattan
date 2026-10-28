@@ -2,7 +2,208 @@
   "schemaVersion": "life-itself-evidence/1.0.0",
   "worldId": "life-itself:manhattan",
   "anchorLayer": "data/anchors-enu.json",
-  "photos": [],
+  "photos": [
+    {
+      "id": "commons-1284794",
+      "anchorId": null,
+      "location": {
+        "lat": 40.75804611,
+        "lon": -73.985514,
+        "x": -1.1822,
+        "y": -0.0,
+        "z": -5.1205,
+        "accuracy": "approximate-geotag",
+        "geotagRole": "unspecified"
+      },
+      "capturedAt": "2005-12-08",
+      "capturePrecision": "day",
+      "recordedAt": "2026-10-28",
+      "imageUri": "assets/evidence/commons-1284794.jpg",
+      "rights": "licensed-for-web",
+      "status": "reported",
+      "source": {
+        "title": "File:NYC Times Square wide angle.jpg",
+        "url": "https://commons.wikimedia.org/wiki/File:NYC_Times_Square_wide_angle.jpg"
+      },
+      "license": {
+        "label": "CC BY-SA 2.5",
+        "url": "https://creativecommons.org/licenses/by-sa/2.5",
+        "author": "Daniel Schwen",
+        "modifications": "Resized Commons preview; no image enhancement"
+      },
+      "conditions": {
+        "weather": "unknown",
+        "lighting": "unknown"
+      },
+      "yawDeg": null,
+      "buildingBin": null,
+      "caption": "Times Square, New York City, USA. Wide angle shot. Caution: This has severe sharpness issues in the corners.",
+      "sha256": "2c09fb4d7f1b3b59f1c60ee24c222aa8201255d3bf15e5ee3ac54df8dd01143f",
+      "modelTrainingPermission": "unreviewed",
+      "segmentation": {
+        "model": "microsoft/beit-base-finetuned-ade-640-640",
+        "modelLicense": "Apache-2.0",
+        "task": "semantic-building-isolation",
+        "maskUri": "assets/evidence/masks/commons-1284794-building.png",
+        "cutoutUri": "assets/evidence/masks/commons-1284794-cutout.png",
+        "maskSha256": "20f03dc4fb73e184507e9aedbf6e7bca44800602c7a50834dfcdb152cfcdf114",
+        "sourceSha256": "2c09fb4d7f1b3b59f1c60ee24c222aa8201255d3bf15e5ee3ac54df8dd01143f",
+        "buildingPixelFraction": 0.6134,
+        "status": "machine-proposed-unreviewed",
+        "limitations": "Occluded building regions are not restored; nonbuilding pixels are masked, not hallucinated"
+      }
+    },
+    {
+      "id": "commons-53032411",
+      "anchorId": null,
+      "location": {
+        "lat": 40.757973,
+        "lon": -73.98556,
+        "x": -5.0665,
+        "y": -0.0,
+        "z": 2.9983,
+        "accuracy": "approximate-geotag",
+        "geotagRole": "unspecified"
+      },
+      "capturedAt": "2010-10-04",
+      "capturePrecision": "day",
+      "recordedAt": "2026-10-28",
+      "imageUri": "assets/evidence/commons-53032411.jpg",
+      "rights": "licensed-for-web",
+      "status": "reported",
+      "source": {
+        "title": "File:Times Square at night in New York - NYC - USA - panoramio.jpg",
+        "url": "https://commons.wikimedia.org/wiki/File:Times_Square_at_night_in_New_York_-_NYC_-_USA_-_panoramio.jpg"
+      },
+      "license": {
+        "label": "CC BY-SA 3.0",
+        "url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "diego_cue",
+        "modifications": "Resized Commons preview; no image enhancement"
+      },
+      "conditions": {
+        "weather": "unknown",
+        "lighting": "unknown"
+      },
+      "yawDeg": null,
+      "buildingBin": null,
+      "caption": "Times Square at night in New York - NYC - USA",
+      "sha256": "2e59a5619cd0df0c8aaab9c8af6010026fd8889e90d54fc0d7789d91ee8b18e5",
+      "modelTrainingPermission": "unreviewed",
+      "segmentation": {
+        "model": "microsoft/beit-base-finetuned-ade-640-640",
+        "modelLicense": "Apache-2.0",
+        "task": "semantic-building-isolation",
+        "maskUri": "assets/evidence/masks/commons-53032411-building.png",
+        "cutoutUri": "assets/evidence/masks/commons-53032411-cutout.png",
+        "maskSha256": "8d7e088b859131dd2971cdfa722a7ec053bb36683b0cd37fcb6e3aba8921687d",
+        "sourceSha256": "2e59a5619cd0df0c8aaab9c8af6010026fd8889e90d54fc0d7789d91ee8b18e5",
+        "buildingPixelFraction": 0.648,
+        "status": "machine-proposed-unreviewed",
+        "limitations": "Occluded building regions are not restored; nonbuilding pixels are masked, not hallucinated"
+      }
+    },
+    {
+      "id": "commons-53911963",
+      "anchorId": null,
+      "location": {
+        "lat": 40.757953,
+        "lon": -73.98556,
+        "x": -5.0665,
+        "y": -0.0,
+        "z": 5.2193,
+        "accuracy": "approximate-geotag",
+        "geotagRole": "unspecified"
+      },
+      "capturedAt": "2006-01-18",
+      "capturePrecision": "day",
+      "recordedAt": "2026-10-28",
+      "imageUri": "assets/evidence/commons-53911963.jpg",
+      "rights": "licensed-for-web",
+      "status": "reported",
+      "source": {
+        "title": "File:Times Square New York City - panoramio.jpg",
+        "url": "https://commons.wikimedia.org/wiki/File:Times_Square_New_York_City_-_panoramio.jpg"
+      },
+      "license": {
+        "label": "CC BY-SA 3.0",
+        "url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "Asim Zafar",
+        "modifications": "Resized Commons preview; no image enhancement"
+      },
+      "conditions": {
+        "weather": "unknown",
+        "lighting": "unknown"
+      },
+      "yawDeg": null,
+      "buildingBin": null,
+      "caption": "Times Square New York City",
+      "sha256": "61812bb41b683f7c90eb864b10285c131de2f4c0386e1dc7f23cf3a0ba593e03",
+      "modelTrainingPermission": "unreviewed",
+      "segmentation": {
+        "model": "microsoft/beit-base-finetuned-ade-640-640",
+        "modelLicense": "Apache-2.0",
+        "task": "semantic-building-isolation",
+        "maskUri": "assets/evidence/masks/commons-53911963-building.png",
+        "cutoutUri": "assets/evidence/masks/commons-53911963-cutout.png",
+        "maskSha256": "949144627b60f09c733cd78ea8a717af5691ca748c1dfc48edae7e57bbff3168",
+        "sourceSha256": "61812bb41b683f7c90eb864b10285c131de2f4c0386e1dc7f23cf3a0ba593e03",
+        "buildingPixelFraction": 0.8155,
+        "status": "machine-proposed-unreviewed",
+        "limitations": "Occluded building regions are not restored; nonbuilding pixels are masked, not hallucinated"
+      }
+    },
+    {
+      "id": "commons-60251150",
+      "anchorId": null,
+      "location": {
+        "lat": 40.758008,
+        "lon": -73.985528,
+        "x": -2.3644,
+        "y": -0.0,
+        "z": -0.8884,
+        "accuracy": "approximate-geotag",
+        "geotagRole": "unspecified"
+      },
+      "capturedAt": "2015-10-30",
+      "capturePrecision": "day",
+      "recordedAt": "2026-10-28",
+      "imageUri": "assets/evidence/commons-60251150.jpg",
+      "rights": "licensed-for-web",
+      "status": "reported",
+      "source": {
+        "title": "File:NYC – Broadway – Times Square - panoramio.jpg",
+        "url": "https://commons.wikimedia.org/wiki/File:NYC_%E2%80%93_Broadway_%E2%80%93_Times_Square_-_panoramio.jpg"
+      },
+      "license": {
+        "label": "CC BY 3.0",
+        "url": "https://creativecommons.org/licenses/by/3.0",
+        "author": "giggel",
+        "modifications": "Resized Commons preview; no image enhancement"
+      },
+      "conditions": {
+        "weather": "unknown",
+        "lighting": "unknown"
+      },
+      "yawDeg": null,
+      "buildingBin": null,
+      "caption": "NYC – Broadway – Times Square",
+      "sha256": "07b8762cbe60638941236022107330d2d36d4293905dfc1a78d49c75213393fd",
+      "modelTrainingPermission": "unreviewed",
+      "segmentation": {
+        "model": "microsoft/beit-base-finetuned-ade-640-640",
+        "modelLicense": "Apache-2.0",
+        "task": "semantic-building-isolation",
+        "maskUri": "assets/evidence/masks/commons-60251150-building.png",
+        "cutoutUri": "assets/evidence/masks/commons-60251150-cutout.png",
+        "maskSha256": "0f2d02e92dfc88fc0c04b6345365999d655b4031dd4a0e3773a4f8a47b125b9a",
+        "sourceSha256": "07b8762cbe60638941236022107330d2d36d4293905dfc1a78d49c75213393fd",
+        "buildingPixelFraction": 0.6167,
+        "status": "machine-proposed-unreviewed",
+        "limitations": "Occluded building regions are not restored; nonbuilding pixels are masked, not hallucinated"
+      }
+    }
+  ],
   "occupancies": [],
   "notes": "No photographed observations or tenant claims have been ingested. Do not fabricate dates, imagery or business history."
 }
