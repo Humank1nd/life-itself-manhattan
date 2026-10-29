@@ -9,6 +9,7 @@ on:
       - "data/conditioning-envelope-v1.json"
       - "data/cloud-capture-manifest-40799078997.json"
       - "data/capture-pilot-v1.json"
+      - "scripts/verify-conditioning-live-bytes.mjs"
       - ".github/workflows/conditioning-envelope.yml"
   workflow_dispatch:
 
@@ -38,3 +39,38 @@ jobs:
 
       - name: Rebuild envelope and run contract gate
         run: npm run build:envelope && npm run test:envelope
+
+  live-bytes:
+    name: Fresh capture bytes vs committed envelope
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      CI: "true"
+    steps:
+      - name: Checkout immutable PR revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Node 24 on ephemeral GitHub runner
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install render dependencies on hosted runner only
+        env:
+          PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
+        run: npm install --no-save --no-package-lock --no-audit --no-fund three@0.160.0 pngjs@7.0.0 puppeteer@24.31.0
+
+      - name: Render fresh cloud capture into ephemeral storage
+        env:
+          CAPTURE_OUT: ${{ runner.temp }}/times-square-capture
+          PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
+        run: node scripts/cloud-capture-times-square.mjs
+
+      - name: Verify live bytes against committed envelope
+        env:
+          CAPTURE_OUT: ${{ runner.temp }}/times-square-capture
+          PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
+        run: node scripts/verify-conditioning-live-bytes.mjs

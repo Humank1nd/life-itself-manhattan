@@ -24,10 +24,19 @@ Cloud-only schema and test work. No model, no weights, no inference.
   (training flip, historical overclaim, stale SHA, depth relabel,
   pixel-path overclaims, pose overclaim, frame hash drift, orphan
   visible ID, unexecuted provider claims) are all rejected.
-- **`.github/workflows/conditioning-envelope.yml`** — cloud CI job
-  (Node 24, no dependencies): rebuild + gate on every touching PR.
+- **`.github/workflows/conditioning-envelope.yml`** — cloud CI with two
+  jobs (Node 24, no committed dependencies): `envelope` rebuild + gate,
+  and `live-bytes`, which re-renders the fresh cloud capture on the
+  runner and verifies its bytes against the committed envelope (see
+  below). No model, no weights, no inference in either job.
 
 Run `npm run build:envelope` and `npm run test:envelope`.
+`scripts/verify-conditioning-live-bytes.mjs` runs only on the
+GitHub-hosted runner (it throws anywhere else): 9/9 fresh frame hashes,
+exact 622-entity BIN/versionId equality with the authoritative source
+records, committed-envelope-vs-fresh-capture agreement, provenance
+rails, 10 adversarial mutations, a bit-flip byte negative, and a
+pixel-leak guard.
 
 ## The depth-contract rule (S016-02 core)
 
