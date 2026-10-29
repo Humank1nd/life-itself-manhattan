@@ -44,7 +44,26 @@ only where it pays.
   1 subway vent, 1 sanitation cycle; 10–20 rats as seeded walkers
   with rat motive profiles; roaches as population nodes.
 
-## Explicitly out of Phase A
+## Temporal setting: an original ecological shock (founder decision)
+
+The simulation opens with a sudden 50% population cull across all
+modeled species — rats, roaches, and the human systems that produce
+waste and sanitation — followed by species-dependent recovery. No
+licensed setting, no third-party characters, locations, or events are
+referenced anywhere in the scenario; the mechanics (abrupt halving,
+disrupted sanitation schedules, vacant-shelter expansion, phased
+recovery) are identical with or without any borrowed fiction, so the
+commercial path stays open under the repo's licensing posture.
+
+Three simulated phases: immediate collapse (familiar scent trails and
+food sources violently disrupted), colony adaptation over subsequent
+years (expansion into abandoned areas against declining human food
+supply), and a changed urban ecosystem at the far horizon. The rat
+knows nothing of causes — only disappearance, disruption, and
+transformation of habitat. That constraint is load-bearing: all
+knowledge in the sim is local and sensory, never expositional.
+
+## Explicitly out of Phase A (including any licensed framing)
 
 Pigeons, cats, raccoons, insects-as-individuals, disease pressure,
 seasonal variation, human indirect effects, any neural model, any
