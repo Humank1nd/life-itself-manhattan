@@ -55,6 +55,7 @@ jobs:
           npm run test:provider-lifecycle
           npm run test:action-contract
           npm run test:citizen-consequence
+          npm run test:world-clock
           npm run test:ecology
           npm run test:rat-foraging
           npm run test:rat-colony

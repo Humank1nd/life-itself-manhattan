@@ -27,6 +27,7 @@
     "test:provider-lifecycle": "node scripts/test-provider-lifecycle.mjs",
     "test:action-contract": "node scripts/test-action-contract.mjs",
     "test:citizen-consequence": "node scripts/test-citizen-consequence.mjs",
+    "test:world-clock": "node scripts/test-world-clock.mjs",
     "test:ecology": "node scripts/test-ecology.mjs",
     "test:rat-foraging": "node scripts/test-rat-foraging.mjs",
     "test:rat-colony": "node scripts/test-rat-colony.mjs",

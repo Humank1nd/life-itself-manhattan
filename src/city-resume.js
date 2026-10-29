@@ -14,12 +14,15 @@ const HEX64 = /^[0-9a-f]{64}$/;
 const assert = (ok, why) => { if (!ok) throw new Error('resume: ' + why); };
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
-export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecology = null, tickMs = TICK_MS }) {
+export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecology = null, ecoDay = null, tickMs = TICK_MS }) {
   assert(snapshot && Number.isInteger(snapshot.tick) && snapshot.tick >= 0, 'record needs a tick');
   assert(HEX64.test(corridorsSha256 || ''), 'record needs pinned corridor hash');
   assert(world && typeof world.traffic === 'string' && typeof world.weather === 'string'
     && Array.isArray(world.disasters) && typeof world.servicesNear === 'boolean', 'record needs world config');
   assert(tickMs === TICK_MS, 'tick length drift');
+  if (ecoDay !== undefined && ecoDay !== null) {
+    assert(Number.isInteger(ecoDay) && ecoDay >= 0, 'ecological day must be a non-negative integer');
+  }
   let eco = null;
   if (ecology !== null && ecology !== undefined) {
     assert(Array.isArray(ecology.patches), 'ecology needs a patches array');
@@ -47,6 +50,7 @@ export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecolog
       world: JSON.parse(JSON.stringify(world)),
       tickMs,
       resumedFromTick: snapshot.tick,
+      ecoDay: ecoDay === undefined ? null : ecoDay,
     },
     ecology: eco,
   };
@@ -72,6 +76,9 @@ export function resumeLivingCity(corridors, record, expected = {}) {
     assert(JSON.stringify(got) === JSON.stringify(want), 'citizen roster mismatch');
   }
   assert(meta.tickMs === TICK_MS, 'tick length drift');
+  if (meta.ecoDay !== undefined && meta.ecoDay !== null) {
+    assert(Number.isInteger(meta.ecoDay) && meta.ecoDay >= 0, 'ecological day out of range');
+  }
   assert(meta.world && typeof meta.world.traffic === 'string', 'world config missing');
   // Rebuild immutable lane geometry from pinned corridors and prove every
   // pedestrian lies on it: tampered corridors or lane assignments fail here.
@@ -144,5 +151,6 @@ export function resumeLivingCity(corridors, record, expected = {}) {
     seed: snapshot.seed, tickCount: snapshot.tick, zones, pedestrians, lanes,
     world: JSON.parse(JSON.stringify(meta.world)),
     patches,
+    ecoDay: meta.ecoDay === undefined ? null : meta.ecoDay,
   };
 }

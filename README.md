@@ -293,3 +293,7 @@ A hungry rat smells nearby patches, weighs hunger/safety/memory, and moves towar
 ## Rat colony: shared depletion and scent — Extraction 023
 
 Two rats, one patch: grazing and scent marks measurably change the second rat's subsequent decision — no scripts, no direct coupling, only shared world state. Scent survives shutdown/restart with the checkpoint. Run `npm run test:rat-colony`. See `docs/extraction-023-rat-colony.md`.
+
+## 365-day world clock — Extraction 024 (Phase B, B01)
+
+Named seasons, year rollover, deterministic skips identical to continuous stepping, and seasonal checkpoint restore carrying the ecological day. Run `npm run test:world-clock`. See `docs/extraction-024-world-clock.md`.
