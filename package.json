@@ -33,7 +33,8 @@
     "build:matrix-plan": "node scripts/build-matrix-plan.mjs",
     "test:matrix-adapter": "node scripts/test-matrix-adapter.mjs",
     "pilot:prepare": "node scripts/lingbot-pilot.mjs --prepare",
-    "pilot:health": "node scripts/lingbot-pilot.mjs --health"
+    "pilot:health": "node scripts/lingbot-pilot.mjs --health",
+    "test:world-checkpoint": "node scripts/test-world-checkpoint.mjs"
   },
   "type": "module",
   "version": "0.1.0"
