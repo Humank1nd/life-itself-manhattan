@@ -12,7 +12,7 @@ import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
 import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, NO_DECISION_TEXT } from './rat-perception.js';
-import { stepRatAutonomy, reconcileIntegrityFault } from './rat-autonomy.js';
+import { stepRatAutonomy, reconcileIntegrityFault, journalEntryMatchesStage } from './rat-autonomy.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 
@@ -207,7 +207,11 @@ function renderMotiveStrip(simHour) {
 // ledger of genuinely committed outcomes. The simulation owns initiation;
 // the panel only reads.
 const ratCtx = { applied: new Set(), lastTick: { n: -1 }, ledger: [],
-  integrity: { fault: null }, journalAppend: null };
+  integrity: { fault: null }, journalAppend: null,
+  // Ambiguity resolver: stages are matched against the ACTUAL journal
+  // contents (both engines expose event_type/payload entries), so a stored-
+  // but-unreported append is adopted, never duplicated.
+  journalHasStage: async (id) => journal.entries.some((e) => journalEntryMatchesStage(e, id)) };
 function ratReceiptsFor(actorId) {
   const found = [];
   for (let i = ratCtx.ledger.length - 1; i >= 0 && found.length === 0; i--) {

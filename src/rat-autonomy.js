@@ -31,6 +31,7 @@ const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 // eligible rat in this order acts, on every engine, every run.
 const cmpStr = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 export const HUNGER_ACT_THRESHOLD = 60;
+export const AUTONOMY_STAGES = ['decision', 'event', 'effect'];
 
 // Pure selection. Returns { rat, action, decision, observations } for the
 // first eligible hungry rat in roster order, or null when nobody may act
@@ -67,6 +68,52 @@ export function selectRatAction(state, tick, ecoDay) {
     return { rat, action, decision, observations };
   }
   return null;
+}
+
+// Idempotent stage writer — the heart of the P017.8b correction.
+// Appends exactly the stages in `stages` not yet recorded on `f`,
+// tracking progress on `f.completedStages` IN PLACE after every
+// successful landing, so a retry resumes instead of repeating.
+//
+// Two hazards, both closed:
+//  1. Repeated failure: a retry reads f.completedStages (updated by the
+//     failed attempt up to its last landed stage) and skips them.
+//  2. Ambiguous failure (the sink stored the entry but reported an
+//     error — e.g. a post-write callback throwing): stages are resolved
+//     against the ACTUAL journal contents through ctx.journalHasStage,
+//     an optional async predicate ({stage, eventId, tick, actorId,
+//     decisionId}) => bool. When present, a stage already in the journal
+//     is adopted without re-appending; a throw that left nothing behind
+//     is a genuine miss. When absent, appends are trusted (single-writer
+//     sinks), but per-stage progress tracking still prevents repeats.
+//
+// Throws { failedStage } when a stage is genuinely absent after the
+// attempt. Callers retain the fault WITH its updated progress — the next
+// retry continues from the new frontier, never from zero.
+async function appendStagesOnce(ctx, tick, payloads, f, stages) {
+  const verify = typeof ctx.journalHasStage === 'function' ? ctx.journalHasStage : null;
+  const ident = { eventId: f.eventId, tick: f.tick, actorId: f.actorId, decisionId: f.decisionId };
+  for (const name of stages) {
+    if (f.completedStages.includes(name)) continue;
+    if (verify && (await verify({ stage: name, ...ident }))) { f.completedStages.push(name); continue; }
+    try {
+      await ctx.journalAppend('action', tick, payloads[name]);
+    } catch (e) {
+      // Landed despite the error? Adopt it; otherwise the stage is missed.
+      if (verify && (await verify({ stage: name, ...ident }))) { f.completedStages.push(name); continue; }
+      const err = new Error('journal stage missing: ' + name);
+      err.failedStage = name;
+      throw err;
+    }
+    if (!verify || (await verify({ stage: name, ...ident }))) {
+      f.completedStages.push(name);
+    } else {
+      // The sink reported success but the stage is absent: fail closed.
+      const err = new Error('journal stage unverifiable: ' + name);
+      err.failedStage = name;
+      throw err;
+    }
+  }
 }
 
 // The single writer. ctx carries caller-owned mutation targets:
@@ -110,22 +157,23 @@ export async function commitRatAction(state, selected, ctx) {
     event: { kind: 'world-event', event },
     effect: { kind: 'scavenge-effect', effect, receipt },
   };
-  const completedStages = [];
-  let failedStage = null;
+  // Progress record carried by the fault itself: completedStages grows as
+  // stages land, so every retry — here or in reconcile — resumes.
+  // decisionId pins the decision stage's journal identity.
+  const progress = { eventId: event.eventId, tick: selected.action.tick,
+    actorId: selected.action.actorId, decisionId: selected.decision.decisionId,
+    completedStages: [] };
   try {
-    for (const name of ['decision', 'event', 'effect']) {
-      failedStage = name;
-      await ctx.journalAppend('action', selected.action.tick, payloads[name]);
-      completedStages.push(name);
-    }
+    await appendStagesOnce(ctx, selected.action.tick, payloads, progress, AUTONOMY_STAGES);
   } catch (err) {
     // The world already changed: record WHAT landed and WHAT is missing,
     // with frozen copies (never live references the world could mutate).
     const frozen = JSON.parse(JSON.stringify({ decision: selected.decision, event, effect, receipt, payloads }));
     ctx.integrity.fault = {
       eventId: event.eventId, actorId: selected.action.actorId,
-      tick: selected.action.tick, failedStage,
-      completedStages: [...completedStages],
+      tick: selected.action.tick, decisionId: selected.decision.decisionId,
+      failedStage: err.failedStage || null,
+      completedStages: [...progress.completedStages],
       ...frozen,
       error: String((err && err.message) || err),
     };
@@ -137,23 +185,47 @@ export async function commitRatAction(state, selected, ctx) {
 
 // Reconciliation: re-append ONLY the stages the fault record marks missing,
 // then a late-arrival marker, then release the withheld receipt into the
-// ledger and clear the fault. Completed stages are never duplicated: the
-// fault record — not a retry counter — is the source of truth for what is
-// missing. Throws (fault retained) when the journal is still failing.
+// ledger and clear the fault. Progress is tracked on the fault itself, so
+// a second failure resumes instead of duplicating: completed stages are
+// never re-appended, the marker is fixed at first reconcile (same
+// lateStages on every retry) and itself verified before counting as done,
+// and the receipt is released only after every required stage is verified
+// exactly once. Throws (fault retained WITH updated progress) when the
+// journal is still failing — the next retry continues from the new
+// frontier. A valid hash chain proves sequence integrity, NOT uniqueness:
+// uniqueness comes from this protocol, and the gate counts every stage.
 export async function reconcileIntegrityFault(ctx) {
   assert(ctx && ctx.integrity && ctx.integrity.fault, 'nothing to reconcile');
   assert(typeof ctx.journalAppend === 'function', 'reconcile needs a journal sink');
   assert(Array.isArray(ctx.ledger), 'reconcile needs a ledger');
   const f = ctx.integrity.fault;
-  const missing = ['decision', 'event', 'effect'].filter((s) => !f.completedStages.includes(s));
-  for (const name of missing) {
-    await ctx.journalAppend('action', f.tick, f.payloads[name]);
+  if (!f.markerLateStages) {
+    f.markerLateStages = [...AUTONOMY_STAGES.filter((s) => !f.completedStages.includes(s))];
   }
-  await ctx.journalAppend('action', f.tick,
-    { kind: 'rat-reconciliation', eventId: f.eventId, lateStages: missing, originalTick: f.tick });
+  const markerPayload = { kind: 'rat-reconciliation', eventId: f.eventId,
+    lateStages: f.markerLateStages, originalTick: f.tick };
+  const payloads = { ...f.payloads, marker: markerPayload };
+  await appendStagesOnce(ctx, f.tick, payloads, f, [...AUTONOMY_STAGES, 'marker']);
   ctx.ledger.push({ decision: f.decision, event: f.event, effect: f.effect, receipt: f.receipt });
+  const receipt = f.receipt;
+  const lateStages = f.markerLateStages;
   ctx.integrity.fault = null;
-  return { status: 'reconciled', receipt: f.receipt, lateStages: missing };
+  return { status: 'reconciled', receipt, lateStages };
+}
+
+// Stage identity matcher shared by gates and the browser adapter, so
+// ambiguous appends are resolved against journal contents the same way
+// everywhere: does this entry record (stage, eventId/decisionId)? A valid
+// hash chain proves sequence integrity, NOT uniqueness — uniqueness comes
+// from the append protocol above, verified through this matcher.
+export function journalEntryMatchesStage(entry, { stage, eventId, decisionId }) {
+  if (!entry || entry.event_type !== 'action') return false;
+  const p = entry.payload || {};
+  if (stage === 'decision') return p.kind === 'rat-decision' && p.decision && p.decision.decisionId === decisionId;
+  if (stage === 'event') return p.kind === 'world-event' && p.event && p.event.eventId === eventId;
+  if (stage === 'effect') return p.kind === 'scavenge-effect' && p.receipt && p.receipt.eventId === eventId;
+  if (stage === 'marker') return p.kind === 'rat-reconciliation' && p.eventId === eventId;
+  return false;
 }
 
 // One bounded tick: select, then commit at most once. When an integrity

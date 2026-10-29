@@ -6,9 +6,9 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createLivingCity, tickLivingCity, citySnapshot, establishAlley } from '../src/living-city.js';
-import { hashWorldState } from '../src/journal.js';
+import { hashWorldState, StateJournal } from '../src/journal.js';
 import { rebuildApplied, verifyRecovery } from '../src/citizen-agency.js';
-import { stepRatAutonomy, reconcileIntegrityFault } from '../src/rat-autonomy.js';
+import { stepRatAutonomy, reconcileIntegrityFault, journalEntryMatchesStage } from '../src/rat-autonomy.js';
 import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText } from '../src/rat-perception.js';
 
 const corridors = JSON.parse(readFileSync(new URL('../data/streets-enu.json', import.meta.url), 'utf8'));
@@ -116,3 +116,100 @@ for (const failAt of [1, 2, 3]) {
 }
 
 console.log('PASS rat integrity — journal faults at all 3 stages become explicit blocked-then-reconciled history, never silent loss, hash covers the acted world');
+
+// ---- P017.8b: repeated and ambiguous failures stay exactly-once ----
+// StateJournal-backed sink with two independent fault modes:
+//   drop: throw BEFORE appending (genuine miss)
+//   landThenThrow: append for real, then throw (ambiguous: stored but reported failed)
+// journalHasStage resolves both against actual journal contents.
+function journalBacked() {
+  const journal = new StateJournal();
+  const gate = { drop: new Set(), land: new Set(), calls: 0 };
+  const matches = (id) => journal.entries.some((e) => journalEntryMatchesStage(e, id));
+  const ctx = { applied: new Set(), ledger: [], lastTick: { n: -1 }, integrity: { fault: null },
+    journalAppend: async (type, tick, payload) => {
+      gate.calls++;
+      if (gate.drop.has(gate.calls)) throw new Error('drop @' + gate.calls);
+      const entry = await journal.append(type, tick, payload);
+      if (gate.land.has(gate.calls)) throw new Error('post-write callback boom @' + gate.calls);
+      return entry;
+    },
+    journalHasStage: async (id) => matches(id) };
+  return { journal, gate, ctx };
+}
+const countKind = (journal, kind) => journal.entries.filter((e) => e.payload && e.payload.kind === kind).length;
+const countMarker = (journal, eventId) => journal.entries.filter((e) =>
+  e.payload && e.payload.kind === 'rat-reconciliation' && e.payload.eventId === eventId).length;
+async function runToStatus(city, ctx, want, ticks = 6) {
+  for (let n = 0; n < ticks; n++) {
+    tickLivingCity(city);
+    const out = await stepRatAutonomy(city, ctx, city.tickCount, ecoDayOf(city));
+    if (out.status === want) return out;
+    assert.equal(out.status, 'abstained', `unexpected ${out.status} before ${want}`);
+  }
+  throw new Error('never reached ' + want);
+}
+
+// A. Sequential failures resume instead of repeating.
+{
+  // A1: decision dropped, then reconcile fails at event: decision lands once.
+  const city = hungryColony();
+  const jb = journalBacked();
+  jb.gate.drop = new Set([1]);
+  const f1 = await runToStatus(city, jb.ctx, 'fault');
+  assert.deepEqual(f1.fault.completedStages, [], 'nothing landed before the first drop');
+  jb.gate.drop = new Set([3]); // reconcile: decision=call2 ok, event=call3 drops
+  await assert.rejects(reconcileIntegrityFault(jb.ctx), /missing: event/);
+  assert.deepEqual(jb.ctx.integrity.fault.completedStages, ['decision'], 'progress tracked across attempts');
+  jb.gate.drop = new Set();
+  const rec = await reconcileIntegrityFault(jb.ctx);
+  assert.equal(rec.status, 'reconciled');
+  assert.equal(countKind(jb.journal, 'rat-decision'), 1, 'decision exactly once across two failures');
+  assert.equal(countKind(jb.journal, 'world-event'), 1);
+  assert.equal(countKind(jb.journal, 'scavenge-effect'), 1);
+  assert.equal(countMarker(jb.journal, f1.event.eventId), 1, 'marker exactly once');
+  assert.equal(await jb.journal.verifyChain(), true);
+  // A2: reconcile fails at the marker: effect is not re-appended on retry.
+  const city2 = hungryColony();
+  const jb2 = journalBacked();
+  jb2.gate.drop = new Set([3]); // effect dropped at commit
+  const f2 = await runToStatus(city2, jb2.ctx, 'fault');
+  assert.deepEqual(f2.fault.completedStages, ['decision', 'event']);
+  jb2.gate.drop = new Set([4]); // reconcile: effect=call4 drops
+  await assert.rejects(reconcileIntegrityFault(jb2.ctx), /missing: effect/);
+  assert.deepEqual(jb2.ctx.integrity.fault.completedStages, ['decision', 'event']);
+  jb2.gate.drop = new Set();
+  await reconcileIntegrityFault(jb2.ctx);
+  assert.equal(countKind(jb2.journal, 'scavenge-effect'), 1, 'effect not duplicated by marker retry');
+  assert.equal(countMarker(jb2.journal, f2.event.eventId), 1);
+  assert.equal(await jb2.journal.verifyChain(), true);
+}
+
+// B. Ambiguous failures (stored but reported failed) are adopted, not duplicated.
+{
+  // B1: decision lands, callback throws: commit continues, no fault at all.
+  const city = hungryColony();
+  const jb = journalBacked();
+  jb.gate.land = new Set([1]);
+  const out = await runToStatus(city, jb.ctx, 'acted');
+  assert.equal(countKind(jb.journal, 'rat-decision'), 1, 'adopted, not re-appended');
+  assert.equal(jb.ctx.integrity.fault, null, 'no fault for a landed stage');
+  assert.equal(jb.ctx.ledger.length, 1);
+  // B2: effect lands-but-throws during reconcile, then the marker does too.
+  const city2 = hungryColony();
+  const jb2 = journalBacked();
+  jb2.gate.drop = new Set([3]); // genuine miss at commit
+  const f = await runToStatus(city2, jb2.ctx, 'fault');
+  assert.deepEqual(f.fault.completedStages, ['decision', 'event']);
+  jb2.gate.drop = new Set();
+  jb2.gate.land = new Set([4, 5]); // effect lands+throws, marker lands+throws
+  const rec = await reconcileIntegrityFault(jb2.ctx);
+  assert.equal(rec.status, 'reconciled', 'adopted stages resolve the whole chain');
+  assert.equal(countKind(jb2.journal, 'scavenge-effect'), 1, 'effect exactly once');
+  assert.equal(countMarker(jb2.journal, f.event.eventId), 1, 'marker exactly once');
+  assert.deepEqual(rec.lateStages, ['effect'], 'marker names the originally missing stage');
+  assert.equal(await jb2.journal.verifyChain(), true);
+  assert.equal(jb2.ctx.ledger.length, 1, 'receipt released once');
+}
+
+console.log('PASS rat reconciliation — repeated and ambiguous failures stay exactly-once: progress-tracked retries, adopted post-write appends, single marker, verified chain');
