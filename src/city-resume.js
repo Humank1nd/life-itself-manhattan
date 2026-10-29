@@ -14,7 +14,7 @@ const HEX64 = /^[0-9a-f]{64}$/;
 const assert = (ok, why) => { if (!ok) throw new Error('resume: ' + why); };
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
-export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecology = null, ecoDay = null, appliedReports = [], tickMs = TICK_MS }) {
+export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecology = null, ecoDay = null, appliedReports = [], objects = null, tickMs = TICK_MS }) {
   assert(snapshot && Number.isInteger(snapshot.tick) && snapshot.tick >= 0, 'record needs a tick');
   assert(HEX64.test(corridorsSha256 || ''), 'record needs pinned corridor hash');
   assert(world && typeof world.traffic === 'string' && typeof world.weather === 'string'
@@ -49,10 +49,36 @@ export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecolog
     assert(!seenIds.has(id), 'duplicated applied report: ' + id);
     seenIds.add(id);
   }
+  // World-object roster (P017.5): pinned alongside patches and applied
+  // reports. Additive and optional — pre-P017.5 records carry null and
+  // restore exactly as before. When present, every entry is shape-pinned
+  // (identity, kind, position, patch link, revision); restore compares the
+  // roster and, when full descriptors are trusted, every field per object.
+  // `rev` is bumped by reviseObject() on any pinned-property change, so a
+  // silent substitution reads as a revision mismatch, not a quiet drift.
+  let objs = null;
+  if (objects !== null && objects !== undefined) {
+    assert(Array.isArray(objects), 'objects must be a list');
+    const seenObjs = new Set();
+    for (const o of objects) {
+      assert(o && typeof o.id === 'string' && o.id.length > 0, 'object identity');
+      assert(!seenObjs.has(o.id), 'duplicated object: ' + o.id);
+      seenObjs.add(o.id);
+      assert(typeof o.kind === 'string' && o.kind.length > 0, 'object kind: ' + o.id);
+      assert(isNum(o.x) && isNum(o.z), 'object position: ' + o.id);
+      if (o.patchId !== null && o.patchId !== undefined) {
+        assert(typeof o.patchId === 'string' && o.patchId.length > 0, 'object patch link: ' + o.id);
+      }
+      assert(Number.isInteger(o.rev) && o.rev >= 0, 'object revision: ' + o.id);
+    }
+    objs = objects.map((o) => ({ id: o.id, kind: o.kind, x: o.x, z: o.z,
+      patchId: o.patchId ?? null, rev: o.rev }));
+  }
   return {
     contract: RESUME_CONTRACT,
     snapshot: JSON.parse(JSON.stringify(snapshot)),
     appliedReports: [...seenIds],
+    objects: objs,
     meta: {
       corridorsSha256,
       world: JSON.parse(JSON.stringify(world)),
@@ -159,6 +185,54 @@ export function resumeLivingCity(corridors, record, expected = {}) {
       assert(JSON.stringify(got) === JSON.stringify([...expected.patchIds].sort()), 'patch roster mismatch');
     }
   }
+  // World-object roster (P017.5): when the checkpoint pins objects, the
+  // caller MUST supply the trusted roster — there is no unauthenticated
+  // restore path for pinned objects. Missing, extra, substituted, revised,
+  // or patch-link-broken objects are rejected here, never merely detected
+  // as downstream divergence. Records without pinned objects skip all of
+  // this, preserving pre-P017.5 restore behavior byte-for-byte.
+  let restoredObjects = null;
+  if (record.objects !== null && record.objects !== undefined) {
+    assert(Array.isArray(record.objects), 'object roster missing');
+    const seenRestored = new Set();
+    for (const o of record.objects) {
+      assert(o && typeof o.id === 'string' && o.id.length > 0, 'restored object identity');
+      assert(!seenRestored.has(o.id), 'duplicated restored object: ' + o.id);
+      seenRestored.add(o.id);
+      assert(typeof o.kind === 'string' && o.kind.length > 0, 'restored object kind: ' + o.id);
+      assert(isNum(o.x) && isNum(o.z), 'restored object position: ' + o.id);
+      if (o.patchId !== null && o.patchId !== undefined) {
+        assert(typeof o.patchId === 'string' && o.patchId.length > 0, 'restored object patch link: ' + o.id);
+      }
+      assert(Number.isInteger(o.rev) && o.rev >= 0, 'restored object revision: ' + o.id);
+    }
+    assert(Array.isArray(expected.objectIds), 'expected object roster required');
+    {
+      const got = record.objects.map((o) => o.id).sort();
+      const want = [...expected.objectIds].sort();
+      assert(JSON.stringify(got) === JSON.stringify(want), 'object roster mismatch');
+    }
+    if (expected.objects !== undefined) {
+      assert(Array.isArray(expected.objects), 'expected objects malformed');
+      const trusted = new Map(expected.objects.map((o) => [o && o.id, o]));
+      for (const o of record.objects) {
+        const w = trusted.get(o.id);
+        assert(w, 'object substitution: ' + o.id);
+        for (const k of ['kind', 'x', 'z', 'patchId', 'rev']) {
+          assert(JSON.stringify(o[k] ?? null) === JSON.stringify(w[k] ?? null), 'object mismatch: ' + o.id + '.' + k);
+        }
+      }
+    }
+    if (patches !== null) {
+      const patchIds = new Set(patches.map((p) => p.id));
+      for (const o of record.objects) {
+        if (o.patchId !== null && o.patchId !== undefined) {
+          assert(patchIds.has(o.patchId), 'object patch association broken: ' + o.id);
+        }
+      }
+    }
+    restoredObjects = record.objects.map((o) => ({ ...o }));
+  }
   // Applied report IDs ride the checkpoint: the deduplication set is
   // restored, never rebuilt from scratch. A report applied before the
   // shutdown stays applied after the restart.
@@ -175,6 +249,7 @@ export function resumeLivingCity(corridors, record, expected = {}) {
     seed: snapshot.seed, tickCount: snapshot.tick, zones, pedestrians, lanes,
     world: JSON.parse(JSON.stringify(meta.world)),
     patches,
+    objects: restoredObjects,
     ecoDay: meta.ecoDay === undefined ? null : meta.ecoDay,
     appliedReports: [...applied],
   };

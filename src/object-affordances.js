@@ -58,15 +58,36 @@ export const round4 = (v) => {
 
 export const OBJECT_KINDS = ['dumpster', 'shelter', 'doorway'];
 
-// Test-only world object. Pure data: identity + pose + patch association.
-// No occupancy field exists on the object model — occupancy must never be
-// invented; evidence comes from the associated ecological patch instead.
-export function makeWorldObject({ id, kind, x, z, patchId = null }) {
+// Test-only world object. Pure data: identity + pose + patch association +
+// revision. No occupancy field exists on the object model — occupancy must
+// never be invented; evidence comes from the associated ecological patch
+// instead. `rev` starts at 1 and MUST be bumped via reviseObject() on any
+// change to the pinned properties (kind, position, patch link); the
+// checkpoint pins (id, rev) plus the full descriptor, so a silent
+// substitution reads as a mismatch, not a quiet drift.
+export function makeWorldObject({ id, kind, x, z, patchId = null, rev = 1 }) {
   assert(isId(id), 'object id required');
   assert(OBJECT_KINDS.includes(kind), 'unknown object kind: ' + kind);
   assert(isNum(x) && isNum(z), 'object position required');
   if (patchId !== null) assert(isId(patchId), 'patch id malformed');
-  return { id, kind, x, z, patchId };
+  assert(Number.isInteger(rev) && rev >= 0, 'object revision required');
+  return { id, kind, x, z, patchId, rev };
+}
+
+// The only lawful way to change a pinned world object: returns a new
+// descriptor with the caller's property updates and rev incremented. The
+// id is immutable — a new id is a new object, not a revision.
+export function reviseObject(object, changes = {}) {
+  assert(object && isId(object.id), 'revise needs an object');
+  assert(Number.isInteger(object.rev) && object.rev >= 0, 'revise needs a revision');
+  assert(changes && typeof changes === 'object', 'revise needs a changes object');
+  assert(changes.id === undefined || changes.id === object.id, 'object id is immutable');
+  assert(changes.rev === undefined, 'rev is assigned, not requested');
+  const next = { ...object, ...changes, id: object.id, rev: object.rev + 1 };
+  if (next.patchId !== null) assert(isId(next.patchId), 'patch id malformed');
+  assert(OBJECT_KINDS.includes(next.kind), 'unknown object kind: ' + next.kind);
+  assert(isNum(next.x) && isNum(next.z), 'object position required');
+  return next;
 }
 
 // Advertisement: a snapshot of opportunity, NOT authorization to act.
