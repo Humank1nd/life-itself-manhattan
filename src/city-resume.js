@@ -36,12 +36,20 @@ export function resumeLivingCity(corridors, record, expected = {}) {
   assert(record && record.contract === RESUME_CONTRACT, 'resumption contract mismatch');
   const { snapshot, meta } = record;
   assert(snapshot && meta && HEX64.test(meta.corridorsSha256 || ''), 'resumption metadata missing');
-  // Strict pin when the caller supplies one (scripts/CI compute it with
-  // crypto; the browser relies on lane-consistency below). Well-formed
-  // but wrong hashes fail here, not silently.
-  if (expected.corridorsSha256 !== undefined) {
-    assert(HEX64.test(expected.corridorsSha256 || ''), 'expected corridor hash malformed');
-    assert(meta.corridorsSha256 === expected.corridorsSha256, 'corridor hash mismatch');
+  // Mandatory source pinning (L2c): the caller MUST supply the trusted
+  // corridor hash — there is no unauthenticated restore path.
+  assert(HEX64.test(expected.corridorsSha256 || ''), 'expected corridor hash required');
+  assert(meta.corridorsSha256 === expected.corridorsSha256, 'corridor hash mismatch');
+  // Checkpoint integrity (L2c): the world config and citizen roster must
+  // exactly equal the trusted values. Alterations are rejected here, not
+  // merely detected as downstream divergence.
+  assert(expected.world && typeof expected.world === 'object', 'expected world config required');
+  assert(JSON.stringify(meta.world) === JSON.stringify(expected.world), 'world config mismatch');
+  assert(Array.isArray(expected.citizenIds) && expected.citizenIds.length > 0, 'expected citizen roster required');
+  {
+    const got = (snapshot.pedestrians || []).map((p) => p.id).sort();
+    const want = [...expected.citizenIds].sort();
+    assert(JSON.stringify(got) === JSON.stringify(want), 'citizen roster mismatch');
   }
   assert(meta.tickMs === TICK_MS, 'tick length drift');
   assert(meta.world && typeof meta.world.traffic === 'string', 'world config missing');

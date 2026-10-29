@@ -35,6 +35,17 @@ statics are pinned to definitions; world config rides in the record
 and any tamper provably diverges; motive rates are recomputed from
 stored traits. Versioned contract rejects unknown futures.
 
+## L2c integrity — trusted binding, not just divergence (review condition)
+
+The first version detected tampering as downstream divergence. The
+merged version rejects it before continuation: resumption requires a
+caller-supplied trusted pin (`corridorsSha256`, exact world config,
+exact citizen roster). Altered world config and dropped/added citizens
+throw `world config mismatch` / `citizen roster mismatch`; the
+duplicate-ID check remains as a per-entity backstop. `data/corridors-sha256.txt`
+commits the pinned corridor hash; the gate fails if the file drifts
+from the recomputed value.
+
 Run `npm run test:city-recovery` for the gate. No model, no GPU, no
 durable storage yet — atomic-commit semantics for a future store are
 still open, as is Quest verification.

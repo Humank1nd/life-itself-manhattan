@@ -28,7 +28,16 @@ assert.equal(record.meta.resumedFromTick, K);
 const rebuilt = buildResumptionRecord({ snapshot: JSON.parse(JSON.stringify(citySnapshot(cut))), corridorsSha256: corridorSha256, world: cut.world });
 assert.equal(JSON.stringify(rebuilt), JSON.stringify(record), 'record rebuild drift');
 const wire = JSON.parse(JSON.stringify(record)); // fresh-process simulation
-const revived = resumeLivingCity(corridors, wire, { corridorsSha256: corridorSha256 });
+// Trusted pins: corridor hash committed in data/, world + roster from the
+// uninterrupted reference. Production callers supply equivalents.
+const pinnedCorridorSha = readFileSync(new URL('../data/corridors-sha256.txt', import.meta.url), 'utf8').trim();
+assert.equal(pinnedCorridorSha, corridorSha256, 'committed corridor pin drift');
+const trust = {
+  corridorsSha256: corridorSha256,
+  world: JSON.parse(JSON.stringify(ref.world)),
+  citizenIds: ref.pedestrians.map((p) => p.id),
+};
+const revived = resumeLivingCity(corridors, wire, trust);
 const revSnaps = [], revSums = [];
 for (let n = K; n < N; n++) { tickLivingCity(revived); revSnaps.push(snap(revived)); revSums.push(summ(revived)); }
 assert.equal(revSnaps.length, N - K);
@@ -36,48 +45,48 @@ for (let i = 0; i < revSnaps.length; i++) {
   assert.equal(revSnaps[i], refSnaps[K + 1 + i], `snapshot divergence at tick ${K + 1 + i}`);
   assert.equal(revSums[i], refSums[K + 1 + i], `summary divergence at tick ${K + 1 + i}`);
 }
-// Negative: every tamper class fails closed or provably diverges.
+// Negative: every tamper class fails closed before continuation begins.
 const clone = () => JSON.parse(JSON.stringify(record));
-assert.throws(() => resumeLivingCity(corridors, { ...clone(), contract: 'x/0' }), /contract mismatch/);
-assert.throws(() => resumeLivingCity(corridors, { ...clone(), meta: { ...record.meta, corridorsSha256: '0'.repeat(64) } }, { corridorsSha256: corridorSha256 }), /corridor hash mismatch/);
-assert.throws(() => resumeLivingCity(corridors, clone(), { corridorsSha256: 'not-hex' }), /malformed/);
+const T = (rec) => resumeLivingCity(corridors, rec, trust);
+assert.throws(() => resumeLivingCity(corridors, { ...clone(), contract: 'x/0' }, trust), /contract mismatch/);
+assert.throws(() => resumeLivingCity(corridors, { ...clone(), meta: { ...record.meta, corridorsSha256: '0'.repeat(64) } }, trust), /corridor hash mismatch/);
+assert.throws(() => resumeLivingCity(corridors, clone(), { corridorsSha256: 'not-hex', world: trust.world, citizenIds: trust.citizenIds }), /malformed|required/);
+assert.throws(() => resumeLivingCity(corridors, clone(), {}), /required/);
 {
   const bad = clone(); bad.snapshot.zones[0].lat += 0.5;
-  assert.throws(() => resumeLivingCity(corridors, bad), /zone geography drift/);
+  assert.throws(() => T(bad), /zone geography drift/);
 }
 {
   const bad = clone(); bad.snapshot.zones[0].id = 'no-such-zone';
-  assert.throws(() => resumeLivingCity(corridors, bad), /unknown zone/);
+  assert.throws(() => T(bad), /unknown zone/);
 }
 {
   const bad = clone(); bad.snapshot.pedestrians[0].laneIndex = 999;
-  assert.throws(() => resumeLivingCity(corridors, bad), /lane assignment/);
+  assert.throws(() => T(bad), /lane assignment/);
 }
 {
   const bad = clone(); bad.snapshot.pedestrians[1].traits.sleep_need = 5;
-  assert.throws(() => resumeLivingCity(corridors, bad), /trait bounds/);
+  assert.throws(() => T(bad), /trait bounds/);
 }
 {
   const bad = clone(); bad.snapshot.pedestrians[2].motives.energy = -3;
-  assert.throws(() => resumeLivingCity(corridors, bad), /motive bounds/);
+  assert.throws(() => T(bad), /motive bounds/);
 }
 {
   const bad = clone(); bad.snapshot.pedestrians.push({ ...bad.snapshot.pedestrians[0] });
-  assert.throws(() => resumeLivingCity(corridors, bad), /duplicated pedestrian/);
+  assert.throws(() => T(bad), /citizen roster mismatch/, 'extra citizen rejected at roster');
+  const sloppy = { ...trust, citizenIds: [...trust.citizenIds, bad.snapshot.pedestrians[0].id] };
+  assert.throws(() => resumeLivingCity(corridors, bad, sloppy), /duplicated pedestrian/, 'per-entity backstop');
 }
 assert.throws(() => JSON.parse('{"tick": 12, broken'), /Unexpected token|Expected/);
-// Tampered world config provably diverges instead of silently matching.
+// L2c integrity: tampered world config and dropped citizens are REJECTED
+// against the trusted values before continuation — not merely divergent.
 {
   const bad = clone(); bad.meta.world = { ...bad.meta.world, traffic: 'red', weather: 'storm' };
-  const r = resumeLivingCity(corridors, bad);
-  tickLivingCity(r);
-  assert.notEqual(snap(r), refSnaps[K + 1], 'world tamper must diverge');
+  assert.throws(() => T(bad), /world config mismatch/);
 }
-// Dropped citizen provably diverges.
 {
   const bad = clone(); bad.snapshot.pedestrians = bad.snapshot.pedestrians.slice(1);
-  const r = resumeLivingCity(corridors, bad);
-  tickLivingCity(r);
-  assert.notEqual(snap(r), refSnaps[K + 1], 'dropped citizen must diverge');
+  assert.throws(() => T(bad), /citizen roster mismatch/);
 }
-console.log(`PASS city recovery — ${N} ticks uninterrupted == tick-${K} restore + continue, snapshots/summaries/trajectories/motives identical, 10 fail-closed + 2 divergence proofs`);
+console.log(`PASS city recovery — ${N} ticks uninterrupted == tick-${K} restore + continue, snapshots/summaries/trajectories/motives identical, 13 fail-closed integrity proofs`);
