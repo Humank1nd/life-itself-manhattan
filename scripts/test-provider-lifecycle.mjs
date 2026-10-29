@@ -62,8 +62,15 @@ for (const state of ['REQUESTED', 'VALIDATING', 'STARTING', 'READY', 'RUNNING'])
     assert.equal(p.state, 'FAILED', `${ev} from ${state}`);
     const q = run([...setup, [ev], ['BEGIN_QUIESCE'], ['QUIESCE_COMPLETE']]);
     assert.equal(q.state, 'OFF', `recover ${ev} from ${state}`);
-    // Review finding 1: exactly one release per allocation, on QUIESCING→OFF.
-    assert.equal(q.effects.filter((e) => e === 'release-gpu').length, 1, 'single release');
+    // Review condition: one release per actual allocation — zero when the
+    // failure predates allocation (REQUESTED/VALIDATING).
+    const releases = q.effects.filter((e) => e === 'release-gpu').length;
+    if (state === 'REQUESTED' || state === 'VALIDATING') {
+      assert.equal(releases, 0, `no release without allocation (${ev} from ${state})`);
+      assert(q.effects.includes('no-allocation'), 'audited no-allocation');
+    } else {
+      assert.equal(releases, 1, `single release (${ev} from ${state})`);
+    }
   }
 }
 // 5. No FAILED→RUNNING shortcut, no auto-retry, unknown events are loud.

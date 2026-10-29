@@ -22,7 +22,7 @@ export function validateIntent(intent) {
   return { ok: reasons.length === 0, reasons };
 }
 export function createProvider() {
-  return { state: 'OFF', intent: null, rejection: null, effects: [], receipt: null };
+  return { state: 'OFF', intent: null, rejection: null, effects: [], receipt: null, allocated: false };
 }
 const FAIL_CLOSED = new Set(['TIMEOUT', 'CANCELLED', 'BUDGET_EXHAUSTED', 'PROVIDER_KILLED']);
 export function step(p, event, payload) {
@@ -54,7 +54,7 @@ export function step(p, event, payload) {
       if (event === 'BEGIN_VALIDATION') return { ...p, state: 'VALIDATING' };
       return fail(event);
     case 'VALIDATING':
-      if (event === 'VALIDATION_OK') return { ...p, state: 'STARTING', effects: [...p.effects, 'allocate-gpu'] };
+      if (event === 'VALIDATION_OK') return { ...p, state: 'STARTING', allocated: true, effects: [...p.effects, 'allocate-gpu'] };
       if (event === 'VALIDATION_REJECTED') return { ...p, state: 'OFF', intent: null, effects: [...p.effects, 'no-allocation'] };
       return fail(event);
     case 'STARTING':
@@ -77,7 +77,13 @@ export function step(p, event, payload) {
       if (event === 'BEGIN_QUIESCE') return { ...p, state: 'QUIESCING' };
       return fail(event);
     case 'QUIESCING':
-      if (event === 'QUIESCE_COMPLETE') return { ...p, state: 'OFF', intent: null, effects: [...p.effects, 'release-gpu'] };
+      // One release per actual allocation: states that never allocated
+      // (REQUESTED/VALIDATING failures) record no-allocation instead.
+      if (event === 'QUIESCE_COMPLETE') {
+        return p.allocated
+          ? { ...p, state: 'OFF', intent: null, allocated: false, effects: [...p.effects, 'release-gpu'] }
+          : { ...p, state: 'OFF', intent: null, effects: [...p.effects, 'no-allocation'] };
+      }
       return fail(event);
     default:
       return fail(event);
