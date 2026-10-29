@@ -1,0 +1,5141 @@
+{
+  "schemaVersion": "life-itself-photo-alignment/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "method": {
+    "name": "geometry-and-time-v1",
+    "maxDistanceM": 150,
+    "score": "(0.55 * proximity + 0.45 * prominence) * timeFit; proximity = exp(-distanceM / 45); prominence = min(1, heightM / 60); timeFit = 1.0 known-predates, 0.55 year-unknown",
+    "hardFilters": [
+      "construction year after the photograph year is excluded"
+    ]
+  },
+  "semantics": "Candidates only: a geotag may identify the pictured landmark rather than the camera position, so candidacy is radial. Scores explain geometric and temporal fit; no visual verification has been performed, no match is confirmed, and no record here is approved for model training.",
+  "alignments": [
+    {
+      "photoId": "commons-100035453",
+      "source": "catalog",
+      "capturedAt": "2009-01-06",
+      "point": {
+        "x": 910.77,
+        "z": -3652.03
+      },
+      "candidates": [
+        {
+          "bin": "1033386",
+          "score": 0.859,
+          "distanceM": 13.3,
+          "builtYear": 1985,
+          "heightM": 62.8,
+          "reasons": [
+            "footprint 13.3 m from the photo point",
+            "built 1985, 24 years before the 2009 photograph",
+            "height 62.8 m"
+          ]
+        },
+        {
+          "bin": "1033555",
+          "score": 0.759,
+          "distanceM": 14.8,
+          "builtYear": 1920,
+          "heightM": 48.4,
+          "reasons": [
+            "footprint 14.8 m from the photo point",
+            "built 1920, 89 years before the 2009 photograph",
+            "height 48.4 m"
+          ]
+        },
+        {
+          "bin": "1033556",
+          "score": 0.635,
+          "distanceM": 36.6,
+          "builtYear": 1922,
+          "heightM": 52.1,
+          "reasons": [
+            "footprint 36.6 m from the photo point",
+            "built 1922, 87 years before the 2009 photograph",
+            "height 52.1 m"
+          ]
+        },
+        {
+          "bin": "1033308",
+          "score": 0.622,
+          "distanceM": 33.4,
+          "builtYear": 1920,
+          "heightM": 48,
+          "reasons": [
+            "footprint 33.4 m from the photo point",
+            "built 1920, 89 years before the 2009 photograph",
+            "height 48 m"
+          ]
+        },
+        {
+          "bin": "1033313",
+          "score": 0.581,
+          "distanceM": 39,
+          "builtYear": 1920,
+          "heightM": 46.6,
+          "reasons": [
+            "footprint 39 m from the photo point",
+            "built 1920, 89 years before the 2009 photograph",
+            "height 46.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-1284794",
+      "source": "evidence",
+      "capturedAt": "2005-12-08",
+      "point": {
+        "x": -1.18,
+        "z": -5.12
+      },
+      "candidates": [
+        {
+          "bin": "1076844",
+          "score": 0.825,
+          "distanceM": 17.2,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 17.2 m from the photo point",
+            "built 1989, 16 years before the 2005 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.785,
+          "distanceM": 22.4,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 22.4 m from the photo point",
+            "built 1985, 20 years before the 2005 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.75,
+          "distanceM": 27.2,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 27.2 m from the photo point",
+            "built 1970, 35 years before the 2005 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.512,
+          "distanceM": 98.2,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 98.2 m from the photo point",
+            "built 1927, 78 years before the 2005 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1085016",
+          "score": 0.51,
+          "distanceM": 99.5,
+          "builtYear": 1988,
+          "heightM": 147.1,
+          "reasons": [
+            "footprint 99.5 m from the photo point",
+            "built 1988, 17 years before the 2005 photograph",
+            "height 147.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false,
+      "storedPoint": {
+        "x": -1.1822,
+        "z": -5.1205
+      }
+    },
+    {
+      "photoId": "commons-147084598",
+      "source": "catalog",
+      "capturedAt": "2024-04-04",
+      "point": {
+        "x": -84.45,
+        "z": 333.15
+      },
+      "candidates": [
+        {
+          "bin": "1022568",
+          "score": 0.869,
+          "distanceM": 12.3,
+          "builtYear": 1931,
+          "heightM": 155.7,
+          "reasons": [
+            "footprint 12.3 m from the photo point",
+            "built 1931, 93 years before the 2024 photograph",
+            "height 155.7 m"
+          ]
+        },
+        {
+          "bin": "1022569",
+          "score": 0.741,
+          "distanceM": 28.6,
+          "builtYear": 1929,
+          "heightM": 128.6,
+          "reasons": [
+            "footprint 28.6 m from the photo point",
+            "built 1929, 95 years before the 2024 photograph",
+            "height 128.6 m"
+          ]
+        },
+        {
+          "bin": "1086069",
+          "score": 0.716,
+          "distanceM": 32.8,
+          "builtYear": 2002,
+          "heightM": 209.6,
+          "reasons": [
+            "footprint 32.8 m from the photo point",
+            "built 2002, 22 years before the 2024 photograph",
+            "height 209.6 m"
+          ]
+        },
+        {
+          "bin": "1022563",
+          "score": 0.7,
+          "distanceM": 35.5,
+          "builtYear": 1924,
+          "heightM": 106,
+          "reasons": [
+            "footprint 35.5 m from the photo point",
+            "built 1924, 100 years before the 2024 photograph",
+            "height 106 m"
+          ]
+        },
+        {
+          "bin": "1022577",
+          "score": 0.636,
+          "distanceM": 48.8,
+          "builtYear": 1918,
+          "heightM": 128.9,
+          "reasons": [
+            "footprint 48.8 m from the photo point",
+            "built 1918, 106 years before the 2024 photograph",
+            "height 128.9 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-150580589",
+      "source": "catalog",
+      "capturedAt": "2024-07-20",
+      "point": {
+        "x": -7.51,
+        "z": -353.8
+      },
+      "candidates": [
+        {
+          "bin": "1024782",
+          "score": 0.798,
+          "distanceM": 7.6,
+          "builtYear": 1927,
+          "heightM": 44.4,
+          "reasons": [
+            "footprint 7.6 m from the photo point",
+            "built 1927, 97 years before the 2024 photograph",
+            "height 44.4 m"
+          ]
+        },
+        {
+          "bin": "1076194",
+          "score": 0.715,
+          "distanceM": 32.9,
+          "builtYear": 1989,
+          "heightM": 122.5,
+          "reasons": [
+            "footprint 32.9 m from the photo point",
+            "built 1989, 35 years before the 2024 photograph",
+            "height 122.5 m"
+          ]
+        },
+        {
+          "bin": "1076195",
+          "score": 0.68,
+          "distanceM": 39.2,
+          "builtYear": 1987,
+          "heightM": 142,
+          "reasons": [
+            "footprint 39.2 m from the photo point",
+            "built 1987, 37 years before the 2024 photograph",
+            "height 142 m"
+          ]
+        },
+        {
+          "bin": "1024783",
+          "score": 0.671,
+          "distanceM": 2.3,
+          "builtYear": 1925,
+          "heightM": 19.8,
+          "reasons": [
+            "footprint 2.3 m from the photo point",
+            "built 1925, 99 years before the 2024 photograph",
+            "height 19.8 m"
+          ]
+        },
+        {
+          "bin": "1085498",
+          "score": 0.641,
+          "distanceM": 47.7,
+          "builtYear": 1998,
+          "heightM": 114.8,
+          "reasons": [
+            "footprint 47.7 m from the photo point",
+            "built 1998, 26 years before the 2024 photograph",
+            "height 114.8 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-152006481",
+      "source": "catalog",
+      "capturedAt": "2024-08-18",
+      "point": {
+        "x": -73.82,
+        "z": 168.69
+      },
+      "candidates": [
+        {
+          "bin": "1022581",
+          "score": 0.903,
+          "distanceM": 8.8,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 8.8 m from the photo point",
+            "built 1908, 116 years before the 2024 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.721,
+          "distanceM": 31.9,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 31.9 m from the photo point",
+            "built 1998, 26 years before the 2024 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.708,
+          "distanceM": 34,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 34 m from the photo point",
+            "built 1999, 25 years before the 2024 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.679,
+          "distanceM": 39.4,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 39.4 m from the photo point",
+            "built 1972, 52 years before the 2024 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.653,
+          "distanceM": 44.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 44.9 m from the photo point",
+            "built 1927, 97 years before the 2024 photograph",
+            "height 128.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-153095542",
+      "source": "catalog",
+      "capturedAt": "2024-06-27",
+      "point": {
+        "x": -35.21,
+        "z": 209.44
+      },
+      "candidates": [
+        {
+          "bin": "1085682",
+          "score": 1,
+          "distanceM": 0,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "photo point falls inside the footprint",
+            "built 1998, 26 years before the 2024 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.651,
+          "distanceM": 45.3,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 45.3 m from the photo point",
+            "built 1972, 52 years before the 2024 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1022581",
+          "score": 0.645,
+          "distanceM": 46.8,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 46.8 m from the photo point",
+            "built 1908, 116 years before the 2024 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1087268",
+          "score": 0.617,
+          "distanceM": 53.6,
+          "builtYear": 2005,
+          "heightM": 270.6,
+          "reasons": [
+            "footprint 53.6 m from the photo point",
+            "built 2005, 19 years before the 2024 photograph",
+            "height 270.6 m"
+          ]
+        },
+        {
+          "bin": "1086069",
+          "score": 0.559,
+          "distanceM": 72.8,
+          "builtYear": 2002,
+          "heightM": 209.6,
+          "reasons": [
+            "footprint 72.8 m from the photo point",
+            "built 2002, 22 years before the 2024 photograph",
+            "height 209.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-154759496",
+      "source": "catalog",
+      "capturedAt": "2024-04-25",
+      "point": {
+        "x": -94.41,
+        "z": 151.8
+      },
+      "candidates": [
+        {
+          "bin": "1024686",
+          "score": 0.913,
+          "distanceM": 7.8,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 7.8 m from the photo point",
+            "built 1999, 25 years before the 2024 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.763,
+          "distanceM": 25.4,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 25.4 m from the photo point",
+            "built 1927, 97 years before the 2024 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022581",
+          "score": 0.757,
+          "distanceM": 26.3,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 26.3 m from the photo point",
+            "built 1908, 116 years before the 2024 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.601,
+          "distanceM": 58.1,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 58.1 m from the photo point",
+            "built 1998, 26 years before the 2024 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.6,
+          "distanceM": 58.6,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 58.6 m from the photo point",
+            "built 1972, 52 years before the 2024 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-155147623",
+      "source": "catalog",
+      "capturedAt": "2024-11-09",
+      "point": {
+        "x": -6.84,
+        "z": 24.99
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.778,
+          "distanceM": 23.2,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 23.2 m from the photo point",
+            "built 1970, 54 years before the 2024 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.732,
+          "distanceM": 30.1,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 30.1 m from the photo point",
+            "built 1989, 35 years before the 2024 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.653,
+          "distanceM": 44.9,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 44.9 m from the photo point",
+            "built 1985, 39 years before the 2024 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.561,
+          "distanceM": 72.1,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 72.1 m from the photo point",
+            "built 1927, 97 years before the 2024 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.559,
+          "distanceM": 72.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 72.7 m from the photo point",
+            "built 1972, 52 years before the 2024 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-15621881",
+      "source": "catalog",
+      "capturedAt": "2011-04-22",
+      "point": {
+        "x": -58.64,
+        "z": 172.74
+      },
+      "candidates": [
+        {
+          "bin": "1085682",
+          "score": 0.829,
+          "distanceM": 16.7,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 16.7 m from the photo point",
+            "built 1998, 13 years before the 2011 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1022581",
+          "score": 0.823,
+          "distanceM": 17.5,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 17.5 m from the photo point",
+            "built 1908, 103 years before the 2011 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.749,
+          "distanceM": 27.4,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 27.4 m from the photo point",
+            "built 1972, 39 years before the 2011 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.634,
+          "distanceM": 49.2,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 49.2 m from the photo point",
+            "built 1999, 12 years before the 2011 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.61,
+          "distanceM": 55.6,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 55.6 m from the photo point",
+            "built 1927, 84 years before the 2011 photograph",
+            "height 128.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-186373787",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-186373865",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-19081527",
+      "source": "catalog",
+      "capturedAt": "2012-03-04",
+      "point": {
+        "x": 0,
+        "z": 22.21
+      },
+      "candidates": [
+        {
+          "bin": "1076844",
+          "score": 0.776,
+          "distanceM": 23.5,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 23.5 m from the photo point",
+            "built 1989, 23 years before the 2012 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.746,
+          "distanceM": 27.9,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 27.9 m from the photo point",
+            "built 1970, 42 years before the 2012 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.654,
+          "distanceM": 44.7,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 44.7 m from the photo point",
+            "built 1985, 27 years before the 2012 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1022624",
+          "score": 0.611,
+          "distanceM": 7,
+          "builtYear": 1938,
+          "heightM": 18.7,
+          "reasons": [
+            "footprint 7 m from the photo point",
+            "built 1938, 74 years before the 2012 photograph",
+            "height 18.7 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.55,
+          "distanceM": 76.8,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 76.8 m from the photo point",
+            "built 1972, 40 years before the 2012 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-19081528",
+      "source": "catalog",
+      "capturedAt": "2012-03-04",
+      "point": {
+        "x": -3.38,
+        "z": 22.21
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.766,
+          "distanceM": 24.9,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 24.9 m from the photo point",
+            "built 1970, 42 years before the 2012 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.761,
+          "distanceM": 25.7,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 25.7 m from the photo point",
+            "built 1989, 23 years before the 2012 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.66,
+          "distanceM": 43.4,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 43.4 m from the photo point",
+            "built 1985, 27 years before the 2012 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1022624",
+          "score": 0.579,
+          "distanceM": 10.2,
+          "builtYear": 1938,
+          "heightM": 18.7,
+          "reasons": [
+            "footprint 10.2 m from the photo point",
+            "built 1938, 74 years before the 2012 photograph",
+            "height 18.7 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.551,
+          "distanceM": 76,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 76 m from the photo point",
+            "built 1972, 40 years before the 2012 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-19511110",
+      "source": "catalog",
+      "capturedAt": "2012-04-25",
+      "point": {
+        "x": 51.91,
+        "z": -126.78
+      },
+      "candidates": [
+        {
+          "bin": "1024757",
+          "score": 0.749,
+          "distanceM": 27.5,
+          "builtYear": 1990,
+          "heightM": 77.7,
+          "reasons": [
+            "footprint 27.5 m from the photo point",
+            "built 1990, 22 years before the 2012 photograph",
+            "height 77.7 m"
+          ]
+        },
+        {
+          "bin": "1085493",
+          "score": 0.737,
+          "distanceM": 29.3,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 29.3 m from the photo point",
+            "built 1913, 99 years before the 2012 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1024742",
+          "score": 0.681,
+          "distanceM": 39,
+          "builtYear": 2000,
+          "heightM": 160.6,
+          "reasons": [
+            "footprint 39 m from the photo point",
+            "built 2000, 12 years before the 2012 photograph",
+            "height 160.6 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.678,
+          "distanceM": 35.9,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 35.9 m from the photo point",
+            "built 1925, 87 years before the 2012 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1076193",
+          "score": 0.602,
+          "distanceM": 58,
+          "builtYear": 1987,
+          "heightM": 201.2,
+          "reasons": [
+            "footprint 58 m from the photo point",
+            "built 1987, 25 years before the 2012 photograph",
+            "height 201.2 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-24267943",
+      "source": "catalog",
+      "capturedAt": "2011-10-28",
+      "point": {
+        "x": -14.1,
+        "z": -15.55
+      },
+      "candidates": [
+        {
+          "bin": "1024727",
+          "score": 0.933,
+          "distanceM": 5.9,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 5.9 m from the photo point",
+            "built 1985, 26 years before the 2011 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.792,
+          "distanceM": 21.4,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 21.4 m from the photo point",
+            "built 1970, 41 years before the 2011 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.711,
+          "distanceM": 33.5,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 33.5 m from the photo point",
+            "built 1989, 22 years before the 2011 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.509,
+          "distanceM": 100.1,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 100.1 m from the photo point",
+            "built 1927, 84 years before the 2011 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.496,
+          "distanceM": 95.2,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 95.2 m from the photo point",
+            "built 1925, 86 years before the 2011 photograph",
+            "height 57.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-24336752",
+      "source": "catalog",
+      "capturedAt": "2008-05-11",
+      "point": {
+        "x": -114.16,
+        "z": -149.92
+      },
+      "candidates": [
+        {
+          "bin": "1076192",
+          "score": 0.91,
+          "distanceM": 8,
+          "builtYear": 1930,
+          "heightM": 63.2,
+          "reasons": [
+            "footprint 8 m from the photo point",
+            "built 1930, 78 years before the 2008 photograph",
+            "height 63.2 m"
+          ]
+        },
+        {
+          "bin": "1024737",
+          "score": 0.897,
+          "distanceM": 9.3,
+          "builtYear": 1928,
+          "heightM": 61.9,
+          "reasons": [
+            "footprint 9.3 m from the photo point",
+            "built 1928, 80 years before the 2008 photograph",
+            "height 61.9 m"
+          ]
+        },
+        {
+          "bin": "1024738",
+          "score": 0.654,
+          "distanceM": 8.6,
+          "builtYear": 1919,
+          "heightM": 26.6,
+          "reasons": [
+            "footprint 8.6 m from the photo point",
+            "built 1919, 89 years before the 2008 photograph",
+            "height 26.6 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.653,
+          "distanceM": 44.8,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 44.8 m from the photo point",
+            "built 1985, 23 years before the 2008 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024736",
+          "score": 0.598,
+          "distanceM": 59.1,
+          "builtYear": 2006,
+          "heightM": 147.3,
+          "reasons": [
+            "footprint 59.1 m from the photo point",
+            "built 2006, 2 years before the 2008 photograph",
+            "height 147.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-24417523",
+      "source": "catalog",
+      "capturedAt": "2008-05-09",
+      "point": {
+        "x": -64.85,
+        "z": 92.84
+      },
+      "candidates": [
+        {
+          "bin": "1024706",
+          "score": 0.937,
+          "distanceM": 5.5,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 5.5 m from the photo point",
+            "built 1927, 81 years before the 2008 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.677,
+          "distanceM": 39.7,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 39.7 m from the photo point",
+            "built 1970, 38 years before the 2008 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.653,
+          "distanceM": 44.8,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 44.8 m from the photo point",
+            "built 1972, 36 years before the 2008 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.591,
+          "distanceM": 61.1,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 61.1 m from the photo point",
+            "built 1999, 9 years before the 2008 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.583,
+          "distanceM": 63.9,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 63.9 m from the photo point",
+            "built 1932, 76 years before the 2008 photograph",
+            "height 95.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-24868254",
+      "source": "catalog",
+      "capturedAt": "2009-05-21",
+      "point": {
+        "x": 32.59,
+        "z": -101.61
+      },
+      "candidates": [
+        {
+          "bin": "1085493",
+          "score": 0.7,
+          "distanceM": 35.6,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 35.6 m from the photo point",
+            "built 1913, 96 years before the 2009 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.691,
+          "distanceM": 33.6,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 33.6 m from the photo point",
+            "built 1925, 84 years before the 2009 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1024742",
+          "score": 0.661,
+          "distanceM": 43.2,
+          "builtYear": 2000,
+          "heightM": 160.6,
+          "reasons": [
+            "footprint 43.2 m from the photo point",
+            "built 2000, 9 years before the 2009 photograph",
+            "height 160.6 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.658,
+          "distanceM": 43.8,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 43.8 m from the photo point",
+            "built 1985, 24 years before the 2009 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.604,
+          "distanceM": 57.2,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 57.2 m from the photo point",
+            "built 1989, 20 years before the 2009 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-25649952",
+      "source": "catalog",
+      "capturedAt": "2011-07-03",
+      "point": {
+        "x": -278.72,
+        "z": 1568.56
+      },
+      "candidates": [
+        {
+          "bin": "1015649",
+          "score": 1,
+          "distanceM": 0,
+          "builtYear": 1916,
+          "heightM": 70.5,
+          "reasons": [
+            "photo point falls inside the footprint",
+            "built 1916, 95 years before the 2011 photograph",
+            "height 70.5 m"
+          ]
+        },
+        {
+          "bin": "1015650",
+          "score": 0.862,
+          "distanceM": 13,
+          "builtYear": 1912,
+          "heightM": 74.2,
+          "reasons": [
+            "footprint 13 m from the photo point",
+            "built 1912, 99 years before the 2011 photograph",
+            "height 74.2 m"
+          ]
+        },
+        {
+          "bin": "1015654",
+          "score": 0.78,
+          "distanceM": 22.9,
+          "builtYear": 1915,
+          "heightM": 86,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1915, 96 years before the 2011 photograph",
+            "height 86 m"
+          ]
+        },
+        {
+          "bin": "1015624",
+          "score": 0.756,
+          "distanceM": 26.4,
+          "builtYear": 1913,
+          "heightM": 90.7,
+          "reasons": [
+            "footprint 26.4 m from the photo point",
+            "built 1913, 98 years before the 2011 photograph",
+            "height 90.7 m"
+          ]
+        },
+        {
+          "bin": "1015625",
+          "score": 0.717,
+          "distanceM": 32.4,
+          "builtYear": 1896,
+          "heightM": 68.1,
+          "reasons": [
+            "footprint 32.4 m from the photo point",
+            "built 1896, 115 years before the 2011 photograph",
+            "height 68.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-26150967",
+      "source": "catalog",
+      "capturedAt": "1968-10-01",
+      "point": {
+        "x": 41.88,
+        "z": -114.05
+      },
+      "candidates": [
+        {
+          "bin": "1085493",
+          "score": 0.72,
+          "distanceM": 32,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 32 m from the photo point",
+            "built 1913, 55 years before the 1968 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.7,
+          "distanceM": 31.9,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 31.9 m from the photo point",
+            "built 1925, 43 years before the 1968 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1076192",
+          "score": 0.52,
+          "distanceM": 92.6,
+          "builtYear": 1930,
+          "heightM": 63.2,
+          "reasons": [
+            "footprint 92.6 m from the photo point",
+            "built 1930, 38 years before the 1968 photograph",
+            "height 63.2 m"
+          ]
+        },
+        {
+          "bin": "1022663",
+          "score": 0.48,
+          "distanceM": 93.2,
+          "builtYear": 1928,
+          "heightM": 54.7,
+          "reasons": [
+            "footprint 93.2 m from the photo point",
+            "built 1928, 40 years before the 1968 photograph",
+            "height 54.7 m"
+          ]
+        },
+        {
+          "bin": "1083718",
+          "score": 0.457,
+          "distanceM": 52,
+          "builtYear": 1909,
+          "heightM": 37.8,
+          "reasons": [
+            "footprint 52 m from the photo point",
+            "built 1909, 59 years before the 1968 photograph",
+            "height 37.8 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-31592320",
+      "source": "catalog",
+      "capturedAt": "2008-08-17",
+      "point": {
+        "x": -14.1,
+        "z": 26.98
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.82,
+          "distanceM": 17.8,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 17.8 m from the photo point",
+            "built 1970, 38 years before the 2008 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.693,
+          "distanceM": 36.7,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 36.7 m from the photo point",
+            "built 1989, 19 years before the 2008 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.651,
+          "distanceM": 45.4,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 45.4 m from the photo point",
+            "built 1985, 23 years before the 2008 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.579,
+          "distanceM": 65.4,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 65.4 m from the photo point",
+            "built 1927, 81 years before the 2008 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.566,
+          "distanceM": 69.9,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 69.9 m from the photo point",
+            "built 1972, 36 years before the 2008 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-31592321",
+      "source": "catalog",
+      "capturedAt": "2008-08-17",
+      "point": {
+        "x": -14.1,
+        "z": 26.98
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.82,
+          "distanceM": 17.8,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 17.8 m from the photo point",
+            "built 1970, 38 years before the 2008 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.693,
+          "distanceM": 36.7,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 36.7 m from the photo point",
+            "built 1989, 19 years before the 2008 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.651,
+          "distanceM": 45.4,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 45.4 m from the photo point",
+            "built 1985, 23 years before the 2008 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.579,
+          "distanceM": 65.4,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 65.4 m from the photo point",
+            "built 1927, 81 years before the 2008 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.566,
+          "distanceM": 69.9,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 69.9 m from the photo point",
+            "built 1972, 36 years before the 2008 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-31592324",
+      "source": "catalog",
+      "capturedAt": "2009-06-12",
+      "point": {
+        "x": -35.8,
+        "z": 64.85
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.822,
+          "distanceM": 17.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 17.6 m from the photo point",
+            "built 1970, 39 years before the 2009 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.759,
+          "distanceM": 25.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 25.9 m from the photo point",
+            "built 1927, 82 years before the 2009 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.696,
+          "distanceM": 36.1,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 36.1 m from the photo point",
+            "built 1972, 37 years before the 2009 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.545,
+          "distanceM": 79.2,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 79.2 m from the photo point",
+            "built 1989, 20 years before the 2009 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.54,
+          "distanceM": 81.5,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 81.5 m from the photo point",
+            "built 1932, 77 years before the 2009 photograph",
+            "height 95.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-31592325",
+      "source": "catalog",
+      "capturedAt": "2009-06-12",
+      "point": {
+        "x": -35.8,
+        "z": 64.85
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.822,
+          "distanceM": 17.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 17.6 m from the photo point",
+            "built 1970, 39 years before the 2009 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.759,
+          "distanceM": 25.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 25.9 m from the photo point",
+            "built 1927, 82 years before the 2009 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.696,
+          "distanceM": 36.1,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 36.1 m from the photo point",
+            "built 1972, 37 years before the 2009 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.545,
+          "distanceM": 79.2,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 79.2 m from the photo point",
+            "built 1989, 20 years before the 2009 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.54,
+          "distanceM": 81.5,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 81.5 m from the photo point",
+            "built 1932, 77 years before the 2009 photograph",
+            "height 95.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-32243322",
+      "source": "catalog",
+      "capturedAt": "2009-06-06",
+      "point": {
+        "x": -1.86,
+        "z": -27.65
+      },
+      "candidates": [
+        {
+          "bin": "1024727",
+          "score": 0.85,
+          "distanceM": 14.3,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 14.3 m from the photo point",
+            "built 1985, 24 years before the 2009 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.742,
+          "distanceM": 28.5,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 28.5 m from the photo point",
+            "built 1989, 20 years before the 2009 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.683,
+          "distanceM": 38.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 38.6 m from the photo point",
+            "built 1970, 39 years before the 2009 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.527,
+          "distanceM": 78,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 78 m from the photo point",
+            "built 1925, 84 years before the 2009 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1085493",
+          "score": 0.515,
+          "distanceM": 95.8,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 95.8 m from the photo point",
+            "built 1913, 96 years before the 2009 photograph",
+            "height 146 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-34143354",
+      "source": "catalog",
+      "capturedAt": "2014-07-20",
+      "point": {
+        "x": -28.15,
+        "z": 117.22
+      },
+      "candidates": [
+        {
+          "bin": "1022610",
+          "score": 0.976,
+          "distanceM": 2,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 2 m from the photo point",
+            "built 1972, 42 years before the 2014 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.633,
+          "distanceM": 49.4,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 49.4 m from the photo point",
+            "built 1927, 87 years before the 2014 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.588,
+          "distanceM": 62.1,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 62.1 m from the photo point",
+            "built 1998, 16 years before the 2014 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1085016",
+          "score": 0.578,
+          "distanceM": 65.6,
+          "builtYear": 1988,
+          "heightM": 147.1,
+          "reasons": [
+            "footprint 65.6 m from the photo point",
+            "built 1988, 26 years before the 2014 photograph",
+            "height 147.1 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.572,
+          "distanceM": 67.9,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 67.9 m from the photo point",
+            "built 1970, 44 years before the 2014 photograph",
+            "height 213.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-38714894",
+      "source": "catalog",
+      "capturedAt": "2012-03-25",
+      "point": {
+        "x": 32.09,
+        "z": -78.62
+      },
+      "candidates": [
+        {
+          "bin": "1022661",
+          "score": 0.74,
+          "distanceM": 25.7,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 25.7 m from the photo point",
+            "built 1925, 87 years before the 2012 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.71,
+          "distanceM": 33.6,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 33.6 m from the photo point",
+            "built 1985, 27 years before the 2012 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.705,
+          "distanceM": 34.6,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 34.6 m from the photo point",
+            "built 1989, 23 years before the 2012 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1085493",
+          "score": 0.684,
+          "distanceM": 38.4,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 38.4 m from the photo point",
+            "built 1913, 99 years before the 2012 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1024742",
+          "score": 0.58,
+          "distanceM": 64.9,
+          "builtYear": 2000,
+          "heightM": 160.6,
+          "reasons": [
+            "footprint 64.9 m from the photo point",
+            "built 2000, 12 years before the 2012 photograph",
+            "height 160.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-38716173",
+      "source": "catalog",
+      "capturedAt": "2012-03-25",
+      "point": {
+        "x": -51.26,
+        "z": 132.59
+      },
+      "candidates": [
+        {
+          "bin": "1022610",
+          "score": 0.813,
+          "distanceM": 18.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 18.7 m from the photo point",
+            "built 1972, 40 years before the 2012 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.694,
+          "distanceM": 36.6,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 36.6 m from the photo point",
+            "built 1927, 85 years before the 2012 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.641,
+          "distanceM": 47.7,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 47.7 m from the photo point",
+            "built 1998, 14 years before the 2012 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.628,
+          "distanceM": 50.8,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 50.8 m from the photo point",
+            "built 1999, 13 years before the 2012 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1022581",
+          "score": 0.626,
+          "distanceM": 51.2,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 51.2 m from the photo point",
+            "built 1908, 104 years before the 2012 photograph",
+            "height 102.7 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-49446897",
+      "source": "catalog",
+      "capturedAt": "2016-06-10",
+      "point": {
+        "x": 35.18,
+        "z": -113.83
+      },
+      "candidates": [
+        {
+          "bin": "1024742",
+          "score": 0.71,
+          "distanceM": 33.7,
+          "builtYear": 2000,
+          "heightM": 160.6,
+          "reasons": [
+            "footprint 33.7 m from the photo point",
+            "built 2000, 16 years before the 2016 photograph",
+            "height 160.6 m"
+          ]
+        },
+        {
+          "bin": "1085493",
+          "score": 0.688,
+          "distanceM": 37.8,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 37.8 m from the photo point",
+            "built 1913, 103 years before the 2016 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.67,
+          "distanceM": 37.3,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 37.3 m from the photo point",
+            "built 1925, 91 years before the 2016 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1024757",
+          "score": 0.644,
+          "distanceM": 46.8,
+          "builtYear": 1990,
+          "heightM": 77.7,
+          "reasons": [
+            "footprint 46.8 m from the photo point",
+            "built 1990, 26 years before the 2016 photograph",
+            "height 77.7 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.615,
+          "distanceM": 54.2,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 54.2 m from the photo point",
+            "built 1985, 31 years before the 2016 photograph",
+            "height 176 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-50919623",
+      "source": "catalog",
+      "capturedAt": "2015-08-19",
+      "point": {
+        "x": 32.59,
+        "z": -83.62
+      },
+      "candidates": [
+        {
+          "bin": "1022661",
+          "score": 0.739,
+          "distanceM": 25.8,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 25.8 m from the photo point",
+            "built 1925, 90 years before the 2015 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.701,
+          "distanceM": 35.2,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 35.2 m from the photo point",
+            "built 1985, 30 years before the 2015 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1085493",
+          "score": 0.696,
+          "distanceM": 36.2,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 36.2 m from the photo point",
+            "built 1913, 102 years before the 2015 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.679,
+          "distanceM": 39.4,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 39.4 m from the photo point",
+            "built 1989, 26 years before the 2015 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024742",
+          "score": 0.594,
+          "distanceM": 60.2,
+          "builtYear": 2000,
+          "heightM": 160.6,
+          "reasons": [
+            "footprint 60.2 m from the photo point",
+            "built 2000, 15 years before the 2015 photograph",
+            "height 160.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-50919624",
+      "source": "catalog",
+      "capturedAt": "2015-08-19",
+      "point": {
+        "x": 32.59,
+        "z": -83.62
+      },
+      "candidates": [
+        {
+          "bin": "1022661",
+          "score": 0.739,
+          "distanceM": 25.8,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 25.8 m from the photo point",
+            "built 1925, 90 years before the 2015 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.701,
+          "distanceM": 35.2,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 35.2 m from the photo point",
+            "built 1985, 30 years before the 2015 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1085493",
+          "score": 0.696,
+          "distanceM": 36.2,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 36.2 m from the photo point",
+            "built 1913, 102 years before the 2015 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.679,
+          "distanceM": 39.4,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 39.4 m from the photo point",
+            "built 1989, 26 years before the 2015 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024742",
+          "score": 0.594,
+          "distanceM": 60.2,
+          "builtYear": 2000,
+          "heightM": 160.6,
+          "reasons": [
+            "footprint 60.2 m from the photo point",
+            "built 2000, 15 years before the 2015 photograph",
+            "height 160.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-50919625",
+      "source": "catalog",
+      "capturedAt": "2015-08-19",
+      "point": {
+        "x": 32.59,
+        "z": -83.62
+      },
+      "candidates": [
+        {
+          "bin": "1022661",
+          "score": 0.739,
+          "distanceM": 25.8,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 25.8 m from the photo point",
+            "built 1925, 90 years before the 2015 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.701,
+          "distanceM": 35.2,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 35.2 m from the photo point",
+            "built 1985, 30 years before the 2015 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1085493",
+          "score": 0.696,
+          "distanceM": 36.2,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 36.2 m from the photo point",
+            "built 1913, 102 years before the 2015 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.679,
+          "distanceM": 39.4,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 39.4 m from the photo point",
+            "built 1989, 26 years before the 2015 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024742",
+          "score": 0.594,
+          "distanceM": 60.2,
+          "builtYear": 2000,
+          "heightM": 160.6,
+          "reasons": [
+            "footprint 60.2 m from the photo point",
+            "built 2000, 15 years before the 2015 photograph",
+            "height 160.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-51487113",
+      "source": "catalog",
+      "capturedAt": "2016-07-10",
+      "point": {
+        "x": 60.29,
+        "z": -97.5
+      },
+      "candidates": [
+        {
+          "bin": "1085493",
+          "score": 0.912,
+          "distanceM": 7.9,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 7.9 m from the photo point",
+            "built 1913, 103 years before the 2016 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.897,
+          "distanceM": 7.4,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 7.4 m from the photo point",
+            "built 1925, 91 years before the 2016 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1024757",
+          "score": 0.614,
+          "distanceM": 54.6,
+          "builtYear": 1990,
+          "heightM": 77.7,
+          "reasons": [
+            "footprint 54.6 m from the photo point",
+            "built 1990, 26 years before the 2016 photograph",
+            "height 77.7 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.607,
+          "distanceM": 56.5,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 56.5 m from the photo point",
+            "built 1989, 27 years before the 2016 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024742",
+          "score": 0.587,
+          "distanceM": 62.5,
+          "builtYear": 2000,
+          "heightM": 160.6,
+          "reasons": [
+            "footprint 62.5 m from the photo point",
+            "built 2000, 16 years before the 2016 photograph",
+            "height 160.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-53032411",
+      "source": "evidence",
+      "capturedAt": "2010-10-04",
+      "point": {
+        "x": -5.07,
+        "z": 3
+      },
+      "candidates": [
+        {
+          "bin": "1076844",
+          "score": 0.811,
+          "distanceM": 19,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 19 m from the photo point",
+            "built 1989, 21 years before the 2010 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.8,
+          "distanceM": 20.3,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 20.3 m from the photo point",
+            "built 1970, 40 years before the 2010 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.762,
+          "distanceM": 25.5,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 25.5 m from the photo point",
+            "built 1985, 25 years before the 2010 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.525,
+          "distanceM": 89.4,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 89.4 m from the photo point",
+            "built 1927, 83 years before the 2010 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.517,
+          "distanceM": 94.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 94.7 m from the photo point",
+            "built 1972, 38 years before the 2010 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false,
+      "storedPoint": {
+        "x": -5.0665,
+        "z": 2.9983
+      }
+    },
+    {
+      "photoId": "commons-53137055",
+      "source": "catalog",
+      "capturedAt": "2009-07-14",
+      "point": {
+        "x": -380.33,
+        "z": 94.38
+      },
+      "candidates": [
+        {
+          "bin": "1083268",
+          "score": 0.735,
+          "distanceM": 4.4,
+          "builtYear": 1950,
+          "heightM": 31.4,
+          "reasons": [
+            "footprint 4.4 m from the photo point",
+            "built 1950, 59 years before the 2009 photograph",
+            "height 31.4 m"
+          ]
+        },
+        {
+          "bin": "1087142",
+          "score": 0.657,
+          "distanceM": 42.4,
+          "builtYear": 1998,
+          "heightM": 59.1,
+          "reasons": [
+            "footprint 42.4 m from the photo point",
+            "built 1998, 11 years before the 2009 photograph",
+            "height 59.1 m"
+          ]
+        },
+        {
+          "bin": "1024947",
+          "score": 0.64,
+          "distanceM": 42.4,
+          "builtYear": 1972,
+          "heightM": 56.7,
+          "reasons": [
+            "footprint 42.4 m from the photo point",
+            "built 1972, 37 years before the 2009 photograph",
+            "height 56.7 m"
+          ]
+        },
+        {
+          "bin": "1024669",
+          "score": 0.575,
+          "distanceM": 66.8,
+          "builtYear": 1999,
+          "heightM": 60.4,
+          "reasons": [
+            "footprint 66.8 m from the photo point",
+            "built 1999, 10 years before the 2009 photograph",
+            "height 60.4 m"
+          ]
+        },
+        {
+          "bin": "1087141",
+          "score": 0.57,
+          "distanceM": 68.5,
+          "builtYear": 2000,
+          "heightM": 161.8,
+          "reasons": [
+            "footprint 68.5 m from the photo point",
+            "built 2000, 9 years before the 2009 photograph",
+            "height 161.8 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-53177791",
+      "source": "catalog",
+      "capturedAt": "2009-06-30",
+      "point": {
+        "x": 47.71,
+        "z": -126.49
+      },
+      "candidates": [
+        {
+          "bin": "1024757",
+          "score": 0.735,
+          "distanceM": 29.6,
+          "builtYear": 1990,
+          "heightM": 77.7,
+          "reasons": [
+            "footprint 29.6 m from the photo point",
+            "built 1990, 19 years before the 2009 photograph",
+            "height 77.7 m"
+          ]
+        },
+        {
+          "bin": "1085493",
+          "score": 0.715,
+          "distanceM": 32.9,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 32.9 m from the photo point",
+            "built 1913, 96 years before the 2009 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1024742",
+          "score": 0.701,
+          "distanceM": 35.2,
+          "builtYear": 2000,
+          "heightM": 160.6,
+          "reasons": [
+            "footprint 35.2 m from the photo point",
+            "built 2000, 9 years before the 2009 photograph",
+            "height 160.6 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.668,
+          "distanceM": 37.6,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 37.6 m from the photo point",
+            "built 1925, 84 years before the 2009 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1076193",
+          "score": 0.607,
+          "distanceM": 56.4,
+          "builtYear": 1987,
+          "heightM": 201.2,
+          "reasons": [
+            "footprint 56.4 m from the photo point",
+            "built 1987, 22 years before the 2009 photograph",
+            "height 201.2 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-53911963",
+      "source": "evidence",
+      "capturedAt": "2006-01-18",
+      "point": {
+        "x": -5.07,
+        "z": 5.22
+      },
+      "candidates": [
+        {
+          "bin": "1076844",
+          "score": 0.81,
+          "distanceM": 19.1,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 19.1 m from the photo point",
+            "built 1989, 17 years before the 2006 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.804,
+          "distanceM": 19.8,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 19.8 m from the photo point",
+            "built 1970, 36 years before the 2006 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.749,
+          "distanceM": 27.4,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 27.4 m from the photo point",
+            "built 1985, 21 years before the 2006 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.528,
+          "distanceM": 87.7,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 87.7 m from the photo point",
+            "built 1927, 79 years before the 2006 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.52,
+          "distanceM": 92.5,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 92.5 m from the photo point",
+            "built 1972, 34 years before the 2006 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false,
+      "storedPoint": {
+        "x": -5.0665,
+        "z": 5.2193
+      }
+    },
+    {
+      "photoId": "commons-54826622",
+      "source": "catalog",
+      "capturedAt": "2012-06-14",
+      "point": {
+        "x": 86.81,
+        "z": -112.27
+      },
+      "candidates": [
+        {
+          "bin": "1085493",
+          "score": 1,
+          "distanceM": 0,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "photo point falls inside the footprint",
+            "built 1913, 99 years before the 2012 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.742,
+          "distanceM": 25.5,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 25.5 m from the photo point",
+            "built 1925, 87 years before the 2012 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1024757",
+          "score": 0.646,
+          "distanceM": 46.4,
+          "builtYear": 1990,
+          "heightM": 77.7,
+          "reasons": [
+            "footprint 46.4 m from the photo point",
+            "built 1990, 22 years before the 2012 photograph",
+            "height 77.7 m"
+          ]
+        },
+        {
+          "bin": "1083718",
+          "score": 0.624,
+          "distanceM": 21.6,
+          "builtYear": 1909,
+          "heightM": 37.8,
+          "reasons": [
+            "footprint 21.6 m from the photo point",
+            "built 1909, 103 years before the 2012 photograph",
+            "height 37.8 m"
+          ]
+        },
+        {
+          "bin": "1022663",
+          "score": 0.559,
+          "distanceM": 58.7,
+          "builtYear": 1928,
+          "heightM": 54.7,
+          "reasons": [
+            "footprint 58.7 m from the photo point",
+            "built 1928, 84 years before the 2012 photograph",
+            "height 54.7 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-58570786",
+      "source": "catalog",
+      "capturedAt": "2014-09-09",
+      "point": {
+        "x": -2444.09,
+        "z": 5896.51
+      },
+      "candidates": [
+        {
+          "bin": "1000043",
+          "score": 0.958,
+          "distanceM": 0,
+          "builtYear": 1887,
+          "heightM": 54.4,
+          "reasons": [
+            "photo point falls inside the footprint",
+            "built 1887, 127 years before the 2014 photograph",
+            "height 54.4 m"
+          ]
+        },
+        {
+          "bin": "1000044",
+          "score": 0.787,
+          "distanceM": 22.1,
+          "builtYear": 1898,
+          "heightM": 96.9,
+          "reasons": [
+            "footprint 22.1 m from the photo point",
+            "built 1898, 116 years before the 2014 photograph",
+            "height 96.9 m"
+          ]
+        },
+        {
+          "bin": "1000045",
+          "score": 0.568,
+          "distanceM": 69.3,
+          "builtYear": 1921,
+          "heightM": 102.6,
+          "reasons": [
+            "footprint 69.3 m from the photo point",
+            "built 1921, 93 years before the 2014 photograph",
+            "height 102.6 m"
+          ]
+        },
+        {
+          "bin": "1000811",
+          "score": 0.506,
+          "distanceM": 102.7,
+          "builtYear": 1885,
+          "heightM": 144.5,
+          "reasons": [
+            "footprint 102.7 m from the photo point",
+            "built 1885, 129 years before the 2014 photograph",
+            "height 144.5 m"
+          ]
+        },
+        {
+          "bin": "1000029",
+          "score": 0.506,
+          "distanceM": 103,
+          "builtYear": 1958,
+          "heightM": 128.4,
+          "reasons": [
+            "footprint 103 m from the photo point",
+            "built 1958, 56 years before the 2014 photograph",
+            "height 128.4 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-59276738",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-59276741",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-59276754",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-59276756",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-59276770",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-59276773",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-59276774",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-59276793",
+      "source": "catalog",
+      "capturedAt": "2007-12-05",
+      "point": {
+        "x": -39.43,
+        "z": 63.96
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.848,
+          "distanceM": 14.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1970, 37 years before the 2007 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.781,
+          "distanceM": 22.9,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 22.9 m from the photo point",
+            "built 1927, 80 years before the 2007 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.7,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.7 m from the photo point",
+            "built 1972, 35 years before the 2007 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.548,
+          "distanceM": 77.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 77.8 m from the photo point",
+            "built 1932, 75 years before the 2007 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.541,
+          "distanceM": 80.9,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 80.9 m from the photo point",
+            "built 1989, 18 years before the 2007 photograph",
+            "height 175.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-60246725",
+      "source": "catalog",
+      "capturedAt": "2015-10-30",
+      "point": {
+        "x": -79.55,
+        "z": 240.87
+      },
+      "candidates": [
+        {
+          "bin": "1086069",
+          "score": 0.815,
+          "distanceM": 18.5,
+          "builtYear": 2002,
+          "heightM": 209.6,
+          "reasons": [
+            "footprint 18.5 m from the photo point",
+            "built 2002, 13 years before the 2015 photograph",
+            "height 209.6 m"
+          ]
+        },
+        {
+          "bin": "1022581",
+          "score": 0.792,
+          "distanceM": 21.4,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 21.4 m from the photo point",
+            "built 1908, 107 years before the 2015 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.761,
+          "distanceM": 25.6,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 25.6 m from the photo point",
+            "built 1998, 17 years before the 2015 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1024656",
+          "score": 0.571,
+          "distanceM": 68.1,
+          "builtYear": 2000,
+          "heightM": 164.8,
+          "reasons": [
+            "footprint 68.1 m from the photo point",
+            "built 2000, 15 years before the 2015 photograph",
+            "height 164.8 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.568,
+          "distanceM": 69.3,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 69.3 m from the photo point",
+            "built 1999, 16 years before the 2015 photograph",
+            "height 148.9 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-60246736",
+      "source": "catalog",
+      "capturedAt": "2015-10-30",
+      "point": {
+        "x": 93.39,
+        "z": -172.13
+      },
+      "candidates": [
+        {
+          "bin": "1024757",
+          "score": 0.84,
+          "distanceM": 15.5,
+          "builtYear": 1990,
+          "heightM": 77.7,
+          "reasons": [
+            "footprint 15.5 m from the photo point",
+            "built 1990, 25 years before the 2015 photograph",
+            "height 77.7 m"
+          ]
+        },
+        {
+          "bin": "1083718",
+          "score": 0.68,
+          "distanceM": 14.7,
+          "builtYear": 1909,
+          "heightM": 37.8,
+          "reasons": [
+            "footprint 14.7 m from the photo point",
+            "built 1909, 106 years before the 2015 photograph",
+            "height 37.8 m"
+          ]
+        },
+        {
+          "bin": "1087187",
+          "score": 0.627,
+          "distanceM": 51.1,
+          "builtYear": 2005,
+          "heightM": 92.7,
+          "reasons": [
+            "footprint 51.1 m from the photo point",
+            "built 2005, 10 years before the 2015 photograph",
+            "height 92.7 m"
+          ]
+        },
+        {
+          "bin": "1085493",
+          "score": 0.613,
+          "distanceM": 54.7,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 54.7 m from the photo point",
+            "built 1913, 102 years before the 2015 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1022688",
+          "score": 0.589,
+          "distanceM": 49,
+          "builtYear": 1920,
+          "heightM": 53.9,
+          "reasons": [
+            "footprint 49 m from the photo point",
+            "built 1920, 95 years before the 2015 photograph",
+            "height 53.9 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-60251150",
+      "source": "evidence",
+      "capturedAt": "2015-10-30",
+      "point": {
+        "x": -2.36,
+        "z": -0.89
+      },
+      "candidates": [
+        {
+          "bin": "1076844",
+          "score": 0.829,
+          "distanceM": 16.8,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 16.8 m from the photo point",
+            "built 1989, 26 years before the 2015 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.771,
+          "distanceM": 24.2,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 24.2 m from the photo point",
+            "built 1970, 45 years before the 2015 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.771,
+          "distanceM": 24.2,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 24.2 m from the photo point",
+            "built 1985, 30 years before the 2015 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.518,
+          "distanceM": 94.1,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 94.1 m from the photo point",
+            "built 1927, 88 years before the 2015 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1085016",
+          "score": 0.514,
+          "distanceM": 96.5,
+          "builtYear": 1988,
+          "heightM": 147.1,
+          "reasons": [
+            "footprint 96.5 m from the photo point",
+            "built 1988, 27 years before the 2015 photograph",
+            "height 147.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false,
+      "storedPoint": {
+        "x": -2.3644,
+        "z": -0.8884
+      }
+    },
+    {
+      "photoId": "commons-60251150",
+      "source": "catalog",
+      "capturedAt": "2015-10-30",
+      "point": {
+        "x": -2.36,
+        "z": -0.89
+      },
+      "candidates": [
+        {
+          "bin": "1076844",
+          "score": 0.829,
+          "distanceM": 16.8,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 16.8 m from the photo point",
+            "built 1989, 26 years before the 2015 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.771,
+          "distanceM": 24.2,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 24.2 m from the photo point",
+            "built 1970, 45 years before the 2015 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.771,
+          "distanceM": 24.2,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 24.2 m from the photo point",
+            "built 1985, 30 years before the 2015 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.518,
+          "distanceM": 94.1,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 94.1 m from the photo point",
+            "built 1927, 88 years before the 2015 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1085016",
+          "score": 0.514,
+          "distanceM": 96.5,
+          "builtYear": 1988,
+          "heightM": 147.1,
+          "reasons": [
+            "footprint 96.5 m from the photo point",
+            "built 1988, 27 years before the 2015 photograph",
+            "height 147.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-6035627",
+      "source": "catalog",
+      "capturedAt": "2008-12-12",
+      "point": {
+        "x": -28.62,
+        "z": 133.4
+      },
+      "candidates": [
+        {
+          "bin": "1022610",
+          "score": 1,
+          "distanceM": 0,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "photo point falls inside the footprint",
+            "built 1972, 36 years before the 2008 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.648,
+          "distanceM": 46.1,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 46.1 m from the photo point",
+            "built 1998, 10 years before the 2008 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.606,
+          "distanceM": 56.8,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 56.8 m from the photo point",
+            "built 1927, 81 years before the 2008 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022581",
+          "score": 0.581,
+          "distanceM": 64.5,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 64.5 m from the photo point",
+            "built 1908, 100 years before the 2008 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1085016",
+          "score": 0.564,
+          "distanceM": 70.7,
+          "builtYear": 1988,
+          "heightM": 147.1,
+          "reasons": [
+            "footprint 70.7 m from the photo point",
+            "built 1988, 20 years before the 2008 photograph",
+            "height 147.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-6044197",
+      "source": "catalog",
+      "capturedAt": "2008-12-12",
+      "point": {
+        "x": -28.62,
+        "z": 133.4
+      },
+      "candidates": [
+        {
+          "bin": "1022610",
+          "score": 1,
+          "distanceM": 0,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "photo point falls inside the footprint",
+            "built 1972, 36 years before the 2008 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.648,
+          "distanceM": 46.1,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 46.1 m from the photo point",
+            "built 1998, 10 years before the 2008 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.606,
+          "distanceM": 56.8,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 56.8 m from the photo point",
+            "built 1927, 81 years before the 2008 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022581",
+          "score": 0.581,
+          "distanceM": 64.5,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 64.5 m from the photo point",
+            "built 1908, 100 years before the 2008 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1085016",
+          "score": 0.564,
+          "distanceM": 70.7,
+          "builtYear": 1988,
+          "heightM": 147.1,
+          "reasons": [
+            "footprint 70.7 m from the photo point",
+            "built 1988, 20 years before the 2008 photograph",
+            "height 147.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-61899428",
+      "source": "catalog",
+      "capturedAt": "2016-12-17",
+      "point": {
+        "x": 86.79,
+        "z": -112.27
+      },
+      "candidates": [
+        {
+          "bin": "1085493",
+          "score": 1,
+          "distanceM": 0,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "photo point falls inside the footprint",
+            "built 1913, 103 years before the 2016 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.742,
+          "distanceM": 25.5,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 25.5 m from the photo point",
+            "built 1925, 91 years before the 2016 photograph",
+            "height 57.3 m"
+          ]
+        },
+        {
+          "bin": "1024757",
+          "score": 0.646,
+          "distanceM": 46.4,
+          "builtYear": 1990,
+          "heightM": 77.7,
+          "reasons": [
+            "footprint 46.4 m from the photo point",
+            "built 1990, 26 years before the 2016 photograph",
+            "height 77.7 m"
+          ]
+        },
+        {
+          "bin": "1083718",
+          "score": 0.624,
+          "distanceM": 21.6,
+          "builtYear": 1909,
+          "heightM": 37.8,
+          "reasons": [
+            "footprint 21.6 m from the photo point",
+            "built 1909, 107 years before the 2016 photograph",
+            "height 37.8 m"
+          ]
+        },
+        {
+          "bin": "1022663",
+          "score": 0.559,
+          "distanceM": 58.7,
+          "builtYear": 1928,
+          "heightM": 54.7,
+          "reasons": [
+            "footprint 58.7 m from the photo point",
+            "built 1928, 88 years before the 2016 photograph",
+            "height 54.7 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-63670072",
+      "source": "catalog",
+      "capturedAt": "2017-08-21",
+      "point": {
+        "x": -17.1,
+        "z": 15.32
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.895,
+          "distanceM": 9.6,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 9.6 m from the photo point",
+            "built 1970, 47 years before the 2017 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.713,
+          "distanceM": 33.3,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 33.3 m from the photo point",
+            "built 1989, 28 years before the 2017 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.711,
+          "distanceM": 33.5,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 33.5 m from the photo point",
+            "built 1985, 32 years before the 2017 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.56,
+          "distanceM": 72.3,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 72.3 m from the photo point",
+            "built 1927, 90 years before the 2017 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.54,
+          "distanceM": 81.4,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 81.4 m from the photo point",
+            "built 1972, 45 years before the 2017 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-64138062",
+      "source": "catalog",
+      "capturedAt": "2010-05-28",
+      "point": {
+        "x": -53.03,
+        "z": 108.61
+      },
+      "candidates": [
+        {
+          "bin": "1024706",
+          "score": 0.776,
+          "distanceM": 23.5,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 23.5 m from the photo point",
+            "built 1927, 83 years before the 2010 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.743,
+          "distanceM": 28.4,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 28.4 m from the photo point",
+            "built 1972, 38 years before the 2010 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.612,
+          "distanceM": 55.1,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 55.1 m from the photo point",
+            "built 1970, 40 years before the 2010 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.599,
+          "distanceM": 58.8,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 58.8 m from the photo point",
+            "built 1999, 11 years before the 2010 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.562,
+          "distanceM": 71.5,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 71.5 m from the photo point",
+            "built 1998, 12 years before the 2010 photograph",
+            "height 224.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-66537026",
+      "source": "catalog",
+      "capturedAt": "2011-10-25",
+      "point": {
+        "x": -87.48,
+        "z": 191.23
+      },
+      "candidates": [
+        {
+          "bin": "1022581",
+          "score": 1,
+          "distanceM": 0,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "photo point falls inside the footprint",
+            "built 1908, 103 years before the 2011 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.702,
+          "distanceM": 35.1,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 35.1 m from the photo point",
+            "built 1999, 12 years before the 2011 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.682,
+          "distanceM": 38.8,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 38.8 m from the photo point",
+            "built 1998, 13 years before the 2011 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1086069",
+          "score": 0.606,
+          "distanceM": 56.7,
+          "builtYear": 2002,
+          "heightM": 209.6,
+          "reasons": [
+            "footprint 56.7 m from the photo point",
+            "built 2002, 9 years before the 2011 photograph",
+            "height 209.6 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.59,
+          "distanceM": 61.6,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 61.6 m from the photo point",
+            "built 1972, 39 years before the 2011 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-66537691",
+      "source": "catalog",
+      "capturedAt": "2011-08-02",
+      "point": {
+        "x": -87.48,
+        "z": 191.23
+      },
+      "candidates": [
+        {
+          "bin": "1022581",
+          "score": 1,
+          "distanceM": 0,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "photo point falls inside the footprint",
+            "built 1908, 103 years before the 2011 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.702,
+          "distanceM": 35.1,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 35.1 m from the photo point",
+            "built 1999, 12 years before the 2011 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.682,
+          "distanceM": 38.8,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 38.8 m from the photo point",
+            "built 1998, 13 years before the 2011 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1086069",
+          "score": 0.606,
+          "distanceM": 56.7,
+          "builtYear": 2002,
+          "heightM": 209.6,
+          "reasons": [
+            "footprint 56.7 m from the photo point",
+            "built 2002, 9 years before the 2011 photograph",
+            "height 209.6 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.59,
+          "distanceM": 61.6,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 61.6 m from the photo point",
+            "built 1972, 39 years before the 2011 photograph",
+            "height 125.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-7336739",
+      "source": "catalog",
+      "capturedAt": "2009-05-31",
+      "point": {
+        "x": -80.22,
+        "z": 218.4
+      },
+      "candidates": [
+        {
+          "bin": "1022581",
+          "score": 0.938,
+          "distanceM": 5.3,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 5.3 m from the photo point",
+            "built 1908, 101 years before the 2009 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.762,
+          "distanceM": 25.5,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 25.5 m from the photo point",
+            "built 1998, 11 years before the 2009 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1086069",
+          "score": 0.695,
+          "distanceM": 36.4,
+          "builtYear": 2002,
+          "heightM": 209.6,
+          "reasons": [
+            "footprint 36.4 m from the photo point",
+            "built 2002, 7 years before the 2009 photograph",
+            "height 209.6 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.617,
+          "distanceM": 53.6,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 53.6 m from the photo point",
+            "built 1999, 10 years before the 2009 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1024656",
+          "score": 0.579,
+          "distanceM": 65.3,
+          "builtYear": 2000,
+          "heightM": 164.8,
+          "reasons": [
+            "footprint 65.3 m from the photo point",
+            "built 2000, 9 years before the 2009 photograph",
+            "height 164.8 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-784775",
+      "source": "catalog",
+      "capturedAt": "1979-11-22",
+      "point": {
+        "x": 58.64,
+        "z": -185.08
+      },
+      "candidates": [
+        {
+          "bin": "1085493",
+          "score": 0.561,
+          "distanceM": 72,
+          "builtYear": 1913,
+          "heightM": 146,
+          "reasons": [
+            "footprint 72 m from the photo point",
+            "built 1913, 66 years before the 1979 photograph",
+            "height 146 m"
+          ]
+        },
+        {
+          "bin": "1076192",
+          "score": 0.531,
+          "distanceM": 86.1,
+          "builtYear": 1930,
+          "heightM": 63.2,
+          "reasons": [
+            "footprint 86.1 m from the photo point",
+            "built 1930, 49 years before the 1979 photograph",
+            "height 63.2 m"
+          ]
+        },
+        {
+          "bin": "1022699",
+          "score": 0.513,
+          "distanceM": 97.5,
+          "builtYear": 1915,
+          "heightM": 68.6,
+          "reasons": [
+            "footprint 97.5 m from the photo point",
+            "built 1915, 64 years before the 1979 photograph",
+            "height 68.6 m"
+          ]
+        },
+        {
+          "bin": "1022688",
+          "score": 0.512,
+          "distanceM": 73.4,
+          "builtYear": 1920,
+          "heightM": 53.9,
+          "reasons": [
+            "footprint 73.4 m from the photo point",
+            "built 1920, 59 years before the 1979 photograph",
+            "height 53.9 m"
+          ]
+        },
+        {
+          "bin": "1022661",
+          "score": 0.502,
+          "distanceM": 91.3,
+          "builtYear": 1925,
+          "heightM": 57.3,
+          "reasons": [
+            "footprint 91.3 m from the photo point",
+            "built 1925, 54 years before the 1979 photograph",
+            "height 57.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-82986254",
+      "source": "catalog",
+      "capturedAt": "2019-09-12",
+      "point": {
+        "x": -58.44,
+        "z": 181.34
+      },
+      "candidates": [
+        {
+          "bin": "1085682",
+          "score": 0.865,
+          "distanceM": 12.7,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 12.7 m from the photo point",
+            "built 1998, 21 years before the 2019 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1022581",
+          "score": 0.824,
+          "distanceM": 17.3,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 17.3 m from the photo point",
+            "built 1908, 111 years before the 2019 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.715,
+          "distanceM": 32.9,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 32.9 m from the photo point",
+            "built 1972, 47 years before the 2019 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.617,
+          "distanceM": 53.6,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 53.6 m from the photo point",
+            "built 1999, 20 years before the 2019 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.586,
+          "distanceM": 63,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 63 m from the photo point",
+            "built 1927, 92 years before the 2019 photograph",
+            "height 128.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-82986257",
+      "source": "catalog",
+      "capturedAt": "2019-09-12",
+      "point": {
+        "x": -50.67,
+        "z": 62.3
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.889,
+          "distanceM": 10.2,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 10.2 m from the photo point",
+            "built 1970, 49 years before the 2019 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.847,
+          "distanceM": 14.6,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 14.6 m from the photo point",
+            "built 1927, 92 years before the 2019 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.644,
+          "distanceM": 47,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 47 m from the photo point",
+            "built 1972, 47 years before the 2019 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.576,
+          "distanceM": 66.5,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 66.5 m from the photo point",
+            "built 1932, 87 years before the 2019 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.532,
+          "distanceM": 85.9,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 85.9 m from the photo point",
+            "built 1985, 34 years before the 2019 photograph",
+            "height 176 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-82986258",
+      "source": "catalog",
+      "capturedAt": "2019-09-12",
+      "point": {
+        "x": -41.55,
+        "z": 78.96
+      },
+      "candidates": [
+        {
+          "bin": "1024706",
+          "score": 0.806,
+          "distanceM": 19.6,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 19.6 m from the photo point",
+            "built 1927, 92 years before the 2019 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.749,
+          "distanceM": 27.4,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 27.4 m from the photo point",
+            "built 1970, 49 years before the 2019 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.739,
+          "distanceM": 28.9,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 28.9 m from the photo point",
+            "built 1972, 47 years before the 2019 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.546,
+          "distanceM": 78.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 78.8 m from the photo point",
+            "built 1932, 87 years before the 2019 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1085016",
+          "score": 0.538,
+          "distanceM": 82.6,
+          "builtYear": 1988,
+          "heightM": 147.1,
+          "reasons": [
+            "footprint 82.6 m from the photo point",
+            "built 1988, 31 years before the 2019 photograph",
+            "height 147.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-82986259",
+      "source": "catalog",
+      "capturedAt": "2019-09-12",
+      "point": {
+        "x": -65.44,
+        "z": 162.91
+      },
+      "candidates": [
+        {
+          "bin": "1022581",
+          "score": 0.819,
+          "distanceM": 17.9,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 17.9 m from the photo point",
+            "built 1908, 111 years before the 2019 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.744,
+          "distanceM": 28.2,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 28.2 m from the photo point",
+            "built 1998, 21 years before the 2019 photograph",
+            "height 224.6 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.733,
+          "distanceM": 29.9,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 29.9 m from the photo point",
+            "built 1972, 47 years before the 2019 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.683,
+          "distanceM": 38.6,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 38.6 m from the photo point",
+            "built 1999, 20 years before the 2019 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.659,
+          "distanceM": 43.6,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 43.6 m from the photo point",
+            "built 1927, 92 years before the 2019 photograph",
+            "height 128.3 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-82986261",
+      "source": "catalog",
+      "capturedAt": "2019-09-12",
+      "point": {
+        "x": -40.36,
+        "z": 77.07
+      },
+      "candidates": [
+        {
+          "bin": "1024706",
+          "score": 0.8,
+          "distanceM": 20.3,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 20.3 m from the photo point",
+            "built 1927, 92 years before the 2019 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.759,
+          "distanceM": 25.9,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 25.9 m from the photo point",
+            "built 1970, 49 years before the 2019 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.737,
+          "distanceM": 29.2,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 29.2 m from the photo point",
+            "built 1972, 47 years before the 2019 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.544,
+          "distanceM": 79.4,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 79.4 m from the photo point",
+            "built 1932, 87 years before the 2019 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1085016",
+          "score": 0.539,
+          "distanceM": 82.1,
+          "builtYear": 1988,
+          "heightM": 147.1,
+          "reasons": [
+            "footprint 82.1 m from the photo point",
+            "built 1988, 31 years before the 2019 photograph",
+            "height 147.1 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-82986262",
+      "source": "catalog",
+      "capturedAt": "2019-09-12",
+      "point": {
+        "x": -38.51,
+        "z": 88.51
+      },
+      "candidates": [
+        {
+          "bin": "1022610",
+          "score": 0.792,
+          "distanceM": 21.4,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 21.4 m from the photo point",
+            "built 1972, 47 years before the 2019 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.756,
+          "distanceM": 26.4,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 26.4 m from the photo point",
+            "built 1927, 92 years before the 2019 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.69,
+          "distanceM": 37.4,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 37.4 m from the photo point",
+            "built 1970, 49 years before the 2019 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1085016",
+          "score": 0.549,
+          "distanceM": 77,
+          "builtYear": 1988,
+          "heightM": 147.1,
+          "reasons": [
+            "footprint 77 m from the photo point",
+            "built 1988, 31 years before the 2019 photograph",
+            "height 147.1 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.538,
+          "distanceM": 82.5,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 82.5 m from the photo point",
+            "built 1999, 20 years before the 2019 photograph",
+            "height 148.9 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-82986264",
+      "source": "catalog",
+      "capturedAt": "2019-09-12",
+      "point": {
+        "x": -56.32,
+        "z": 86.4
+      },
+      "candidates": [
+        {
+          "bin": "1024706",
+          "score": 0.892,
+          "distanceM": 9.8,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 9.8 m from the photo point",
+            "built 1927, 92 years before the 2019 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1024714",
+          "score": 0.716,
+          "distanceM": 32.7,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 32.7 m from the photo point",
+            "built 1970, 49 years before the 2019 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.682,
+          "distanceM": 38.9,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 38.9 m from the photo point",
+            "built 1972, 47 years before the 2019 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1088760",
+          "score": 0.572,
+          "distanceM": 67.8,
+          "builtYear": 1932,
+          "heightM": 95.1,
+          "reasons": [
+            "footprint 67.8 m from the photo point",
+            "built 1932, 87 years before the 2019 photograph",
+            "height 95.1 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.562,
+          "distanceM": 71.5,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 71.5 m from the photo point",
+            "built 1999, 20 years before the 2019 photograph",
+            "height 148.9 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-88130242",
+      "source": "catalog",
+      "capturedAt": "2007-05-03",
+      "point": {
+        "x": -116.45,
+        "z": 233.2
+      },
+      "candidates": [
+        {
+          "bin": "1086069",
+          "score": 0.926,
+          "distanceM": 6.5,
+          "builtYear": 2002,
+          "heightM": 209.6,
+          "reasons": [
+            "footprint 6.5 m from the photo point",
+            "built 2002, 5 years before the 2007 photograph",
+            "height 209.6 m"
+          ]
+        },
+        {
+          "bin": "1022581",
+          "score": 0.76,
+          "distanceM": 25.8,
+          "builtYear": 1908,
+          "heightM": 102.7,
+          "reasons": [
+            "footprint 25.8 m from the photo point",
+            "built 1908, 99 years before the 2007 photograph",
+            "height 102.7 m"
+          ]
+        },
+        {
+          "bin": "1024656",
+          "score": 0.729,
+          "distanceM": 30.5,
+          "builtYear": 2000,
+          "heightM": 164.8,
+          "reasons": [
+            "footprint 30.5 m from the photo point",
+            "built 2000, 7 years before the 2007 photograph",
+            "height 164.8 m"
+          ]
+        },
+        {
+          "bin": "1024686",
+          "score": 0.657,
+          "distanceM": 43.9,
+          "builtYear": 1999,
+          "heightM": 148.9,
+          "reasons": [
+            "footprint 43.9 m from the photo point",
+            "built 1999, 8 years before the 2007 photograph",
+            "height 148.9 m"
+          ]
+        },
+        {
+          "bin": "1085682",
+          "score": 0.593,
+          "distanceM": 60.6,
+          "builtYear": 1998,
+          "heightM": 224.6,
+          "reasons": [
+            "footprint 60.6 m from the photo point",
+            "built 1998, 9 years before the 2007 photograph",
+            "height 224.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-8884017",
+      "source": "catalog",
+      "capturedAt": "2009-12-10",
+      "point": {
+        "x": -135.1,
+        "z": -164.72
+      },
+      "candidates": [
+        {
+          "bin": "1024737",
+          "score": 0.939,
+          "distanceM": 5.3,
+          "builtYear": 1928,
+          "heightM": 61.9,
+          "reasons": [
+            "footprint 5.3 m from the photo point",
+            "built 1928, 81 years before the 2009 photograph",
+            "height 61.9 m"
+          ]
+        },
+        {
+          "bin": "1076192",
+          "score": 0.791,
+          "distanceM": 21.5,
+          "builtYear": 1930,
+          "heightM": 63.2,
+          "reasons": [
+            "footprint 21.5 m from the photo point",
+            "built 1930, 79 years before the 2009 photograph",
+            "height 63.2 m"
+          ]
+        },
+        {
+          "bin": "1024736",
+          "score": 0.711,
+          "distanceM": 33.5,
+          "builtYear": 2006,
+          "heightM": 147.3,
+          "reasons": [
+            "footprint 33.5 m from the photo point",
+            "built 2006, 3 years before the 2009 photograph",
+            "height 147.3 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.589,
+          "distanceM": 61.8,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 61.8 m from the photo point",
+            "built 1985, 24 years before the 2009 photograph",
+            "height 176 m"
+          ]
+        },
+        {
+          "bin": "1024725",
+          "score": 0.555,
+          "distanceM": 13.4,
+          "builtYear": 1923,
+          "heightM": 19.6,
+          "reasons": [
+            "footprint 13.4 m from the photo point",
+            "built 1923, 86 years before the 2009 photograph",
+            "height 19.6 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    },
+    {
+      "photoId": "commons-9050927",
+      "source": "catalog",
+      "capturedAt": "2009-12-30",
+      "point": {
+        "x": -16.42,
+        "z": 40.1
+      },
+      "candidates": [
+        {
+          "bin": "1024714",
+          "score": 0.787,
+          "distanceM": 22.1,
+          "builtYear": 1970,
+          "heightM": 213.6,
+          "reasons": [
+            "footprint 22.1 m from the photo point",
+            "built 1970, 39 years before the 2009 photograph",
+            "height 213.6 m"
+          ]
+        },
+        {
+          "bin": "1076844",
+          "score": 0.64,
+          "distanceM": 47.8,
+          "builtYear": 1989,
+          "heightM": 175.3,
+          "reasons": [
+            "footprint 47.8 m from the photo point",
+            "built 1989, 20 years before the 2009 photograph",
+            "height 175.3 m"
+          ]
+        },
+        {
+          "bin": "1024706",
+          "score": 0.612,
+          "distanceM": 55,
+          "builtYear": 1927,
+          "heightM": 128.3,
+          "reasons": [
+            "footprint 55 m from the photo point",
+            "built 1927, 82 years before the 2009 photograph",
+            "height 128.3 m"
+          ]
+        },
+        {
+          "bin": "1022610",
+          "score": 0.606,
+          "distanceM": 56.6,
+          "builtYear": 1972,
+          "heightM": 125.6,
+          "reasons": [
+            "footprint 56.6 m from the photo point",
+            "built 1972, 37 years before the 2009 photograph",
+            "height 125.6 m"
+          ]
+        },
+        {
+          "bin": "1024727",
+          "score": 0.601,
+          "distanceM": 58.3,
+          "builtYear": 1985,
+          "heightM": 176,
+          "reasons": [
+            "footprint 58.3 m from the photo point",
+            "built 1985, 24 years before the 2009 photograph",
+            "height 176 m"
+          ]
+        }
+      ],
+      "status": "proposed",
+      "validatedVisualOverlap": false
+    }
+  ]
+}

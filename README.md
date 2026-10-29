@@ -114,6 +114,20 @@ unreviewed and explicitly ineligible for automatic training. See
 `docs/extraction-010-time-catalog.md` for history, rights, source limitations,
 NYPL API retirement and AWS expenditure gates.
 
+## Photograph-to-building alignment (Extraction 011)
+
+Every dated, geotagged photograph — the **4** evidence photos and the **66**
+dated, geotagged catalog records — now carries up to five **proposed**
+building candidates in `data/photo-alignment-v1.json`: **350** candidate
+pairs, each scored by footprint distance and height and hard-filtered so no
+building is ever proposed for a photograph taken before it was built. Every
+candidate carries its reasons in plain words. Nothing is visually verified
+and nothing is written back into the evidence registry: a human confirms a
+match before it becomes a record.
+
+Run `npm run build:alignment` to recompute the alignments deterministically,
+and `npm run test:alignment` to verify them. See
+`docs/extraction-011-photo-alignment.md`.
 ## Times Square individual façade alignment prototype (Extraction 011)
 
 Founder choices: Times Square pilot; distinct candidate façade masks per source photograph;
@@ -183,23 +197,22 @@ The spatial memory browser panel adds **Prepare LingBot 2005 pilot**, a
 read-only metadata preview that does not trigger generation. Use
 `npm run test:lingbot` for protocol and safety tests.
 
-## Phase 014 — REA-audited LingBot interoperability (draft)
+## Renderer-neutral capture pipeline — Phase 014 (number pending)
 
-REA (Reverse Engineer Anything) **v6.7.0**, already installed on Houston, was
-used for evidence-backed static analysis of the Manhattan JavaScript adapter.
-The actual Dream Caesar Python server response was then compared to that
-analysis and its source, revealing the provider's response contains
-`frames_hex_png`, **not** the previously assumed `frames` array. The
-adapter now validates the actual response and rejects obsolete/malformed
-mock frames.
+Under the founder's Phase 014 ruling (`docs/decision-phase-014-renderer-strategy.md`),
+the capture interface belongs to the world representation, not to any
+renderer. A deterministic spec (`data/capture-pilot-v1.json`) names
+**182 current buildings** within 320 m of the Times Square origin, each
+with its own segmentation color keyed to its BIN, and a nine-frame plan:
+RGB, depth, and segmentation from the same three-waypoint camera path
+the conditioning pilot uses, with every pose recorded in ENU meters
+and UE centimeters. The geometry is the current snapshot only; the
+spec's historical claim is `none`, and its validator rejects training
+flips, vendor relabeling, invented buildings, and path drift.
 
-Use `npm run check:lingbot` to inspect local weight/shard, T5/VAE/tokenizer,
-GPU, disk and license readiness **without downloading or deleting anything**.
-Houston's root disk was critically full (~92 MiB free), the service lacked
-weights and FlashAttention, and single-8GB-GPU inference remains unproven.
-Commercial use of LingBot's CC BY-NC-SA 4.0 model needs separate authorization.
-
-See `docs/extraction-014-rea-lingbot-recovery.md` for the original REA
-Evidence ID, source code SHA-256 ledger, model architecture, dry-run/test
-evidence, unsupported REA WASM analysis dependency and clean-room provider
-replacement plan. No new model training or production behavior is enabled.
+Open `capture.html` to run it in a browser: one click downloads the
+nine frames plus a run manifest that records the run. Use
+`npm run build:capture` to rebuild the spec and `npm run test:capture`
+for the gate. See `docs/capture-pipeline.md`. The first real browser
+capture run has not been recorded yet; the spec and the tool are what
+this step ships.

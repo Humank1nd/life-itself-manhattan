@@ -5,9 +5,11 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateEvidenceGraph } from '../src/evidence-graph.js';
 import { validateCatalog } from '../src/photo-catalog.js';
+import { validateAlignment } from '../src/photo-alignment.js';
 import {validateBuildingVersions,validateFacadeInstances,validateFacadeMatches,validateCorroboration} from '../src/facade-matching.js';
 import {validateSpatialMemory} from '../src/spatial-memory.js';
 import {validateConditioningPacket} from '../src/world-model-conditioning.js';
+import {validateCaptureSpec} from '../src/capture-pipeline.js';
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const check = (x, message) => assert.ok(x, message);
 function dataFile(uri) {
@@ -52,6 +54,12 @@ export function validateManifestShape(m) {
     check(typeof m.layers.photoLinks.source==='string'&&!!m.layers.photoLinks.source, 'photo links source missing');
     dataFile(m.layers.photoLinks.uri);
   }
+  if(m.layers.photoAlignment) {
+    check(m.layers.photoAlignment.uri==='data/photo-alignment-v1.json' &&
+      m.layers.photoAlignment.kind==='proposed-geometry-time-candidates', 'photo alignment contract mismatch');
+    check(typeof m.layers.photoAlignment.source==='string'&&!!m.layers.photoAlignment.source, 'photo alignment source missing');
+    dataFile(m.layers.photoAlignment.uri);
+  }
   for(const [key,uri,kind] of [
     ['buildingVersions','data/times-square-building-versions-v1.json','bounded-temporal-building-versions'],
     ['facadeInstances','data/facade-instances-v1.json','unreviewed-panoptic-facade-region-candidates'],
@@ -71,6 +79,11 @@ export function validateManifestShape(m) {
     typeof m.layers.worldModelPilot.source==='string'&&!!m.layers.worldModelPilot.source,
     'LingBot pilot manifest contract mismatch');
   dataFile(m.layers.worldModelPilot.uri);
+  check(m.layers.capturePipeline?.uri==='data/capture-pilot-v1.json'&&
+    m.layers.capturePipeline?.kind==='renderer-neutral-rgb-depth-segmentation-pose-capture'&&
+    typeof m.layers.capturePipeline?.source==='string'&&!!m.layers.capturePipeline.source,
+    'capture pipeline manifest contract mismatch');
+  dataFile(m.layers.capturePipeline.uri);
   check(Array.isArray(m.assets), 'assets must be listed');
   for (const a of m.assets) {
     check(['original','public-domain','licensed-for-web'].includes(a.rights), 'asset rights not approved');
@@ -107,6 +120,7 @@ export function validateCityScene(m) {
     validateEvidenceGraph(readData(m.layers.evidence.uri), anchors.anchors, ids);
   }
   if(m.layers.photoCatalog) validateCatalog(readData(m.layers.photoCatalog.uri));
+  if(m.layers.photoAlignment) validateAlignment(readData(m.layers.photoAlignment.uri), new Map(buildings.map((b) => [b.bin, b.yr])));
   const versions=readData(m.layers.buildingVersions.uri);
   const instances=readData(m.layers.facadeInstances.uri);
   const alignments=readData(m.layers.facadeMatches.uri);
@@ -115,6 +129,7 @@ export function validateCityScene(m) {
   validateFacadeMatches(alignments,instances,versions,new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)));
   validateSpatialMemory(readData(m.layers.spatialMemory.uri));
   validateConditioningPacket(readData(m.layers.worldModelPilot.uri));
+  validateCaptureSpec(readData(m.layers.capturePipeline.uri), new Map(buildings.map((b) => [b.bin, b])));
   validateCorroboration(readData(m.layers.facadeCorroboration.uri),
     new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)),
     new Set(instances.instances.map(x=>x.id)),new Set(versions.versions.map(x=>x.id)));
