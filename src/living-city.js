@@ -176,7 +176,8 @@ export function citySnapshot(state) {
   // Traits ride along (seed-derived but explicit for audit); motives are live.
   return {
     seed: state.seed, tick: state.tickCount,
-    zones: state.zones.map(({ id, pop, jobs, money, happy }) => ({ id, pop, jobs, money, happy })),
+    zones: state.zones.map(({ id, lat, lon, type, radiusKm, pop, jobs, money, happy }) =>
+      ({ id, lat, lon, type, radiusKm, pop, jobs, money, happy })),
     pedestrians: state.pedestrians.map(({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives }) =>
       ({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives })),
   };
