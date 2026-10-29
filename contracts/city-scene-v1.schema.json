@@ -417,6 +417,27 @@
               "minLength": 1
             }
           }
+        },
+        "capturePipeline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uri",
+            "kind",
+            "source"
+          ],
+          "properties": {
+            "uri": {
+              "const": "data/capture-pilot-v1.json"
+            },
+            "kind": {
+              "const": "renderer-neutral-rgb-depth-segmentation-pose-capture"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       }
     },

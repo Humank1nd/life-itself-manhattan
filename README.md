@@ -196,3 +196,23 @@ No training, AWS spend or model checkpoint download occurs here.
 The spatial memory browser panel adds **Prepare LingBot 2005 pilot**, a
 read-only metadata preview that does not trigger generation. Use
 `npm run test:lingbot` for protocol and safety tests.
+
+## Renderer-neutral capture pipeline — Phase 014 (number pending)
+
+Under the founder's Phase 014 ruling (`docs/decision-phase-014-renderer-strategy.md`),
+the capture interface belongs to the world representation, not to any
+renderer. A deterministic spec (`data/capture-pilot-v1.json`) names
+**182 current buildings** within 320 m of the Times Square origin, each
+with its own segmentation color keyed to its BIN, and a nine-frame plan:
+RGB, depth, and segmentation from the same three-waypoint camera path
+the conditioning pilot uses, with every pose recorded in ENU meters
+and UE centimeters. The geometry is the current snapshot only; the
+spec's historical claim is `none`, and its validator rejects training
+flips, vendor relabeling, invented buildings, and path drift.
+
+Open `capture.html` to run it in a browser: one click downloads the
+nine frames plus a run manifest that records the run. Use
+`npm run build:capture` to rebuild the spec and `npm run test:capture`
+for the gate. See `docs/capture-pipeline.md`. The first real browser
+capture run has not been recorded yet; the spec and the tool are what
+this step ships.

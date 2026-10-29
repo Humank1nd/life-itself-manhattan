@@ -9,6 +9,7 @@ import { validateAlignment } from '../src/photo-alignment.js';
 import {validateBuildingVersions,validateFacadeInstances,validateFacadeMatches,validateCorroboration} from '../src/facade-matching.js';
 import {validateSpatialMemory} from '../src/spatial-memory.js';
 import {validateConditioningPacket} from '../src/world-model-conditioning.js';
+import {validateCaptureSpec} from '../src/capture-pipeline.js';
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const check = (x, message) => assert.ok(x, message);
 function dataFile(uri) {
@@ -78,6 +79,11 @@ export function validateManifestShape(m) {
     typeof m.layers.worldModelPilot.source==='string'&&!!m.layers.worldModelPilot.source,
     'LingBot pilot manifest contract mismatch');
   dataFile(m.layers.worldModelPilot.uri);
+  check(m.layers.capturePipeline?.uri==='data/capture-pilot-v1.json'&&
+    m.layers.capturePipeline?.kind==='renderer-neutral-rgb-depth-segmentation-pose-capture'&&
+    typeof m.layers.capturePipeline?.source==='string'&&!!m.layers.capturePipeline.source,
+    'capture pipeline manifest contract mismatch');
+  dataFile(m.layers.capturePipeline.uri);
   check(Array.isArray(m.assets), 'assets must be listed');
   for (const a of m.assets) {
     check(['original','public-domain','licensed-for-web'].includes(a.rights), 'asset rights not approved');
@@ -123,6 +129,7 @@ export function validateCityScene(m) {
   validateFacadeMatches(alignments,instances,versions,new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)));
   validateSpatialMemory(readData(m.layers.spatialMemory.uri));
   validateConditioningPacket(readData(m.layers.worldModelPilot.uri));
+  validateCaptureSpec(readData(m.layers.capturePipeline.uri), new Map(buildings.map((b) => [b.bin, b])));
   validateCorroboration(readData(m.layers.facadeCorroboration.uri),
     new Set(readData(m.layers.evidence.uri).photos.map(p=>p.id)),
     new Set(instances.instances.map(x=>x.id)),new Set(versions.versions.map(x=>x.id)));

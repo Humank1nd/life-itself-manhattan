@@ -21,6 +21,8 @@
     "test:memory": "node scripts/test-spatial-memory.mjs",
     "build:memory": "node scripts/build-spatial-memory.mjs",
     "test:lingbot": "node scripts/test-lingbot-conditioning.mjs",
+    "build:capture": "node scripts/build-capture-pilot.mjs",
+    "test:capture": "node scripts/test-capture-pipeline.mjs",
     "pilot:prepare": "node scripts/lingbot-pilot.mjs --prepare",
     "pilot:health": "node scripts/lingbot-pilot.mjs --health"
   },

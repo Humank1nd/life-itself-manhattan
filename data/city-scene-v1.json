@@ -90,6 +90,11 @@
       "uri": "data/lingbot-conditioning-pilot-v1.json",
       "kind": "local-optional-lingbot-packet-not-generated",
       "source": "Life Itself 2005 source-grounded photo reference + synthetic camera path"
+    },
+    "capturePipeline": {
+      "uri": "data/capture-pilot-v1.json",
+      "kind": "renderer-neutral-rgb-depth-segmentation-pose-capture",
+      "source": "Life Itself Manhattan capture pipeline over the authoritative current building snapshot"
     }
   },
   "assets": [],

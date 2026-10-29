@@ -1,0 +1,2252 @@
+{
+  "schemaVersion": "life-itself-capture/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "status": "spec-ready-not-captured",
+  "frame": {
+    "originId": "twin-earth-times-square",
+    "axes": "east/up/-north",
+    "units": "meters"
+  },
+  "geometry": {
+    "source": "data/manhattan-enu.json",
+    "temporalBasis": "current-snapshot-only",
+    "historicalClaim": "none"
+  },
+  "focus": {
+    "name": "Times Square",
+    "radiusM": 320
+  },
+  "image": {
+    "width": 512,
+    "height": 512,
+    "fovDeg": 55,
+    "passes": [
+      "rgb",
+      "depth",
+      "segmentation"
+    ],
+    "depthEncoding": {
+      "nearM": 0.5,
+      "farM": 400,
+      "mapping": "gray = 255 * (1 - clamp((distanceM - nearM) / (farM - nearM), 0, 1))"
+    },
+    "segmentationBackground": "#000000"
+  },
+  "buildings": [
+    {
+      "bin": "1022578",
+      "index": 1,
+      "color": "#000001",
+      "heightM": 123.1,
+      "yr": 2017,
+      "centroid": [
+        -16.64,
+        313.38
+      ]
+    },
+    {
+      "bin": "1022579",
+      "index": 2,
+      "color": "#000002",
+      "heightM": 67,
+      "yr": null,
+      "centroid": [
+        -41.96,
+        311.76
+      ]
+    },
+    {
+      "bin": "1022581",
+      "index": 3,
+      "color": "#000003",
+      "heightM": 102.7,
+      "yr": 1908,
+      "centroid": [
+        -85.89,
+        190.38
+      ]
+    },
+    {
+      "bin": "1022610",
+      "index": 4,
+      "color": "#000004",
+      "heightM": 125.6,
+      "yr": 1972,
+      "centroid": [
+        -6.28,
+        132.57
+      ]
+    },
+    {
+      "bin": "1022611",
+      "index": 5,
+      "color": "#000005",
+      "heightM": 24.4,
+      "yr": 1910,
+      "centroid": [
+        8.62,
+        164.09
+      ]
+    },
+    {
+      "bin": "1022612",
+      "index": 6,
+      "color": "#000006",
+      "heightM": 33.2,
+      "yr": 1999,
+      "centroid": [
+        33.57,
+        158.46
+      ]
+    },
+    {
+      "bin": "1022613",
+      "index": 7,
+      "color": "#000007",
+      "heightM": 46.1,
+      "yr": 1902,
+      "centroid": [
+        53.4,
+        184.65
+      ]
+    },
+    {
+      "bin": "1022614",
+      "index": 8,
+      "color": "#000008",
+      "heightM": 6.5,
+      "yr": 1910,
+      "centroid": [
+        87.59,
+        194.24
+      ]
+    },
+    {
+      "bin": "1022615",
+      "index": 9,
+      "color": "#000009",
+      "heightM": 35.4,
+      "yr": 1921,
+      "centroid": [
+        98.31,
+        208.85
+      ]
+    },
+    {
+      "bin": "1022616",
+      "index": 10,
+      "color": "#00000a",
+      "heightM": 54.1,
+      "yr": 1933,
+      "centroid": [
+        99.86,
+        176.49
+      ]
+    },
+    {
+      "bin": "1022617",
+      "index": 11,
+      "color": "#00000b",
+      "heightM": 24,
+      "yr": 1905,
+      "centroid": [
+        74.87,
+        168.15
+      ]
+    },
+    {
+      "bin": "1022619",
+      "index": 12,
+      "color": "#00000c",
+      "heightM": 11.7,
+      "yr": 1910,
+      "centroid": [
+        56.8,
+        154.42
+      ]
+    },
+    {
+      "bin": "1022620",
+      "index": 13,
+      "color": "#00000d",
+      "heightM": 38.2,
+      "yr": 1906,
+      "centroid": [
+        49.72,
+        152.8
+      ]
+    },
+    {
+      "bin": "1022621",
+      "index": 14,
+      "color": "#00000e",
+      "heightM": 16.3,
+      "yr": 1910,
+      "centroid": [
+        28.72,
+        138.06
+      ]
+    },
+    {
+      "bin": "1022622",
+      "index": 15,
+      "color": "#00000f",
+      "heightM": 40.9,
+      "yr": 1925,
+      "centroid": [
+        19.43,
+        132.44
+      ]
+    },
+    {
+      "bin": "1022623",
+      "index": 16,
+      "color": "#000010",
+      "heightM": 16.7,
+      "yr": 1920,
+      "centroid": [
+        13.57,
+        130.68
+      ]
+    },
+    {
+      "bin": "1022624",
+      "index": 17,
+      "color": "#000011",
+      "heightM": 18.7,
+      "yr": 1938,
+      "centroid": [
+        34.64,
+        59.89
+      ]
+    },
+    {
+      "bin": "1022628",
+      "index": 18,
+      "color": "#000012",
+      "heightM": 70.1,
+      "yr": 1998,
+      "centroid": [
+        95.58,
+        122.89
+      ]
+    },
+    {
+      "bin": "1022629",
+      "index": 19,
+      "color": "#000013",
+      "heightM": 49.3,
+      "yr": 1894,
+      "centroid": [
+        117.96,
+        128.08
+      ]
+    },
+    {
+      "bin": "1022630",
+      "index": 20,
+      "color": "#000014",
+      "heightM": 19.2,
+      "yr": 1907,
+      "centroid": [
+        141.34,
+        144.12
+      ]
+    },
+    {
+      "bin": "1022631",
+      "index": 21,
+      "color": "#000015",
+      "heightM": 155.8,
+      "yr": 1984,
+      "centroid": [
+        177.96,
+        150
+      ]
+    },
+    {
+      "bin": "1022632",
+      "index": 22,
+      "color": "#000016",
+      "heightM": 35.1,
+      "yr": 1900,
+      "centroid": [
+        110.6,
+        88.85
+      ]
+    },
+    {
+      "bin": "1022633",
+      "index": 23,
+      "color": "#000017",
+      "heightM": 30.3,
+      "yr": 1903,
+      "centroid": [
+        87.79,
+        10.92
+      ]
+    },
+    {
+      "bin": "1022634",
+      "index": 24,
+      "color": "#000018",
+      "heightM": 50.9,
+      "yr": 1911,
+      "centroid": [
+        99.52,
+        36.48
+      ]
+    },
+    {
+      "bin": "1022637",
+      "index": 25,
+      "color": "#000019",
+      "heightM": 51.5,
+      "yr": 1928,
+      "centroid": [
+        146.08,
+        59.08
+      ]
+    },
+    {
+      "bin": "1022638",
+      "index": 26,
+      "color": "#00001a",
+      "heightM": 12.5,
+      "yr": 1920,
+      "centroid": [
+        164.3,
+        69.35
+      ]
+    },
+    {
+      "bin": "1022639",
+      "index": 27,
+      "color": "#00001b",
+      "heightM": 21.6,
+      "yr": 1920,
+      "centroid": [
+        168.89,
+        73.31
+      ]
+    },
+    {
+      "bin": "1022640",
+      "index": 28,
+      "color": "#00001c",
+      "heightM": 49.1,
+      "yr": 1925,
+      "centroid": [
+        182.68,
+        78.23
+      ]
+    },
+    {
+      "bin": "1022641",
+      "index": 29,
+      "color": "#00001d",
+      "heightM": 46.1,
+      "yr": 1900,
+      "centroid": [
+        193.95,
+        87.82
+      ]
+    },
+    {
+      "bin": "1022645",
+      "index": 30,
+      "color": "#00001e",
+      "heightM": 65.8,
+      "yr": 1912,
+      "centroid": [
+        144.73,
+        26.09
+      ]
+    },
+    {
+      "bin": "1022646",
+      "index": 31,
+      "color": "#00001f",
+      "heightM": 15.8,
+      "yr": 1920,
+      "centroid": [
+        134.66,
+        13.94
+      ]
+    },
+    {
+      "bin": "1022647",
+      "index": 32,
+      "color": "#000020",
+      "heightM": 15.8,
+      "yr": 1920,
+      "centroid": [
+        128.2,
+        13.56
+      ]
+    },
+    {
+      "bin": "1022648",
+      "index": 33,
+      "color": "#000021",
+      "heightM": 14.9,
+      "yr": 1920,
+      "centroid": [
+        124.58,
+        3.11
+      ]
+    },
+    {
+      "bin": "1022649",
+      "index": 34,
+      "color": "#000022",
+      "heightM": 16.2,
+      "yr": 1920,
+      "centroid": [
+        115.74,
+        0.04
+      ]
+    },
+    {
+      "bin": "1022650",
+      "index": 35,
+      "color": "#000023",
+      "heightM": 15.8,
+      "yr": 1920,
+      "centroid": [
+        109.53,
+        1.72
+      ]
+    },
+    {
+      "bin": "1022651",
+      "index": 36,
+      "color": "#000024",
+      "heightM": 23.2,
+      "yr": 1920,
+      "centroid": [
+        103.49,
+        0.32
+      ]
+    },
+    {
+      "bin": "1022653",
+      "index": 37,
+      "color": "#000025",
+      "heightM": 15.8,
+      "yr": 1939,
+      "centroid": [
+        60.86,
+        -38.87
+      ]
+    },
+    {
+      "bin": "1022657",
+      "index": 38,
+      "color": "#000026",
+      "heightM": 16.5,
+      "yr": 1930,
+      "centroid": [
+        153.19,
+        67.55
+      ]
+    },
+    {
+      "bin": "1022658",
+      "index": 39,
+      "color": "#000027",
+      "heightM": 15.5,
+      "yr": 1924,
+      "centroid": [
+        126.66,
+        8.86
+      ]
+    },
+    {
+      "bin": "1022659",
+      "index": 40,
+      "color": "#000028",
+      "heightM": 15.8,
+      "yr": 1924,
+      "centroid": [
+        118.53,
+        3.67
+      ]
+    },
+    {
+      "bin": "1022660",
+      "index": 41,
+      "color": "#000029",
+      "heightM": 16.9,
+      "yr": 1926,
+      "centroid": [
+        63.9,
+        -66.9
+      ]
+    },
+    {
+      "bin": "1022661",
+      "index": 42,
+      "color": "#00002a",
+      "heightM": 57.3,
+      "yr": 1925,
+      "centroid": [
+        86.47,
+        -66.26
+      ]
+    },
+    {
+      "bin": "1022663",
+      "index": 43,
+      "color": "#00002b",
+      "heightM": 54.7,
+      "yr": 1928,
+      "centroid": [
+        124.59,
+        -51.26
+      ]
+    },
+    {
+      "bin": "1022664",
+      "index": 44,
+      "color": "#00002c",
+      "heightM": 13.1,
+      "yr": 1920,
+      "centroid": [
+        130.22,
+        -43.68
+      ]
+    },
+    {
+      "bin": "1022665",
+      "index": 45,
+      "color": "#00002d",
+      "heightM": 34.3,
+      "yr": 1895,
+      "centroid": [
+        166.68,
+        -43.9
+      ]
+    },
+    {
+      "bin": "1022666",
+      "index": 46,
+      "color": "#00002e",
+      "heightM": 32.7,
+      "yr": 1902,
+      "centroid": [
+        174.34,
+        -14.35
+      ]
+    },
+    {
+      "bin": "1022667",
+      "index": 47,
+      "color": "#00002f",
+      "heightM": 113,
+      "yr": 1987,
+      "centroid": [
+        200.58,
+        -17.13
+      ]
+    },
+    {
+      "bin": "1022668",
+      "index": 48,
+      "color": "#000030",
+      "heightM": 25,
+      "yr": 1910,
+      "centroid": [
+        196.89,
+        -39.86
+      ]
+    },
+    {
+      "bin": "1022669",
+      "index": 49,
+      "color": "#000031",
+      "heightM": 35.5,
+      "yr": 1939,
+      "centroid": [
+        187.83,
+        -48.19
+      ]
+    },
+    {
+      "bin": "1022670",
+      "index": 50,
+      "color": "#000032",
+      "heightM": 13.1,
+      "yr": 1920,
+      "centroid": [
+        153.54,
+        -63.6
+      ]
+    },
+    {
+      "bin": "1022671",
+      "index": 51,
+      "color": "#000033",
+      "heightM": 46.6,
+      "yr": 1979,
+      "centroid": [
+        140.35,
+        -63.84
+      ]
+    },
+    {
+      "bin": "1022675",
+      "index": 52,
+      "color": "#000034",
+      "heightM": 13.1,
+      "yr": 1920,
+      "centroid": [
+        136.34,
+        -42.99
+      ]
+    },
+    {
+      "bin": "1022676",
+      "index": 53,
+      "color": "#000035",
+      "heightM": 34.2,
+      "yr": 1906,
+      "centroid": [
+        152.87,
+        -124.41
+      ]
+    },
+    {
+      "bin": "1022678",
+      "index": 54,
+      "color": "#000036",
+      "heightM": 181.8,
+      "yr": 1973,
+      "centroid": [
+        257.19,
+        -72.93
+      ]
+    },
+    {
+      "bin": "1022679",
+      "index": 55,
+      "color": "#000037",
+      "heightM": 21,
+      "yr": 1913,
+      "centroid": [
+        206.54,
+        -122.83
+      ]
+    },
+    {
+      "bin": "1022686",
+      "index": 56,
+      "color": "#000038",
+      "heightM": 14,
+      "yr": 1920,
+      "centroid": [
+        124.64,
+        -175.57
+      ]
+    },
+    {
+      "bin": "1022688",
+      "index": 57,
+      "color": "#000039",
+      "heightM": 53.9,
+      "yr": 1920,
+      "centroid": [
+        144.22,
+        -207.88
+      ]
+    },
+    {
+      "bin": "1022689",
+      "index": 58,
+      "color": "#00003a",
+      "heightM": 17.7,
+      "yr": 1920,
+      "centroid": [
+        157.06,
+        -211.83
+      ]
+    },
+    {
+      "bin": "1022690",
+      "index": 59,
+      "color": "#00003b",
+      "heightM": 22.5,
+      "yr": 1920,
+      "centroid": [
+        159.69,
+        -220.04
+      ]
+    },
+    {
+      "bin": "1022694",
+      "index": 60,
+      "color": "#00003c",
+      "heightM": 45.8,
+      "yr": 1903,
+      "centroid": [
+        212.11,
+        -209.91
+      ]
+    },
+    {
+      "bin": "1022695",
+      "index": 61,
+      "color": "#00003d",
+      "heightM": 12.9,
+      "yr": 1920,
+      "centroid": [
+        196.26,
+        -223.8
+      ]
+    },
+    {
+      "bin": "1022696",
+      "index": 62,
+      "color": "#00003e",
+      "heightM": 18.7,
+      "yr": 1930,
+      "centroid": [
+        185.91,
+        -226.99
+      ]
+    },
+    {
+      "bin": "1022697",
+      "index": 63,
+      "color": "#00003f",
+      "heightM": 15,
+      "yr": 1920,
+      "centroid": [
+        154.18,
+        -202.36
+      ]
+    },
+    {
+      "bin": "1022698",
+      "index": 64,
+      "color": "#000040",
+      "heightM": 12.5,
+      "yr": 1920,
+      "centroid": [
+        201.68,
+        -220.36
+      ]
+    },
+    {
+      "bin": "1022699",
+      "index": 65,
+      "color": "#000041",
+      "heightM": 68.6,
+      "yr": 1915,
+      "centroid": [
+        165.81,
+        -238.82
+      ]
+    },
+    {
+      "bin": "1024656",
+      "index": 66,
+      "color": "#000042",
+      "heightM": 164.8,
+      "yr": 2000,
+      "centroid": [
+        -179.88,
+        229.87
+      ]
+    },
+    {
+      "bin": "1024660",
+      "index": 67,
+      "color": "#000043",
+      "heightM": 38.2,
+      "yr": 1903,
+      "centroid": [
+        -210.87,
+        230.85
+      ]
+    },
+    {
+      "bin": "1024661",
+      "index": 68,
+      "color": "#000044",
+      "heightM": 12.7,
+      "yr": 1920,
+      "centroid": [
+        -197.72,
+        205.26
+      ]
+    },
+    {
+      "bin": "1024662",
+      "index": 69,
+      "color": "#000045",
+      "heightM": 21.4,
+      "yr": 1914,
+      "centroid": [
+        -204.8,
+        201.27
+      ]
+    },
+    {
+      "bin": "1024663",
+      "index": 70,
+      "color": "#000046",
+      "heightM": 103.9,
+      "yr": 1921,
+      "centroid": [
+        -225.01,
+        206.11
+      ]
+    },
+    {
+      "bin": "1024683",
+      "index": 71,
+      "color": "#000047",
+      "heightM": 54.6,
+      "yr": 1999,
+      "centroid": [
+        -223.89,
+        131.23
+      ]
+    },
+    {
+      "bin": "1024684",
+      "index": 72,
+      "color": "#000048",
+      "heightM": 18.3,
+      "yr": 1919,
+      "centroid": [
+        -191.34,
+        139.83
+      ]
+    },
+    {
+      "bin": "1024685",
+      "index": 73,
+      "color": "#000049",
+      "heightM": 21.1,
+      "yr": 1903,
+      "centroid": [
+        -165.68,
+        158.91
+      ]
+    },
+    {
+      "bin": "1024686",
+      "index": 74,
+      "color": "#00004a",
+      "heightM": 148.9,
+      "yr": 1999,
+      "centroid": [
+        -130.89,
+        177.72
+      ]
+    },
+    {
+      "bin": "1024691",
+      "index": 75,
+      "color": "#00004b",
+      "heightM": 23.6,
+      "yr": 1903,
+      "centroid": [
+        -169.84,
+        134.09
+      ]
+    },
+    {
+      "bin": "1024703",
+      "index": 76,
+      "color": "#00004c",
+      "heightM": 55,
+      "yr": 1920,
+      "centroid": [
+        -257.7,
+        10.6
+      ]
+    },
+    {
+      "bin": "1024704",
+      "index": 77,
+      "color": "#00004d",
+      "heightM": 18.9,
+      "yr": 1920,
+      "centroid": [
+        -274.53,
+        -7.03
+      ]
+    },
+    {
+      "bin": "1024705",
+      "index": 78,
+      "color": "#00004e",
+      "heightM": 22.9,
+      "yr": 1949,
+      "centroid": [
+        -231.08,
+        31.5
+      ]
+    },
+    {
+      "bin": "1024706",
+      "index": 79,
+      "color": "#00004f",
+      "heightM": 128.3,
+      "yr": 1927,
+      "centroid": [
+        -111.86,
+        80.44
+      ]
+    },
+    {
+      "bin": "1024707",
+      "index": 80,
+      "color": "#000050",
+      "heightM": 41.1,
+      "yr": 1927,
+      "centroid": [
+        -178.17,
+        25.39
+      ]
+    },
+    {
+      "bin": "1024708",
+      "index": 81,
+      "color": "#000051",
+      "heightM": 13.7,
+      "yr": 1912,
+      "centroid": [
+        -200.35,
+        18.05
+      ]
+    },
+    {
+      "bin": "1024709",
+      "index": 82,
+      "color": "#000052",
+      "heightM": 22.6,
+      "yr": 1927,
+      "centroid": [
+        -223.11,
+        1.81
+      ]
+    },
+    {
+      "bin": "1024710",
+      "index": 83,
+      "color": "#000053",
+      "heightM": 23.3,
+      "yr": 1920,
+      "centroid": [
+        -253.46,
+        -18.55
+      ]
+    },
+    {
+      "bin": "1024711",
+      "index": 84,
+      "color": "#000054",
+      "heightM": 92.2,
+      "yr": 1961,
+      "centroid": [
+        -231.97,
+        -84.74
+      ]
+    },
+    {
+      "bin": "1024712",
+      "index": 85,
+      "color": "#000055",
+      "heightM": 22.6,
+      "yr": 1927,
+      "centroid": [
+        -213.96,
+        -50.68
+      ]
+    },
+    {
+      "bin": "1024713",
+      "index": 86,
+      "color": "#000056",
+      "heightM": 21.8,
+      "yr": 1918,
+      "centroid": [
+        -179.48,
+        -33.62
+      ]
+    },
+    {
+      "bin": "1024714",
+      "index": 87,
+      "color": "#000057",
+      "heightM": 213.6,
+      "yr": 1970,
+      "centroid": [
+        -91.36,
+        0.52
+      ]
+    },
+    {
+      "bin": "1024715",
+      "index": 88,
+      "color": "#000058",
+      "heightM": 20.3,
+      "yr": 1918,
+      "centroid": [
+        -155.9,
+        -56.75
+      ]
+    },
+    {
+      "bin": "1024716",
+      "index": 89,
+      "color": "#000059",
+      "heightM": 20.7,
+      "yr": 1927,
+      "centroid": [
+        -187.71,
+        -64.95
+      ]
+    },
+    {
+      "bin": "1024717",
+      "index": 90,
+      "color": "#00005a",
+      "heightM": 20.9,
+      "yr": 1927,
+      "centroid": [
+        -208.2,
+        -77.12
+      ]
+    },
+    {
+      "bin": "1024719",
+      "index": 91,
+      "color": "#00005b",
+      "heightM": 13.1,
+      "yr": 1920,
+      "centroid": [
+        -210.2,
+        -138.03
+      ]
+    },
+    {
+      "bin": "1024720",
+      "index": 92,
+      "color": "#00005c",
+      "heightM": 13,
+      "yr": 1920,
+      "centroid": [
+        -207.94,
+        -143.29
+      ]
+    },
+    {
+      "bin": "1024721",
+      "index": 93,
+      "color": "#00005d",
+      "heightM": 13.2,
+      "yr": 1920,
+      "centroid": [
+        -207.1,
+        -148.62
+      ]
+    },
+    {
+      "bin": "1024725",
+      "index": 94,
+      "color": "#00005e",
+      "heightM": 19.6,
+      "yr": 1923,
+      "centroid": [
+        -145.78,
+        -118.33
+      ]
+    },
+    {
+      "bin": "1024726",
+      "index": 95,
+      "color": "#00005f",
+      "heightM": 19.9,
+      "yr": 1920,
+      "centroid": [
+        -137.02,
+        -97.01
+      ]
+    },
+    {
+      "bin": "1024727",
+      "index": 96,
+      "color": "#000060",
+      "heightM": 176,
+      "yr": 1985,
+      "centroid": [
+        -28.22,
+        -52.66
+      ]
+    },
+    {
+      "bin": "1024728",
+      "index": 97,
+      "color": "#000061",
+      "heightM": 22.3,
+      "yr": 1924,
+      "centroid": [
+        -103.29,
+        -112.19
+      ]
+    },
+    {
+      "bin": "1024729",
+      "index": 98,
+      "color": "#000062",
+      "heightM": 13.7,
+      "yr": 1920,
+      "centroid": [
+        -150.37,
+        -146.18
+      ]
+    },
+    {
+      "bin": "1024736",
+      "index": 99,
+      "color": "#000063",
+      "heightM": 147.3,
+      "yr": 2006,
+      "centroid": [
+        -163.56,
+        -200.24
+      ]
+    },
+    {
+      "bin": "1024737",
+      "index": 100,
+      "color": "#000064",
+      "heightM": 61.9,
+      "yr": 1928,
+      "centroid": [
+        -127.99,
+        -185.95
+      ]
+    },
+    {
+      "bin": "1024738",
+      "index": 101,
+      "color": "#000065",
+      "heightM": 26.6,
+      "yr": 1919,
+      "centroid": [
+        -86.71,
+        -165.81
+      ]
+    },
+    {
+      "bin": "1024739",
+      "index": 102,
+      "color": "#000066",
+      "heightM": 26.2,
+      "yr": 1910,
+      "centroid": [
+        -35.11,
+        -135.91
+      ]
+    },
+    {
+      "bin": "1024741",
+      "index": 103,
+      "color": "#000067",
+      "heightM": 13.9,
+      "yr": 1924,
+      "centroid": [
+        -0.37,
+        -131.18
+      ]
+    },
+    {
+      "bin": "1024742",
+      "index": 104,
+      "color": "#000068",
+      "heightM": 160.6,
+      "yr": 2000,
+      "centroid": [
+        -3.42,
+        -152.83
+      ]
+    },
+    {
+      "bin": "1024743",
+      "index": 105,
+      "color": "#000069",
+      "heightM": 39.6,
+      "yr": 1923,
+      "centroid": [
+        -29.36,
+        -164.02
+      ]
+    },
+    {
+      "bin": "1024744",
+      "index": 106,
+      "color": "#00006a",
+      "heightM": 18,
+      "yr": 1910,
+      "centroid": [
+        -90.91,
+        -208.03
+      ]
+    },
+    {
+      "bin": "1024745",
+      "index": 107,
+      "color": "#00006b",
+      "heightM": 18,
+      "yr": 1920,
+      "centroid": [
+        -97.03,
+        -211.83
+      ]
+    },
+    {
+      "bin": "1024746",
+      "index": 108,
+      "color": "#00006c",
+      "heightM": 18,
+      "yr": 1925,
+      "centroid": [
+        -109.32,
+        -205.52
+      ]
+    },
+    {
+      "bin": "1024747",
+      "index": 109,
+      "color": "#00006d",
+      "heightM": 20,
+      "yr": 1926,
+      "centroid": [
+        -125.54,
+        -212.5
+      ]
+    },
+    {
+      "bin": "1024748",
+      "index": 110,
+      "color": "#00006e",
+      "heightM": 18.8,
+      "yr": 1928,
+      "centroid": [
+        -153.17,
+        -239.88
+      ]
+    },
+    {
+      "bin": "1024749",
+      "index": 111,
+      "color": "#00006f",
+      "heightM": 14.6,
+      "yr": 1920,
+      "centroid": [
+        8.38,
+        -142.52
+      ]
+    },
+    {
+      "bin": "1024753",
+      "index": 112,
+      "color": "#000070",
+      "heightM": 20.7,
+      "yr": 1926,
+      "centroid": [
+        -101.34,
+        -268.33
+      ]
+    },
+    {
+      "bin": "1024754",
+      "index": 113,
+      "color": "#000071",
+      "heightM": 17.7,
+      "yr": 1930,
+      "centroid": [
+        -86.25,
+        -257.85
+      ]
+    },
+    {
+      "bin": "1024755",
+      "index": 114,
+      "color": "#000072",
+      "heightM": 22.1,
+      "yr": 1928,
+      "centroid": [
+        -52.75,
+        -240.61
+      ]
+    },
+    {
+      "bin": "1024757",
+      "index": 115,
+      "color": "#000073",
+      "heightM": 77.7,
+      "yr": 1990,
+      "centroid": [
+        67.99,
+        -182.03
+      ]
+    },
+    {
+      "bin": "1024762",
+      "index": 116,
+      "color": "#000074",
+      "heightM": 21.2,
+      "yr": 1913,
+      "centroid": [
+        -34.17,
+        -261.14
+      ]
+    },
+    {
+      "bin": "1024763",
+      "index": 117,
+      "color": "#000075",
+      "heightM": 16.2,
+      "yr": 1910,
+      "centroid": [
+        -57.87,
+        -271.02
+      ]
+    },
+    {
+      "bin": "1024764",
+      "index": 118,
+      "color": "#000076",
+      "heightM": 50.7,
+      "yr": 1927,
+      "centroid": [
+        -71.29,
+        -278.87
+      ]
+    },
+    {
+      "bin": "1024765",
+      "index": 119,
+      "color": "#000077",
+      "heightM": 17.2,
+      "yr": 1910,
+      "centroid": [
+        -91.83,
+        -291.4
+      ]
+    },
+    {
+      "bin": "1024766",
+      "index": 120,
+      "color": "#000078",
+      "heightM": 17.8,
+      "yr": 1910,
+      "centroid": [
+        -97.45,
+        -294.83
+      ]
+    },
+    {
+      "bin": "1024772",
+      "index": 121,
+      "color": "#000079",
+      "heightM": 19.2,
+      "yr": 1924,
+      "centroid": [
+        -9.4,
+        -298.37
+      ]
+    },
+    {
+      "bin": "1024777",
+      "index": 122,
+      "color": "#00007a",
+      "heightM": 11.4,
+      "yr": 1920,
+      "centroid": [
+        120.08,
+        -268.48
+      ]
+    },
+    {
+      "bin": "1024778",
+      "index": 123,
+      "color": "#00007b",
+      "heightM": 14.5,
+      "yr": 1925,
+      "centroid": [
+        126.17,
+        -274.07
+      ]
+    },
+    {
+      "bin": "1024779",
+      "index": 124,
+      "color": "#00007c",
+      "heightM": 23.1,
+      "yr": 1930,
+      "centroid": [
+        101.89,
+        -277.89
+      ]
+    },
+    {
+      "bin": "1024786",
+      "index": 125,
+      "color": "#00007d",
+      "heightM": 12.2,
+      "yr": 1925,
+      "centroid": [
+        112.64,
+        -275.52
+      ]
+    },
+    {
+      "bin": "1024991",
+      "index": 126,
+      "color": "#00007e",
+      "heightM": 20.4,
+      "yr": 1928,
+      "centroid": [
+        -294.67,
+        -94.72
+      ]
+    },
+    {
+      "bin": "1024992",
+      "index": 127,
+      "color": "#00007f",
+      "heightM": 12.2,
+      "yr": 1928,
+      "centroid": [
+        -285.79,
+        -119.7
+      ]
+    },
+    {
+      "bin": "1025011",
+      "index": 128,
+      "color": "#000080",
+      "heightM": 45.7,
+      "yr": 1966,
+      "centroid": [
+        -256.06,
+        -171.34
+      ]
+    },
+    {
+      "bin": "1025012",
+      "index": 129,
+      "color": "#000081",
+      "heightM": 12,
+      "yr": 1940,
+      "centroid": [
+        -247.84,
+        -181.64
+      ]
+    },
+    {
+      "bin": "1034217",
+      "index": 130,
+      "color": "#000082",
+      "heightM": 79.2,
+      "yr": 1931,
+      "centroid": [
+        235.96,
+        203.58
+      ]
+    },
+    {
+      "bin": "1034218",
+      "index": 131,
+      "color": "#000083",
+      "heightM": 32.4,
+      "yr": 1914,
+      "centroid": [
+        254.63,
+        188.92
+      ]
+    },
+    {
+      "bin": "1034240",
+      "index": 132,
+      "color": "#000084",
+      "heightM": 34.2,
+      "yr": 1911,
+      "centroid": [
+        259.06,
+        169.02
+      ]
+    },
+    {
+      "bin": "1069581",
+      "index": 133,
+      "color": "#000085",
+      "heightM": 146.9,
+      "yr": 1988,
+      "centroid": [
+        131.52,
+        112.88
+      ]
+    },
+    {
+      "bin": "1069583",
+      "index": 134,
+      "color": "#000086",
+      "heightM": 29.9,
+      "yr": 1894,
+      "centroid": [
+        165.96,
+        43.11
+      ]
+    },
+    {
+      "bin": "1071414",
+      "index": 135,
+      "color": "#000087",
+      "heightM": 173.7,
+      "yr": 1974,
+      "centroid": [
+        296.66,
+        115.76
+      ]
+    },
+    {
+      "bin": "1076172",
+      "index": 136,
+      "color": "#000088",
+      "heightM": 23.2,
+      "yr": 1988,
+      "centroid": [
+        92.61,
+        96.98
+      ]
+    },
+    {
+      "bin": "1076173",
+      "index": 137,
+      "color": "#000089",
+      "heightM": 202.5,
+      "yr": 1988,
+      "centroid": [
+        214.38,
+        82.83
+      ]
+    },
+    {
+      "bin": "1076192",
+      "index": 138,
+      "color": "#00008a",
+      "heightM": 63.2,
+      "yr": 1930,
+      "centroid": [
+        -73.42,
+        -165.48
+      ]
+    },
+    {
+      "bin": "1076193",
+      "index": 139,
+      "color": "#00008b",
+      "heightM": 201.2,
+      "yr": 1987,
+      "centroid": [
+        22.18,
+        -207.32
+      ]
+    },
+    {
+      "bin": "1076195",
+      "index": 140,
+      "color": "#00008c",
+      "heightM": 142,
+      "yr": 1987,
+      "centroid": [
+        42.39,
+        -278.72
+      ]
+    },
+    {
+      "bin": "1076844",
+      "index": 141,
+      "color": "#00008d",
+      "heightM": 175.3,
+      "yr": 1989,
+      "centroid": [
+        67.53,
+        -3.67
+      ]
+    },
+    {
+      "bin": "1078853",
+      "index": 142,
+      "color": "#00008e",
+      "heightM": 17.3,
+      "yr": 1900,
+      "centroid": [
+        -265.02,
+        -27.7
+      ]
+    },
+    {
+      "bin": "1078854",
+      "index": 143,
+      "color": "#00008f",
+      "heightM": 18,
+      "yr": 1900,
+      "centroid": [
+        -257.22,
+        -30.61
+      ]
+    },
+    {
+      "bin": "1080823",
+      "index": 144,
+      "color": "#000090",
+      "heightM": 52.6,
+      "yr": 1968,
+      "centroid": [
+        116.24,
+        194.43
+      ]
+    },
+    {
+      "bin": "1080824",
+      "index": 145,
+      "color": "#000091",
+      "heightM": 167.2,
+      "yr": 1968,
+      "centroid": [
+        144.37,
+        220.86
+      ]
+    },
+    {
+      "bin": "1080825",
+      "index": 146,
+      "color": "#000092",
+      "heightM": 14.7,
+      "yr": 1910,
+      "centroid": [
+        159.8,
+        -200.99
+      ]
+    },
+    {
+      "bin": "1080826",
+      "index": 147,
+      "color": "#000093",
+      "heightM": 5.1,
+      "yr": 1910,
+      "centroid": [
+        167.64,
+        -205.05
+      ]
+    },
+    {
+      "bin": "1080837",
+      "index": 148,
+      "color": "#000094",
+      "heightM": 131.3,
+      "yr": 1999,
+      "centroid": [
+        -233.81,
+        191.63
+      ]
+    },
+    {
+      "bin": "1080841",
+      "index": 149,
+      "color": "#000095",
+      "heightM": 21,
+      "yr": 1913,
+      "centroid": [
+        -128.86,
+        -44.58
+      ]
+    },
+    {
+      "bin": "1080842",
+      "index": 150,
+      "color": "#000096",
+      "heightM": 21.9,
+      "yr": 1913,
+      "centroid": [
+        -149.98,
+        -13.12
+      ]
+    },
+    {
+      "bin": "1081654",
+      "index": 151,
+      "color": "#000097",
+      "heightM": 19.5,
+      "yr": 1890,
+      "centroid": [
+        -243.91,
+        -197
+      ]
+    },
+    {
+      "bin": "1083716",
+      "index": 152,
+      "color": "#000098",
+      "heightM": 18.6,
+      "yr": 1970,
+      "centroid": [
+        220.94,
+        4.39
+      ]
+    },
+    {
+      "bin": "1083717",
+      "index": 153,
+      "color": "#000099",
+      "heightM": 167.8,
+      "yr": 1970,
+      "centroid": [
+        251.7,
+        12.35
+      ]
+    },
+    {
+      "bin": "1083718",
+      "index": 154,
+      "color": "#00009a",
+      "heightM": 37.8,
+      "yr": 1909,
+      "centroid": [
+        123.09,
+        -132.47
+      ]
+    },
+    {
+      "bin": "1083727",
+      "index": 155,
+      "color": "#00009b",
+      "heightM": 19.5,
+      "yr": 2008,
+      "centroid": [
+        -6.76,
+        -104.12
+      ]
+    },
+    {
+      "bin": "1085016",
+      "index": 156,
+      "color": "#00009c",
+      "heightM": 147.1,
+      "yr": 1988,
+      "centroid": [
+        59.71,
+        102.86
+      ]
+    },
+    {
+      "bin": "1085017",
+      "index": 157,
+      "color": "#00009d",
+      "heightM": 12.4,
+      "yr": 1988,
+      "centroid": [
+        77.84,
+        73.32
+      ]
+    },
+    {
+      "bin": "1085096",
+      "index": 158,
+      "color": "#00009e",
+      "heightM": 70.9,
+      "yr": 1929,
+      "centroid": [
+        -243.67,
+        76.29
+      ]
+    },
+    {
+      "bin": "1085493",
+      "index": 159,
+      "color": "#00009f",
+      "heightM": 146,
+      "yr": 1913,
+      "centroid": [
+        92.07,
+        -108.58
+      ]
+    },
+    {
+      "bin": "1085637",
+      "index": 160,
+      "color": "#0000a0",
+      "heightM": 4.9,
+      "yr": 2013,
+      "centroid": [
+        47.18,
+        -130.5
+      ]
+    },
+    {
+      "bin": "1085682",
+      "index": 161,
+      "color": "#0000a1",
+      "heightM": 224.6,
+      "yr": 1998,
+      "centroid": [
+        -39.28,
+        213.22
+      ]
+    },
+    {
+      "bin": "1085736",
+      "index": 162,
+      "color": "#0000a2",
+      "heightM": 28.3,
+      "yr": 1903,
+      "centroid": [
+        -192.76,
+        107.29
+      ]
+    },
+    {
+      "bin": "1086069",
+      "index": 163,
+      "color": "#0000a3",
+      "heightM": 209.6,
+      "yr": 2002,
+      "centroid": [
+        -113.09,
+        265.34
+      ]
+    },
+    {
+      "bin": "1086225",
+      "index": 164,
+      "color": "#0000a4",
+      "heightM": 155.4,
+      "yr": 2001,
+      "centroid": [
+        -118.82,
+        -283.25
+      ]
+    },
+    {
+      "bin": "1087141",
+      "index": 165,
+      "color": "#0000a5",
+      "heightM": 161.8,
+      "yr": 2000,
+      "centroid": [
+        -295.41,
+        46.77
+      ]
+    },
+    {
+      "bin": "1087142",
+      "index": 166,
+      "color": "#0000a6",
+      "heightM": 59.1,
+      "yr": 1998,
+      "centroid": [
+        -272.88,
+        94.95
+      ]
+    },
+    {
+      "bin": "1087187",
+      "index": 167,
+      "color": "#0000a7",
+      "heightM": 92.7,
+      "yr": 2005,
+      "centroid": [
+        94.2,
+        -244.94
+      ]
+    },
+    {
+      "bin": "1087268",
+      "index": 168,
+      "color": "#0000a8",
+      "heightM": 270.6,
+      "yr": 2005,
+      "centroid": [
+        48.1,
+        263.24
+      ]
+    },
+    {
+      "bin": "1087882",
+      "index": 169,
+      "color": "#0000a9",
+      "heightM": 27.7,
+      "yr": 2000,
+      "centroid": [
+        -218.4,
+        93.5
+      ]
+    },
+    {
+      "bin": "1088568",
+      "index": 170,
+      "color": "#0000aa",
+      "heightM": 18.6,
+      "yr": 2009,
+      "centroid": [
+        -2.52,
+        -118.8
+      ]
+    },
+    {
+      "bin": "1088760",
+      "index": 171,
+      "color": "#0000ab",
+      "heightM": 95.1,
+      "yr": 1932,
+      "centroid": [
+        -151.53,
+        49.95
+      ]
+    },
+    {
+      "bin": "1088995",
+      "index": 172,
+      "color": "#0000ac",
+      "heightM": 3.4,
+      "yr": 1908,
+      "centroid": [
+        -72.92,
+        165.16
+      ]
+    },
+    {
+      "bin": "1089796",
+      "index": 173,
+      "color": "#0000ad",
+      "heightM": 174.9,
+      "yr": 2009,
+      "centroid": [
+        127.76,
+        46.72
+      ]
+    },
+    {
+      "bin": "1089850",
+      "index": 174,
+      "color": "#0000ae",
+      "heightM": 17.4,
+      "yr": 2017,
+      "centroid": [
+        127.19,
+        -181.78
+      ]
+    },
+    {
+      "bin": "1090496",
+      "index": 175,
+      "color": "#0000af",
+      "heightM": 26.2,
+      "yr": 2016,
+      "centroid": [
+        -215.03,
+        -229.64
+      ]
+    },
+    {
+      "bin": "1090733",
+      "index": 176,
+      "color": "#0000b0",
+      "heightM": 134.7,
+      "yr": 2022,
+      "centroid": [
+        186.06,
+        -195.06
+      ]
+    },
+    {
+      "bin": "1090823",
+      "index": 177,
+      "color": "#0000b1",
+      "heightM": 158.5,
+      "yr": 2021,
+      "centroid": [
+        173.49,
+        -107.79
+      ]
+    },
+    {
+      "bin": "1090889",
+      "index": 178,
+      "color": "#0000b2",
+      "heightM": 10,
+      "yr": null,
+      "centroid": [
+        -59.92,
+        129.94
+      ]
+    },
+    {
+      "bin": "1090938",
+      "index": 179,
+      "color": "#0000b3",
+      "heightM": 11.6,
+      "yr": 2014,
+      "centroid": [
+        -77.5,
+        -244.04
+      ]
+    },
+    {
+      "bin": "1090950",
+      "index": 180,
+      "color": "#0000b4",
+      "heightM": 3,
+      "yr": 2017,
+      "centroid": [
+        25.85,
+        -117.58
+      ]
+    },
+    {
+      "bin": "1091592",
+      "index": 181,
+      "color": "#0000b5",
+      "heightM": 128,
+      "yr": 2022,
+      "centroid": [
+        167.31,
+        -148.17
+      ]
+    },
+    {
+      "bin": "1091777",
+      "index": 182,
+      "color": "#0000b6",
+      "heightM": 10,
+      "yr": null,
+      "centroid": [
+        -190.47,
+        -167.1
+      ]
+    }
+  ],
+  "camera": {
+    "poseStatus": "synthetic-unverified-demo-path",
+    "facing": "+east",
+    "waypointsEnu": [
+      [
+        -5,
+        1.68,
+        0
+      ],
+      [
+        -3.75,
+        1.68,
+        0
+      ],
+      [
+        -2.5,
+        1.68,
+        0
+      ]
+    ],
+    "waypointsUE": [
+      {
+        "x": -500,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      {
+        "x": -375,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      {
+        "x": -250,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      }
+    ]
+  },
+  "frames": [
+    {
+      "id": "wp0-rgb",
+      "waypoint": 0,
+      "pass": "rgb",
+      "poseEnu": [
+        -5,
+        1.68,
+        0
+      ],
+      "poseUE": {
+        "x": -500,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      "file": "frames/wp0-rgb.png"
+    },
+    {
+      "id": "wp0-depth",
+      "waypoint": 0,
+      "pass": "depth",
+      "poseEnu": [
+        -5,
+        1.68,
+        0
+      ],
+      "poseUE": {
+        "x": -500,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      "file": "frames/wp0-depth.png"
+    },
+    {
+      "id": "wp0-segmentation",
+      "waypoint": 0,
+      "pass": "segmentation",
+      "poseEnu": [
+        -5,
+        1.68,
+        0
+      ],
+      "poseUE": {
+        "x": -500,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      "file": "frames/wp0-segmentation.png"
+    },
+    {
+      "id": "wp1-rgb",
+      "waypoint": 1,
+      "pass": "rgb",
+      "poseEnu": [
+        -3.75,
+        1.68,
+        0
+      ],
+      "poseUE": {
+        "x": -375,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      "file": "frames/wp1-rgb.png"
+    },
+    {
+      "id": "wp1-depth",
+      "waypoint": 1,
+      "pass": "depth",
+      "poseEnu": [
+        -3.75,
+        1.68,
+        0
+      ],
+      "poseUE": {
+        "x": -375,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      "file": "frames/wp1-depth.png"
+    },
+    {
+      "id": "wp1-segmentation",
+      "waypoint": 1,
+      "pass": "segmentation",
+      "poseEnu": [
+        -3.75,
+        1.68,
+        0
+      ],
+      "poseUE": {
+        "x": -375,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      "file": "frames/wp1-segmentation.png"
+    },
+    {
+      "id": "wp2-rgb",
+      "waypoint": 2,
+      "pass": "rgb",
+      "poseEnu": [
+        -2.5,
+        1.68,
+        0
+      ],
+      "poseUE": {
+        "x": -250,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      "file": "frames/wp2-rgb.png"
+    },
+    {
+      "id": "wp2-depth",
+      "waypoint": 2,
+      "pass": "depth",
+      "poseEnu": [
+        -2.5,
+        1.68,
+        0
+      ],
+      "poseUE": {
+        "x": -250,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      "file": "frames/wp2-depth.png"
+    },
+    {
+      "id": "wp2-segmentation",
+      "waypoint": 2,
+      "pass": "segmentation",
+      "poseEnu": [
+        -2.5,
+        1.68,
+        0
+      ],
+      "poseUE": {
+        "x": -250,
+        "y": 0,
+        "z": 168,
+        "yaw_deg": 0,
+        "pitch_deg": 0
+      },
+      "file": "frames/wp2-segmentation.png"
+    }
+  ],
+  "policy": {
+    "modelTraining": "not-authorized",
+    "rendererNeutral": true,
+    "generatedOutputIsHistoricalEvidence": false
+  }
+}
