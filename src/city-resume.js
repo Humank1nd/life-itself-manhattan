@@ -14,12 +14,26 @@ const HEX64 = /^[0-9a-f]{64}$/;
 const assert = (ok, why) => { if (!ok) throw new Error('resume: ' + why); };
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
-export function buildResumptionRecord({ snapshot, corridorsSha256, world, tickMs = TICK_MS }) {
+export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecology = null, tickMs = TICK_MS }) {
   assert(snapshot && Number.isInteger(snapshot.tick) && snapshot.tick >= 0, 'record needs a tick');
   assert(HEX64.test(corridorsSha256 || ''), 'record needs pinned corridor hash');
   assert(world && typeof world.traffic === 'string' && typeof world.weather === 'string'
     && Array.isArray(world.disasters) && typeof world.servicesNear === 'boolean', 'record needs world config');
   assert(tickMs === TICK_MS, 'tick length drift');
+  let eco = null;
+  if (ecology !== null && ecology !== undefined) {
+    assert(Array.isArray(ecology.patches), 'ecology needs a patches array');
+    const ids = new Set();
+    for (const p of ecology.patches) {
+      assert(p && typeof p.id === 'string' && p.id.length > 0, 'patch identity');
+      assert(!ids.has(p.id), 'duplicated patch: ' + p.id);
+      ids.add(p.id);
+      for (const k of ['x', 'z', 'fresh', 'rot', 'residue', 'biomass', 'moisture', 'warmth', 'disturbance', 'day']) {
+        assert(isNum(p[k]), 'patch field ' + k + ': ' + p.id);
+      }
+    }
+    eco = { patches: JSON.parse(JSON.stringify(ecology.patches)) };
+  }
   return {
     contract: RESUME_CONTRACT,
     snapshot: JSON.parse(JSON.stringify(snapshot)),
@@ -29,6 +43,7 @@ export function buildResumptionRecord({ snapshot, corridorsSha256, world, tickMs
       tickMs,
       resumedFromTick: snapshot.tick,
     },
+    ecology: eco,
   };
 }
 
@@ -95,8 +110,29 @@ export function resumeLivingCity(corridors, record, expected = {}) {
     ...JSON.parse(JSON.stringify(ped)),
     rates: motiveRateModifiers(ped.traits),
   }));
+  // Ecological state is owned restored state, not sidecar data: validated
+  // here, attached to the revived world, advanced by the same tick loop.
+  let patches = null;
+  if (record.ecology !== null && record.ecology !== undefined) {
+    assert(Array.isArray(record.ecology.patches), 'ecology patches missing');
+    patches = [];
+    const seen = new Set();
+    for (const p of record.ecology.patches) {
+      assert(p && typeof p.id === 'string' && p.id.length > 0, 'restored patch identity');
+      assert(!seen.has(p.id), 'duplicated restored patch: ' + p.id);
+      seen.add(p.id);
+      for (const k of ['x', 'z', 'fresh', 'rot', 'residue', 'biomass', 'moisture', 'warmth', 'disturbance', 'day']) assert(isNum(p[k]), 'restored patch field ' + k);
+      patches.push(JSON.parse(JSON.stringify(p)));
+    }
+    if (expected.patchIds !== undefined) {
+      assert(Array.isArray(expected.patchIds), 'expected patch roster malformed');
+      const got = patches.map((p) => p.id).sort();
+      assert(JSON.stringify(got) === JSON.stringify([...expected.patchIds].sort()), 'patch roster mismatch');
+    }
+  }
   return {
     seed: snapshot.seed, tickCount: snapshot.tick, zones, pedestrians, lanes,
     world: JSON.parse(JSON.stringify(meta.world)),
+    patches,
   };
 }
