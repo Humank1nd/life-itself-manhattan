@@ -32,6 +32,7 @@ export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecolog
         assert(isNum(p[k]), 'patch field ' + k + ': ' + p.id);
       }
       assert(Array.isArray(p.marks), 'patch scent marks missing: ' + p.id);
+      assert(p.marks.length <= 20, 'scent mark cap exceeded at checkpoint: ' + p.id);
       for (const m of p.marks) {
         assert(m && typeof m.by === 'string' && Number.isInteger(m.day) && m.day >= 0, 'scent mark shape: ' + p.id);
       }
@@ -127,6 +128,7 @@ export function resumeLivingCity(corridors, record, expected = {}) {
       seen.add(p.id);
       for (const k of ['x', 'z', 'fresh', 'rot', 'residue', 'biomass', 'moisture', 'warmth', 'disturbance', 'day']) assert(isNum(p[k]), 'restored patch field ' + k);
       assert(Array.isArray(p.marks), 'restored patch scent marks missing: ' + p.id);
+      assert(p.marks.length <= 20, 'scent mark cap exceeded on restore: ' + p.id);
       for (const m of p.marks) {
         assert(m && typeof m.by === 'string' && Number.isInteger(m.day) && m.day >= 0, 'restored scent mark shape: ' + p.id);
       }

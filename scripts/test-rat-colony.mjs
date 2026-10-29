@@ -73,6 +73,12 @@ assert.equal(proposeForage(A, full, [menu], A.memory, 8, 2), null, 'satiated rat
   const bad2 = JSON.parse(JSON.stringify(wire));
   delete bad2.ecology.patches[0].marks;
   assert.throws(() => resumeLivingCity(corridors, bad2, trust), /scent mark/);
+  const bad3 = JSON.parse(JSON.stringify(wire));
+  bad3.ecology.patches[0].marks = Array.from({ length: 21 }, (_, i) => ({ by: 'rat-' + i, day: i }));
+  assert.throws(() => resumeLivingCity(corridors, bad3, trust), /cap exceeded/);
+  assert.throws(() => buildResumptionRecord({ snapshot: JSON.parse(JSON.stringify(citySnapshot(city))),
+    corridorsSha256: corridorSha256, world: city.world,
+    ecology: { patches: [{ ...wire.ecology.patches[0], marks: bad3.ecology.patches[0].marks }] } }), /cap exceeded/);
   const appeal1 = patchAppeal(menu, forageValue(menu), B.memory, 8, 'rat-B');
   const appeal2 = patchAppeal(menu, forageValue(menu), B.memory, 8, 'rat-B');
   assert.equal(appeal1, appeal2);
