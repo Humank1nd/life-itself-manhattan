@@ -41,6 +41,9 @@
   #city-toggle { margin-top: 5px; background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0; border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
   #city-toggle:disabled { opacity: 0.5; cursor: default; }
   #journal { margin-top: 8px; font-size: 12px; opacity: 0.75; word-break: break-all; }
+  #pipeline-status { margin-top: 8px; font-size: 12px; opacity: 0.85; }
+  #capture-link-row { margin-top: 4px; font-size: 12px; }
+  #capture-link-row a { color: #82d9f5; }
   #verify {
     background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0;
     border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; margin-top: 6px;
@@ -137,6 +140,8 @@
   <p id="pick">Click any building to see its record.</p>
   <p id="journal">Journal: the island's history is starting…</p>
   <button type="button" id="verify">Verify the island's history</button>
+  <p id="pipeline-status" aria-live="polite">Capture pipeline: loading verified manifests…</p>
+  <p id="capture-link-row"><a id="capture-link" href="capture.html">Open the renderer-neutral capture tool</a></p>
 </div>
 <section id="timeline" aria-label="Historical Manhattan evidence timeline" hidden>
   <div id="timeline-header"><strong>Manhattan · evidence through time</strong>

@@ -32,6 +32,26 @@ async function renderJournal() {
 journal.onAppend = () => { renderJournal().catch(() => {}); };
 window.islandJournal = journal; // anyone may audit the chain from the console
 
+// --- Pipeline status (Phase 015/016): one read-only line from the
+// committed envelope + matrix plan. Pure text, no renderer risk; if the
+// manifests are missing the island still stands.
+const pipelineStatusEl = document.getElementById('pipeline-status');
+async function renderPipelineStatus() {
+  try {
+    const [env, plan] = await Promise.all([
+      fetch('data/conditioning-envelope-v1.json').then((r) => { if (!r.ok) throw new Error('no envelope'); return r.json(); }),
+      fetch('data/matrix-invocation-plan-v1.json').then((r) => { if (!r.ok) throw new Error('no plan'); return r.json(); }),
+    ]);
+    const frames = env.passes.rgb.files.length + env.passes.depth.files.length + env.passes.buildingId.files.length;
+    pipelineStatusEl.textContent =
+      `Capture · ${env.identities.count} identities, ${env.identities.visibleIds.length} visible, ${frames} frames hashed · ` +
+      `Matrix plan ${plan.video.inputFrames}→${plan.video.outputFrames} @${plan.video.fps}fps ${plan.video.width}×${plan.video.height} · scene ${plan.scene.checkpoint}`;
+  } catch {
+    pipelineStatusEl.textContent = 'Capture pipeline manifests unavailable.';
+  }
+}
+renderPipelineStatus().catch(() => {});
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x05070a);
 scene.fog = new THREE.Fog(0x05070a, 18000, 42000);
