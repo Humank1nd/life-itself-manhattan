@@ -1,0 +1,25 @@
+{
+  "hosting": {
+    "site": "life-itself-manhattan",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "endpoint/**",
+      "core/target/**",
+      "core/**/*.rs",
+      "scripts/**"
+    ],
+    "headers": [
+      {
+        "source": "**/*.wasm",
+        "headers": [{ "key": "Content-Type", "value": "application/wasm" }]
+      },
+      {
+        "source": "data/*.json",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+      }
+    ]
+  }
+}

@@ -9,3 +9,7 @@ core/target/
 # or without this directory.
 licensed/
 
+
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc
