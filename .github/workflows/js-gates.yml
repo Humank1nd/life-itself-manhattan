@@ -54,6 +54,7 @@ jobs:
           npm run test:provider-lifecycle
           npm run test:action-contract
           npm run test:citizen-consequence
+          npm run test:licensed-content
           npm run test:city-recovery
           npm run test:world-checkpoint
           npm run validate:city

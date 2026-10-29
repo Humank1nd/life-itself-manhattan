@@ -65,6 +65,21 @@ licensed reference to land, the line is cut, not the rule. The twist
 must work as pure dramatic irony for players who never make the
 connection, and as recognition for players who do.
 
+## Licensed-references toggle (private testing only)
+
+Licensed text, if it is ever written, lives ONLY in a git-ignored
+local `licensed/` directory with a `manifest.json` envelope
+(`life-itself-licensed-overlay/1.0.0`). It is never committed, never
+deployed — GitHub Pages artifacts cannot contain it, because git
+cannot see it. `src/licensed-content.js` resolves to disabled unless
+the caller explicitly opts in AND a valid manifest exists; malformed
+anything stays off. The gate (`npm run test:licensed-content`) uses
+SAMPLE placeholder text in `/tmp` and asserts the public tree has no
+`licensed/` directory. Clearance checklist before any toggle-on
+outside private testing: exact licensed material identified, rights
+holder terms reviewed, written clearance filed, distribution scope
+bounded. Until then the toggle has nothing to turn on.
+
 ## Temporal setting: an original ecological shock (founder decision)
 
 The simulation opens with a sudden 50% population cull across all
