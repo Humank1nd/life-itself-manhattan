@@ -69,7 +69,8 @@ const checkFresh = (m) => {
   assert(m.snapshotAt === '2026-10-28', 'snapshot year');
   assert(m.geometryStatus === 'current-snapshot-only', 'geometry status');
   assert(m.outputsAreHistoricalGroundTruth !== true, 'historical ground truth overclaim');
-  assert(m.trainingUseAuthorization !== true && m.trainingDataApproved !== true, 'training rails');
+  assert(m.trainingUseAuthorization === 'not-established', 'training authorization rails');
+  assert(m.trainingDataApproved === false, 'training approval rails');
   assert(Array.isArray(m.modelsExecuted) && m.modelsExecuted.length === 0, 'models executed');
   assert(m.capture.width === 640 && m.capture.height === 360 && m.capture.fovDeg === 62, 'raster/intrinsics');
   assert(m.capture.depthEncoding !== '8bit-grayscale-distance', 'pilot depth encoding in cloud manifest');
