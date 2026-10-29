@@ -11,6 +11,7 @@
 // repeated commit or a repeated apply of the same event ID fails;
 // there is no path that executes one committed event twice.
 import { validateObservation, validateAction, commitAction } from './action-contract.js';
+const assert = (ok, why) => { if (!ok) throw new Error('agency: ' + why); };
 const clamp100 = (v) => Math.max(0, Math.min(100, v));
 
 // What the citizen perceives: own lowest motive + nearest neighbor.
@@ -113,6 +114,24 @@ export function rebuildApplied(log) {
     applied.add(e.eventId);
   }
   return applied;
+}
+
+// Post-restart invariant: committed, applied and recovered are three
+// names for one set. A committed-but-unapplied event means the crash
+// landed between commit and effect — replay it instead of proceeding.
+// An applied-but-unlogged ID means the log is incomplete. Both fail.
+export function verifyRecovery(log, applied) {
+  const logged = new Set();
+  for (const e of log) {
+    if (!e || typeof e.eventId !== 'string') throw new Error('agency: corrupt event log entry');
+    logged.add(e.eventId);
+  }
+  for (const id of logged) assert(id, 'agency: empty event id');
+  const missing = [...logged].filter((id) => !applied.has(id));
+  if (missing.length > 0) throw new Error('agency: committed event never applied: ' + missing[0]);
+  const extra = [...applied].filter((id) => !logged.has(id));
+  if (extra.length > 0) throw new Error('agency: applied event missing from log: ' + extra[0]);
+  return true;
 }
 
 export { validateObservation, validateAction, commitAction };

@@ -7,7 +7,7 @@
 import assert from 'node:assert/strict';
 import { createLivingCity, tickLivingCity, citySnapshot } from '../src/living-city.js';
 import { buildResumptionRecord, resumeLivingCity } from '../src/city-resume.js';
-import { perceive, propose, applyEventOnce, rebuildApplied } from '../src/citizen-agency.js';
+import { perceive, propose, applyEventOnce, rebuildApplied, verifyRecovery } from '../src/citizen-agency.js';
 import { validateAction, commitAction } from '../src/action-contract.js';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -55,6 +55,12 @@ const wire = JSON.parse(JSON.stringify({ record, log: logA }));
 const revived = resumeLivingCity(corridors, wire.record, trust);
 const appliedB = rebuildApplied(wire.log);
 assert.deepEqual([...appliedB], [evA.eventId]);
+// Committed/applied/recovered are one set: verify the invariant explicitly.
+assert.equal(verifyRecovery(wire.log, appliedB), true);
+// Crash between commit and effect: logged but never applied → must replay,
+// never silently proceed.
+assert.throws(() => verifyRecovery(wire.log, new Set()), /never applied/);
+assert.throws(() => verifyRecovery(wire.log, new Set([evA.eventId, 'ev-99-ghost'])), /missing from log/);
 // Replay is rejected at the commit gate AND the effect gate.
 assert.throws(() => commitAction(
   { ...propose(revived, citizenId(revived), perceive(revived, citizenId(revived))), actionId: evA.actionId, tick: K },

@@ -28,4 +28,15 @@ future. Not proven: multi-citizen interaction effects, journal sealing
 of events (contract is journal-shaped; the page appends at ask/tick
 time in a later slice), any neural involvement.
 
+## Committed = applied = recovered (review hardening)
+
+Commit checks the applied set but never mutates it; the caller records
+the ID after the effect applies. On restore, `rebuildApplied` rebuilds
+the set from the checkpointed event log, and `verifyRecovery` asserts
+the three are one set: a logged-but-unapplied event (crash between
+commit and effect) must be replayed, never silently skipped; an
+applied-but-unlogged ID means the log is incomplete. Both fail closed.
+There is no path that executes one committed event twice — and none
+that drops one silently.
+
 Run `npm run test:citizen-consequence` for the gate.
