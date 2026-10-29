@@ -36,6 +36,13 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Install FFmpeg for mandatory byte-rejection test
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          command -v ffprobe
+          ffmpeg -hide_banner -encoders | grep -q libx264
+
       - name: Rebuild plan and run adapter gate
         run: npm run build:matrix-plan && npm run test:matrix-adapter
 
