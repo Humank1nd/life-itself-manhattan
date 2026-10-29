@@ -3,4 +3,13 @@ node_modules/
 __pycache__/
 core/target/
 .DS_Store
+# Licensed-content overlay: NEVER committed, NEVER deployed. Private
+# testing only — see docs/proposal-rat-pov-manhattan.md "Licensed
+# references toggle". The product builds and ships identically with
+# or without this directory.
+licensed/
 
+
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc
