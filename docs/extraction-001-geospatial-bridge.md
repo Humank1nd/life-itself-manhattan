@@ -29,6 +29,6 @@ rules for the bridge's convention instead.
 ## Not taken
 
 Everything else in the monolith: the tick engine, the trait dynamics, the
-council and Marvel material. They stay in the pool until a sibling project
+unrelated fictional-universe and agent-council material. They stay in the pool until a sibling project
 needs them. Manhattan needed the ground to be true; this is the piece that
 makes it true.
