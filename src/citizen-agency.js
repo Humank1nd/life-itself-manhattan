@@ -11,8 +11,13 @@
 // repeated commit or a repeated apply of the same event ID fails;
 // there is no path that executes one committed event twice.
 import { validateObservation, validateAction, commitAction } from './action-contract.js';
+import { graze } from './ecology.js';
 const assert = (ok, why) => { if (!ok) throw new Error('agency: ' + why); };
 const clamp100 = (v) => Math.max(0, Math.min(100, v));
+// Hunger recovery per kilogram scavenged. Documented gameplay hypothesis
+// (not physiology): a 0.5 kg alley meal restores +15 hunger (0..100 scale,
+// higher means more satiated — lower motives.hunger means greater hunger).
+export const SCAVENGE_HUNGER_PER_KG = 30;
 
 // What the citizen perceives: own lowest motive + nearest neighbor.
 export function perceive(state, pedId) {
@@ -90,6 +95,30 @@ export function applyEvent(state, event) {
     ped.x = a[0] + dx * t;
     ped.z = a[1] + dz * t;
     return { fraction: t };
+  }
+  if (event.type === 'scavenge') {
+    // Grounded consumption (P017.4): the ONLY lawful path from patch fresh
+    // stock to rat hunger. Requires the patch live in state.patches (owned
+    // restored ecological state, same array checkpointed by city-resume).
+    // Never mutates patch.fresh directly: books through graze() so
+    // eatenKg carries the mass, and requires sufficient stock so a partial
+    // fulfillment can never masquerade as a complete commitment.
+    const ped = state.pedestrians.find((p) => p.id === event.actorId);
+    assert(ped, 'agency: unknown scavenger');
+    assert(ped.alive !== false, 'agency: dead rats do not eat');
+    const patches = state.patches;
+    assert(Array.isArray(patches), 'agency: scavenge needs state.patches');
+    const patch = patches.find((q) => q.id === event.params.patchId);
+    assert(patch, 'agency: unknown patch ' + event.params.patchId);
+    const amount = event.params.amountKg;
+    assert(typeof amount === 'number' && Number.isFinite(amount) && amount > 0, 'agency: bad scavenge amount');
+    assert(patch.fresh >= amount, 'agency: insufficient stock at apply');
+    const taken = graze(patch, amount);
+    // graze() takes min(fresh, amount): with the stock check above the
+    // take must be whole — any shortfall is a bookkeeping bug, fail closed.
+    assert(taken === amount, 'agency: partial fulfillment rejected');
+    ped.motives.hunger = clamp100(ped.motives.hunger + taken * SCAVENGE_HUNGER_PER_KG);
+    return { takenKg: taken, hunger: ped.motives.hunger, fresh: patch.fresh, eatenKg: patch.eatenKg };
   }
   throw new Error('agency: unknown effect ' + event.type);
 }
