@@ -12,6 +12,7 @@ import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
 import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, NO_DECISION_TEXT } from './rat-perception.js';
+import { stepRatAutonomy } from './rat-autonomy.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 
@@ -200,12 +201,21 @@ function renderMotiveStrip(simHour) {
     motiveStripEl.appendChild(wrap);
   }
 }
-// --- P017.6/P017.7 read-only perception bridge: what the selected rat
-// knows. Page-level selection state only — the alley itself is
-// simulation-owned (establishAlley) and the snapshot reads live sim
-// state. Never written, never snapshotted, never journaled: every read
-// below is a pure function of live state; any failure renders the empty
-// state, never invented data, and never interrupts the city tick.
+// --- P017.8 first living decision: one autonomous rat per city tick.
+// Caller-owned exactly-once state lives OUTSIDE livingCity (page level,
+// never snapshotted): the applied set, the causal tick holder, and the
+// ledger of genuinely committed outcomes. The simulation owns initiation;
+// the panel only reads.
+const ratCtx = { applied: new Set(), lastTick: { n: -1 }, ledger: [],
+  journalAppend: null };
+function ratReceiptsFor(actorId) {
+  const found = [];
+  for (let i = ratCtx.ledger.length - 1; i >= 0 && found.length === 0; i--) {
+    if (ratCtx.ledger[i].decision.actorId === actorId) found.push(ratCtx.ledger[i].receipt);
+  }
+  return found;
+}
+// Page-level selection only — never sim state.
 let selectedRatId = null;
 const ratDetailsEl = document.getElementById('rat-perception');
 const ratSelectEl = document.getElementById('rat-select');
@@ -229,7 +239,8 @@ function renderRatPanel() {
     selectedRatId = rat ? rat.id : null;
     const view = snapshotLiveRat({ rat, tick: livingCity.tickCount,
       ecoDay: Math.floor(livingCity.tickCount / TICKS_PER_DAY),
-      patches: livingCity.patches, objects: livingCity.objects });
+      patches: livingCity.patches, objects: livingCity.objects,
+      receipts: ratReceiptsFor(rat.id) });
     if (!view) { ratViewEl.textContent = NO_DECISION_TEXT; return; }
     const patchesById = Object.fromEntries(livingCity.patches.map((p) => [p.id, p]));
     const live = refreshLiveAvailability(view, patchesById, livingCity.tickCount);
@@ -277,6 +288,20 @@ async function advanceCityTick() {
     });
     // Existing world_hash remains the immutable NYC ground-data digest.
     // The mutable simulation gets its own hash in the ACTION record above.
+    // P017.8: one autonomous rat may then act on sim-owned state. Its own
+    // journal entries land before TICK_END; a failure here skips the rat
+    // for this tick only — the city itself never pauses for autonomy.
+    if (livingCity.patches && livingCity.objects) {
+      try {
+        if (!ratCtx.journalAppend) ratCtx.journalAppend = (t, k, p) => journal.append(t, k, p);
+        const ecoDay = Math.floor(livingCity.tickCount / TICKS_PER_DAY);
+        const outcome = await stepRatAutonomy(livingCity, ratCtx, livingCity.tickCount, ecoDay);
+        if (ratCtx.ledger.length > 200) ratCtx.ledger.splice(0, ratCtx.ledger.length - 200);
+        void outcome;
+      } catch (ratErr) {
+        console.error('Rat autonomy skipped this tick:', ratErr);
+      }
+    }
     await journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
     renderCityPeople();
     showCityState();
@@ -296,6 +321,12 @@ function startLivingCity(corridors) {
   // is unaffected and legacy states (no alley) never see this key.
   try { establishAlley(livingCity); }
   catch { /* panel reads turn empty; city unaffected */ }
+  // Fresh simulation, fresh exactly-once state: replays from a previous
+  // city incarnation can never leak into this one's causal record.
+  ratCtx.applied.clear();
+  ratCtx.ledger.length = 0;
+  ratCtx.lastTick.n = -1;
+  selectedRatId = null;
   const positions = new Float32Array(livingCity.pedestrians.length * 3);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
