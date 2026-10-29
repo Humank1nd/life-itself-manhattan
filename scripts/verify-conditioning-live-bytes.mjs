@@ -50,7 +50,7 @@ const byBin = new Map(versions.versions.map((v) => [v.bin, v]));
 for (const [key, entry] of Object.entries(manifest.identity)) {
   const source = byBin.get(entry.bin);
   assert(source, 'identity BIN without source record: ' + key);
-  assert.equal(entry.versionId, source.versionId, 'versionId mismatch for BIN ' + entry.bin);
+  assert.equal(entry.versionId, source.id, 'versionId mismatch for BIN ' + entry.bin);
 }
 assert.equal(Object.keys(manifest.identity).length, 622, 'identity count');
 

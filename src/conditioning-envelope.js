@@ -34,8 +34,9 @@ export function buildConditioningEnvelope({ manifest, manifestSha256, pilotSpec,
   const byBin = new Map(buildingVersions.versions.map((v) => [v.bin, v]));
   for (const key of identityKeys) {
     const entry = manifest.identity[key];
-    assert(entry && typeof entry.bin === 'string' && byBin.has(entry.bin), 'unknown BIN in identity map: ' + key);
-    assert(typeof entry.versionId === 'string' && entry.versionId.length > 0, 'identity without version: ' + key);
+    const source = byBin.get(entry?.bin);
+    assert(source, 'identity BIN without source record: ' + key);
+    assert(entry.versionId === source.id, 'versionId mismatch for BIN ' + entry.bin);
   }
   const visible = manifest.observedVisibleBuildingIds || [];
   assert(visible.length > 0, 'no visible IDs observed');
@@ -135,10 +136,11 @@ export function validateEnvelope(env, { manifest, manifestSha256, buildingVersio
   }
   assert(env.identities?.count === 622, 'identity count drift');
   assert(Array.isArray(env.identities?.visibleIds) && env.identities.visibleIds.length > 0, 'visible IDs missing');
-  const byBin = new Set(buildingVersions.versions.map((v) => v.bin));
+  const byBin = new Map(buildingVersions.versions.map((v) => [v.bin, v.id]));
   for (const id of env.identities.visibleIds) {
     const entry = manifest.identity[String(id)];
     assert(entry && byBin.has(entry.bin), 'visible ID without source BIN: ' + id);
+    assert(entry.versionId === byBin.get(entry.bin), 'visible ID version mismatch: ' + id);
   }
   assert(env.compatibility?.sharedPixelSpace === false, 'pixel-space overclaim');
   assert(env.compatibility?.sharedCameraPath === false, 'shared-path overclaim');
