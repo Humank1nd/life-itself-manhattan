@@ -14,7 +14,7 @@ const HEX64 = /^[0-9a-f]{64}$/;
 const assert = (ok, why) => { if (!ok) throw new Error('resume: ' + why); };
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
-export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecology = null, ecoDay = null, tickMs = TICK_MS }) {
+export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecology = null, ecoDay = null, appliedReports = [], tickMs = TICK_MS }) {
   assert(snapshot && Number.isInteger(snapshot.tick) && snapshot.tick >= 0, 'record needs a tick');
   assert(HEX64.test(corridorsSha256 || ''), 'record needs pinned corridor hash');
   assert(world && typeof world.traffic === 'string' && typeof world.weather === 'string'
@@ -42,9 +42,17 @@ export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecolog
     }
     eco = { patches: JSON.parse(JSON.stringify(ecology.patches)) };
   }
+  assert(Array.isArray(appliedReports), 'applied reports must be a list');
+  const seenIds = new Set();
+  for (const id of appliedReports) {
+    assert(typeof id === 'string' && id.length > 0, 'applied report id');
+    assert(!seenIds.has(id), 'duplicated applied report: ' + id);
+    seenIds.add(id);
+  }
   return {
     contract: RESUME_CONTRACT,
     snapshot: JSON.parse(JSON.stringify(snapshot)),
+    appliedReports: [...seenIds],
     meta: {
       corridorsSha256,
       world: JSON.parse(JSON.stringify(world)),
@@ -151,10 +159,23 @@ export function resumeLivingCity(corridors, record, expected = {}) {
       assert(JSON.stringify(got) === JSON.stringify([...expected.patchIds].sort()), 'patch roster mismatch');
     }
   }
+  // Applied report IDs ride the checkpoint: the deduplication set is
+  // restored, never rebuilt from scratch. A report applied before the
+  // shutdown stays applied after the restart.
+  const applied = Array.isArray(record.appliedReports) ? record.appliedReports : [];
+  {
+    const seen = new Set();
+    for (const id of applied) {
+      assert(typeof id === 'string' && id.length > 0, 'applied report id');
+      assert(!seen.has(id), 'duplicated applied report: ' + id);
+      seen.add(id);
+    }
+  }
   return {
     seed: snapshot.seed, tickCount: snapshot.tick, zones, pedestrians, lanes,
     world: JSON.parse(JSON.stringify(meta.world)),
     patches,
     ecoDay: meta.ecoDay === undefined ? null : meta.ecoDay,
+    appliedReports: [...applied],
   };
 }

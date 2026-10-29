@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { createPatch, addWaste, seedRoaches, tickPatch, forageValue } from '../src/ecology.js';
 import { attestReport, verifyReportHash, reconcileReport } from '../src/grounding-contract.js';
+import { restaurantPulse, sanitationDue, reportIdFor } from '../src/grounding-producer.js';
 import { proposeForage } from '../src/rat-foraging.js';
 function shaOf(obj) { return createHash('sha256').update(JSON.stringify(obj)).digest('hex'); }
 const mkPatch = () => { const p = createPatch({ id: 'deli-1', x: 40, z: 0, moisture: 0.7, warmth: 0.6, disturbance: 0.1 }); seedRoaches(p, 2); for (let d = 0; d < 8; d++) tickPatch(p, { day: d }); return p; };
@@ -17,15 +18,15 @@ const rat = { id: 'rat-1', x: 0, z: 0, memory: { visits: {} }, motives: HUNGRY }
   const patch = createPatch({ id: 'deli-1', x: 40, z: 0, moisture: 0.7, warmth: 0.6, disturbance: 0.1 });
   assert.equal(proposeForage(rat, HUNGRY, [patch], { visits: {} }, 8, 5), null, 'empty patch ignored');
 }
-// 2. Full loop: report -> verify hash -> reconcile -> decide -> act east.
+// 2. Full loop: producer emits -> hash -> attest -> verify -> reconcile -> decide east.
 const world = { patches: [mkPatch()] };
-const payload = { patchId: 'deli-1', wasteKg: 25 };
-const att = attestReport({ sourceId: 'restaurant-pulse', reportId: 'rr-001', payload, sha256: shaOf(payload), tick: 8 });
+const payload = restaurantPulse({ patchId: 'deli-1', wasteKg: 25, day: 8, seq: 1 });
+const att = attestReport({ sourceId: 'restaurant-pulse', reportId: reportIdFor('restaurant-pulse', 8, 1), payload, sha256: shaOf(payload), tick: 8 });
 assert(verifyReportHash(att, shaOf(payload)));
 const seen = new Set();
 const fx = reconcileReport(world, att, seen, shaOf(payload));
 assert.throws(() => reconcileReport(world, JSON.parse(JSON.stringify(att)), new Set(), shaOf({other: 1})), /hash mismatch/, 'no verify-then-reconcile bypass');
-assert.deepEqual(fx, { applied: 'rr-001', source: 'restaurant-pulse' });
+assert.deepEqual(fx, { applied: 'restaurant-pulse-d8-1', source: 'restaurant-pulse' });
 assert.equal(world.patches[0].fresh, 25, 'restaurant waste landed in the world');
 const act = proposeForage(rat, HUNGRY, world.patches, { visits: {} }, 8, 5);
 assert(act && act.params.to.x > 0, 'reconciled waste draws the rat east');
@@ -45,6 +46,10 @@ assert.throws(() => attestReport({ sourceId: 'restaurant-pulse', reportId: 'x', 
   const wAtt = attestReport({ sourceId: 'weather-station', reportId: 'w-1', payload: {}, sha256: shaOf({}), tick: 0 });
   assert.throws(() => reconcileReport({ patches: [] }, wAtt, new Set(), shaOf({})), /not implemented/);
   assert.throws(() => reconcileReport(world, att, seen, shaOf(payload)), /duplicate report/);
+assert.deepEqual(sanitationDue(7), true);
+assert.deepEqual(sanitationDue(8), false);
+assert.throws(() => restaurantPulse({ patchId: '', wasteKg: 1, day: 0, seq: 0 }), /patchId/);
+assert.throws(() => sanitationDue(-1), /non-negative/);
   const noPatch = attestReport({ sourceId: 'restaurant-pulse', reportId: 'rr-9', payload: { patchId: 'nowhere', wasteKg: 1 }, sha256: shaOf({ patchId: 'nowhere', wasteKg: 1 }), tick: 0 });
   assert.throws(() => reconcileReport(world, noPatch, new Set(), shaOf(noPatch.payload)), /unknown patch/);
   const neg = attestReport({ sourceId: 'restaurant-pulse', reportId: 'rr-10', payload: { patchId: 'deli-1', wasteKg: -5 }, sha256: shaOf({ patchId: 'deli-1', wasteKg: -5 }), tick: 0 });

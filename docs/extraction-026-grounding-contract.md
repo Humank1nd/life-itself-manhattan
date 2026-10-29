@@ -30,3 +30,15 @@ what it would eventually consume — hashed, attributed, reconciled
 state — never raw numbers. No low-poly exporter yet; no training.
 
 Run `npm run test:grounding-contract`.
+
+## Follow-ups (landed with the review)
+
+- Verification lives inside `reconcileReport`: the expected SHA is a
+  required argument, so no caller can apply without proving bytes.
+- `src/grounding-producer.js`: deterministic report constructors
+  (`restaurantPulse`, weekly `sanitationDue`, `reportIdFor`) — payloads
+  originate from a component, not hand-written fixtures; hashing stays
+  at the boundary.
+- Applied report IDs persist through checkpoint/restore
+  (`buildResumptionRecord`/`resumeLivingCity` carry and validate them);
+  re-applying a restored ID is rejected.
