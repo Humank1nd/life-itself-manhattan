@@ -11,12 +11,15 @@
 // says so instead of substituting fixtures or aggregates.
 //
 // No DOM, no I/O, no model, no provider. Safe to import in Node gates.
-import { createPatch } from './ecology.js';
 import {
-  POLICY_REVISION, makeWorldObject,
+  POLICY_REVISION,
   advertiseObject, advertisementToObservation,
   decideForRat,
 } from './object-affordances.js';
+// Alley construction lives in the simulation's own module: the panel
+// never builds world state, it only reads it. Re-exported here so
+// existing gate imports keep working.
+export { buildAlley } from './object-affordances.js';
 
 export const RAT_VIEW_CONTRACT = 'life-itself-rat-view/1.0.0';
 export const NO_DECISION_TEXT = 'No rat decision available';
@@ -32,38 +35,29 @@ function deepFreeze(o) {
   return o;
 }
 
-// Deterministic display alley derived from real lane geometry: two
-// dumpsters straddling lane 0 segment 0 (near/rich/quiet east,
-// farther/poorer/noisier west), both inside interaction range of a rat
-// standing at the segment midpoint. Same construction as the P017.5 gate,
-// so live readings reproduce gate scenarios instead of inventing new ones.
-export function buildAlley(lanes) {
-  assert(Array.isArray(lanes) && lanes.length > 0, 'alley needs lanes');
-  const lane = lanes[0];
-  assert(Array.isArray(lane.waypoints) && lane.waypoints.length > 1, 'alley needs a segment');
-  const [ax, az] = lane.waypoints[0], [bx, bz] = lane.waypoints[1];
-  const segLen = Math.hypot(bx - ax, bz - az);
-  assert(segLen > 8, 'alley segment too short');
-  const at = (f) => ({ x: ax + (bx - ax) * f, z: az + (bz - az) * f });
-  const fR = 0.5;
-  const pE = at(fR + 1 / segLen), pW = at(fR - 2.5 / segLen);
-  const deli1 = createPatch({ id: 'deli-1', x: pE.x, z: pE.z, wasteKg: 1.0, moisture: 0.7, warmth: 0.6, disturbance: 0.1 });
-  const deli2 = createPatch({ id: 'deli-2', x: pW.x, z: pW.z, wasteKg: 0.6, moisture: 0.7, warmth: 0.6, disturbance: 0.5 });
-  const dump1 = makeWorldObject({ id: 'dumpster-1', kind: 'dumpster', x: pE.x, z: pE.z, patchId: 'deli-1' });
-  const dump2 = makeWorldObject({ id: 'dumpster-2', kind: 'dumpster', x: pW.x, z: pW.z, patchId: 'deli-2' });
-  return { patches: [deli1, deli2], objects: [dump1, dump2] };
-}
+// Alley construction lives in the simulation's own module
+// (object-affordances.js, shared with establishAlley): the panel never
+// builds world state, it only reads it. Re-exported here so existing gate
+// imports keep working.
 
 // One pure pass over live state: advertise each object, wrap in the
 // rat's own observations, decide, and freeze the view model. Returns null
 // when there is no rat to read (unknown selection) — the panel renders
 // NO_DECISION_TEXT. Throws fail-closed on malformed world input; the
 // caller converts that to the same empty state, never to invented values.
-export function snapshotLiveRat({ rat, tick, ecoDay, patches, objects }) {
+export function snapshotLiveRat({ rat, tick, ecoDay, patches, objects, receipts = [] }) {
   if (!rat) return null;
   assert(Number.isInteger(tick) && tick >= 0, 'snapshot needs a tick');
   assert(Number.isInteger(ecoDay) && ecoDay >= 0, 'snapshot needs an ecoDay');
   assert(Array.isArray(patches) && Array.isArray(objects), 'snapshot needs alley state');
+  // Receipts are caller-supplied evidence of GENUINE runtime commits
+  // (actionReceipt-shaped). The bridge never creates them: the default is
+  // empty, and anything malformed is rejected rather than displayed.
+  assert(Array.isArray(receipts), 'receipts must be a list');
+  for (const r of receipts) {
+    assert(r && typeof r.actionId === 'string' && typeof r.status === 'string', 'receipt shape');
+    if (r.status === 'committed') assert(typeof r.eventId === 'string', 'committed receipt needs an event id');
+  }
   const patchesById = Object.fromEntries(patches.map((p) => [p.id, p]));
   const objectsById = Object.fromEntries(objects.map((o) => [o.id, o]));
   const ads = objects.map((o) => advertiseObject(o, patchesById[o.patchId], { tick, ecoDay }));
@@ -73,6 +67,7 @@ export function snapshotLiveRat({ rat, tick, ecoDay, patches, objects }) {
     observationIds: observations.map((o) => o.observationId) });
   const evidenceByObject = {};
   const patchByObject = {};
+  const provenanceByObject = {};
   for (const ad of ads) {
     evidenceByObject[ad.objectId] = {
       freshKg: ad.evidence.freshKg,
@@ -81,6 +76,9 @@ export function snapshotLiveRat({ rat, tick, ecoDay, patches, objects }) {
       marksCount: ad.evidence.marksCount,
     };
     patchByObject[ad.objectId] = ad.patchId;
+    // Provenance as declared by the authoritative object descriptor:
+    // 'simulated' is simulation-owned state, never a real-world claim.
+    provenanceByObject[ad.objectId] = objectsById[ad.objectId].provenance ?? 'unknown';
   }
   return deepFreeze({
     schemaVersion: RAT_VIEW_CONTRACT,
@@ -91,13 +89,14 @@ export function snapshotLiveRat({ rat, tick, ecoDay, patches, objects }) {
     // Frozen object→patch linkage as advertised: live refresh resolves
     // current stock through this map, never through caller input.
     patchByObject,
+    provenanceByObject,
     evaluated: decision.evaluated,
     chosen: decision.chosen,
     policyRevision: decision.policyRevision,
-    // Viewing only: this bridge never commits, so there are no receipts of
-    // its own. Any committed receipts for the actor live in the journal,
-    // which the panel cites by head checksum for context (read-only).
-    receipts: [],
+    // Genuine committed receipts only: the bridge never commits, so this
+    // is empty unless the caller passes real runtime receipts. The panel
+    // renders exactly what is here — never an invented receipt.
+    receipts: receipts.map((r) => ({ ...r })),
   });
 }
 
@@ -144,12 +143,13 @@ export function renderRatPanelText(viewModel, live) {
     lines.push(`historical snapshot from tick ${live.asOfTick} — current tick ${live.currentTick}; snapshot values are NOT current`);
   }
   for (const [objectId, ev] of Object.entries(viewModel.evidenceByObject)) {
+    const prov = viewModel.provenanceByObject ? viewModel.provenanceByObject[objectId] : 'unknown';
     let suffix = `fresh ${ev.freshKg}kg forage ${Math.round(ev.forageValue)} disturbance ${ev.disturbance}`;
     if (live && live.liveFreshByObject && objectId in live.liveFreshByObject) {
       const lf = live.liveFreshByObject[objectId];
       suffix += lf === 'unknown' ? ' · live stock unknown' : ` · live now ${lf}kg`;
     }
-    lines.push(`- ${objectId}: ${suffix}`);
+    lines.push(`- ${objectId} [${prov}]: ${suffix}`);
   }
   for (const e of viewModel.evaluated) {
     const why = e.eligible ? '' : ` [${e.rejectionReasons.join(', ')}]`;
@@ -160,7 +160,13 @@ export function renderRatPanelText(viewModel, live) {
   } else {
     lines.push('chosen: none (nothing eligible and executable)');
   }
-  lines.push('receipts: none — viewing only; no actions committed from this panel');
+  if (viewModel.receipts.length === 0) {
+    lines.push('receipts: none — viewing only; no actions committed from this panel');
+  } else {
+    for (const r of viewModel.receipts) {
+      lines.push(`receipt: ${r.actionId} → ${r.status}${r.eventId ? ' ' + r.eventId : ''}`);
+    }
+  }
   return lines.join('\n');
 }
 

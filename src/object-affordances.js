@@ -18,7 +18,7 @@
 //   forageValue() is attraction/ranking signal (0..100), NOT kilograms of
 //   edible food — never consumed as inventory. Only patch.fresh (kg) is stock.
 //   All scoring coefficients are gameplay hypotheses, not rat biology.
-import { forageValue } from './ecology.js';
+import { forageValue, createPatch } from './ecology.js';
 import { OBSERVATION_CONTRACT } from './action-contract.js';
 
 export const AFFORDANCE_CONTRACT = 'life-itself-affordance/1.0.0';
@@ -57,21 +57,31 @@ export const round4 = (v) => {
 };
 
 export const OBJECT_KINDS = ['dumpster', 'shelter', 'doorway'];
+// Provenance vocabulary (mirrored in city-resume.js validation —
+// deliberate duplication across the contract boundary). Simulation
+// ownership establishes INTERNAL authority only: a 'simulated' dumpster
+// is authoritative world state without claiming to be any verified
+// real-world Manhattan dumpster. 'grounded' requires its own external
+// evidence and is never assigned by the simulation itself.
+export const OBJECT_PROVENANCES = ['simulated', 'grounded'];
 
 // Test-only world object. Pure data: identity + pose + patch association +
-// revision. No occupancy field exists on the object model — occupancy must
-// never be invented; evidence comes from the associated ecological patch
-// instead. `rev` starts at 1 and MUST be bumped via reviseObject() on any
-// change to the pinned properties (kind, position, patch link); the
-// checkpoint pins (id, rev) plus the full descriptor, so a silent
-// substitution reads as a mismatch, not a quiet drift.
-export function makeWorldObject({ id, kind, x, z, patchId = null, rev = 1 }) {
+// revision + provenance. No occupancy field exists on the object model —
+// occupancy must never be invented; evidence comes from the associated
+// ecological patch instead. `rev` starts at 1 and MUST be bumped via
+// reviseObject() on any change to the pinned properties (kind, position,
+// patch link, provenance); the checkpoint pins (id, rev) plus the full
+// descriptor, so a silent substitution reads as a mismatch, not drift.
+// `provenance` defaults to 'simulated': authoritative inside the
+// simulation, making no claim about real-world existence.
+export function makeWorldObject({ id, kind, x, z, patchId = null, rev = 1, provenance = 'simulated' }) {
   assert(isId(id), 'object id required');
   assert(OBJECT_KINDS.includes(kind), 'unknown object kind: ' + kind);
   assert(isNum(x) && isNum(z), 'object position required');
   if (patchId !== null) assert(isId(patchId), 'patch id malformed');
   assert(Number.isInteger(rev) && rev >= 0, 'object revision required');
-  return { id, kind, x, z, patchId, rev };
+  assert(OBJECT_PROVENANCES.includes(provenance), 'object provenance: ' + provenance);
+  return { id, kind, x, z, patchId, rev, provenance };
 }
 
 // The only lawful way to change a pinned world object: returns a new
@@ -86,8 +96,32 @@ export function reviseObject(object, changes = {}) {
   const next = { ...object, ...changes, id: object.id, rev: object.rev + 1 };
   if (next.patchId !== null) assert(isId(next.patchId), 'patch id malformed');
   assert(OBJECT_KINDS.includes(next.kind), 'unknown object kind: ' + next.kind);
+  assert(OBJECT_PROVENANCES.includes(next.provenance), 'object provenance: ' + next.provenance);
   assert(isNum(next.x) && isNum(next.z), 'object position required');
   return next;
+}
+
+// Deterministic display alley derived from real lane geometry: two
+// dumpsters straddling lane 0 segment 0 (near/rich/quiet east,
+// farther/poorer/noisier west), both inside interaction range of a rat
+// standing at the segment midpoint. Simulation-owned construction shared
+// by establishAlley() and the gates, so live readings reproduce gate
+// scenarios instead of inventing new layouts.
+export function buildAlley(lanes) {
+  assert(Array.isArray(lanes) && lanes.length > 0, 'alley needs lanes');
+  const lane = lanes[0];
+  assert(Array.isArray(lane.waypoints) && lane.waypoints.length > 1, 'alley needs a segment');
+  const [ax, az] = lane.waypoints[0], [bx, bz] = lane.waypoints[1];
+  const segLen = Math.hypot(bx - ax, bz - az);
+  assert(segLen > 8, 'alley segment too short');
+  const at = (f) => ({ x: ax + (bx - ax) * f, z: az + (bz - az) * f });
+  const fR = 0.5;
+  const pE = at(fR + 1 / segLen), pW = at(fR - 2.5 / segLen);
+  const deli1 = createPatch({ id: 'deli-1', x: pE.x, z: pE.z, wasteKg: 1.0, moisture: 0.7, warmth: 0.6, disturbance: 0.1 });
+  const deli2 = createPatch({ id: 'deli-2', x: pW.x, z: pW.z, wasteKg: 0.6, moisture: 0.7, warmth: 0.6, disturbance: 0.5 });
+  const dump1 = makeWorldObject({ id: 'dumpster-1', kind: 'dumpster', x: pE.x, z: pE.z, patchId: 'deli-1' });
+  const dump2 = makeWorldObject({ id: 'dumpster-2', kind: 'dumpster', x: pW.x, z: pW.z, patchId: 'deli-2' });
+  return { patches: [deli1, deli2], objects: [dump1, dump2] };
 }
 
 // Advertisement: a snapshot of opportunity, NOT authorization to act.

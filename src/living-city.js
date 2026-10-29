@@ -11,6 +11,7 @@
 // pedestrian's motive rates derive from its own seeded personality.
 import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { initMotives, tickMotives, crowdContext, MOTIVES } from './motives.js';
+import { buildAlley } from './object-affordances.js';
 export const TICK_MS = 5000;
 export const SIDEWALK_OFFSET_M = 6.2;
 export const DEFAULT_SEED = 20261028;
@@ -125,6 +126,23 @@ export function createLivingCity(corridors, { seed = DEFAULT_SEED, pedestrians =
     world: { traffic: 'green', weather: 'good', disasters: [], servicesNear: true } };
 }
 
+// Simulation-owned alley establishment (P017.7): the explicit path that
+// promotes world objects and ecological patches into simulation state.
+// The world — not the presentation layer — owns existence from here on:
+// the panel, the checkpoint, and the gates all read these same arrays.
+// Deliberately NOT called by createLivingCity: legacy states carry no
+// alley and must serialize byte-identically to history. Double
+// establishment fails closed (re-establishing would silently substitute
+// the roster the checkpoint may have already pinned).
+export function establishAlley(state) {
+  if (!state || !Array.isArray(state.lanes)) throw new Error('alley: simulation state with lanes required');
+  if (state.objects !== undefined || state.patches !== undefined) throw new Error('alley: already established');
+  const { patches, objects } = buildAlley(state.lanes);
+  state.patches = patches;
+  state.objects = objects;
+  return state;
+}
+
 function advancePedestrian(ped, lane, seconds) {
   let remaining = seconds * ped.speed;
   // A walker travels at most 7.5m per tick; the guard also handles tiny segments.
@@ -192,13 +210,18 @@ export function tickLivingCity(state) {
 export function citySnapshot(state) {
   // Include reproducible state, exclude immutable lane geometry already in data/.
   // Traits ride along (seed-derived but explicit for audit); motives and vitals are live.
-  return {
+  // `objects` rides the snapshot ONLY when the alley is established — legacy
+  // states (no alley) serialize exactly as before. Patches keep traveling
+  // via the resume record's ecology section, not the snapshot.
+  const snap = {
     seed: state.seed, tick: state.tickCount,
     zones: state.zones.map(({ id, lat, lon, type, radiusKm, pop, jobs, money, happy }) =>
       ({ id, lat, lon, type, radiusKm, pop, jobs, money, happy })),
     pedestrians: state.pedestrians.map(({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives, memory, ageTicks, injury, starveTicks, alive, death }) =>
       ({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives, memory: memory || { visits: {} }, ageTicks, injury, starveTicks, alive, death })),
   };
+  if (state.objects !== undefined && state.objects !== null) snap.objects = JSON.parse(JSON.stringify(state.objects));
+  return snap;
 }
 
 export function citySummary(state) {

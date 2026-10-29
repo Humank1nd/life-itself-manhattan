@@ -212,7 +212,7 @@ assert.equal((await StateJournal.fromJSONL(wire.journal).verifyChain()), true);
   assert.equal(legacy.objects, null);
   const revivedLegacy = resumeLivingCity(corridors, JSON.parse(JSON.stringify(legacy)),
     { corridorsSha256: corridorSha256, world, citizenIds, patchIds: ['deli-1', 'deli-2'] });
-  assert.equal(revivedLegacy.objects, null, 'legacy records skip object checks');
+  assert(!('objects' in revivedLegacy), 'legacy restores carry no objects key at all');
 }
 
 console.log('PASS object multi-decision — rat preferred dumpster-1 for an inspectable reason, lawful eating reversed the ranking to dumpster-2, roster+revs pinned and tamper-rejected, legacy restore unchanged');

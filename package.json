@@ -39,6 +39,7 @@
     "test:object-affordances": "node scripts/test-object-affordances.mjs",
     "test:object-multi-decision": "node scripts/test-object-multi-decision.mjs",
     "test:rat-perception": "node scripts/test-rat-perception.mjs",
+    "test:rat-binding": "node scripts/test-rat-binding.mjs",
     "test:lingbot": "node scripts/test-lingbot-conditioning.mjs",
     "build:capture": "node scripts/build-capture-pilot.mjs",
     "test:capture": "node scripts/test-capture-pipeline.mjs",

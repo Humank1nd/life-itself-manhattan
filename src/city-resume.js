@@ -9,6 +9,11 @@
 import { buildSidewalkLanes, TICK_MS, ZONE_DEFINITIONS } from './living-city.js';
 import { motiveRateModifiers } from './traits.js';
 import { MOTIVES } from './motives.js';
+// Provenance vocabulary, mirrored from object-affordances.js (deliberate
+// duplication across the contract boundary): 'simulated' is authoritative
+// inside the simulation only; 'grounded' claims externally verified
+// existence and is never assigned by the sim. Anything else is rejected.
+const OBJECT_PROVENANCES = ['simulated', 'grounded'];
 export const RESUME_CONTRACT = 'life-itself-city-resume/1.0.0';
 const HEX64 = /^[0-9a-f]{64}$/;
 const assert = (ok, why) => { if (!ok) throw new Error('resume: ' + why); };
@@ -70,9 +75,13 @@ export function buildResumptionRecord({ snapshot, corridorsSha256, world, ecolog
         assert(typeof o.patchId === 'string' && o.patchId.length > 0, 'object patch link: ' + o.id);
       }
       assert(Number.isInteger(o.rev) && o.rev >= 0, 'object revision: ' + o.id);
+      if (o.provenance !== undefined && o.provenance !== null) {
+        assert(OBJECT_PROVENANCES.includes(o.provenance), 'object provenance: ' + o.id);
+      }
     }
     objs = objects.map((o) => ({ id: o.id, kind: o.kind, x: o.x, z: o.z,
-      patchId: o.patchId ?? null, rev: o.rev }));
+      patchId: o.patchId ?? null, rev: o.rev,
+      ...(o.provenance !== undefined && o.provenance !== null ? { provenance: o.provenance } : {}) }));
   }
   return {
     contract: RESUME_CONTRACT,
@@ -205,6 +214,9 @@ export function resumeLivingCity(corridors, record, expected = {}) {
         assert(typeof o.patchId === 'string' && o.patchId.length > 0, 'restored object patch link: ' + o.id);
       }
       assert(Number.isInteger(o.rev) && o.rev >= 0, 'restored object revision: ' + o.id);
+      if (o.provenance !== undefined && o.provenance !== null) {
+        assert(OBJECT_PROVENANCES.includes(o.provenance), 'restored object provenance: ' + o.id);
+      }
     }
     assert(Array.isArray(expected.objectIds), 'expected object roster required');
     {
@@ -218,10 +230,19 @@ export function resumeLivingCity(corridors, record, expected = {}) {
       for (const o of record.objects) {
         const w = trusted.get(o.id);
         assert(w, 'object substitution: ' + o.id);
-        for (const k of ['kind', 'x', 'z', 'patchId', 'rev']) {
+        for (const k of ['kind', 'x', 'z', 'patchId', 'rev', 'provenance']) {
           assert(JSON.stringify(o[k] ?? null) === JSON.stringify(w[k] ?? null), 'object mismatch: ' + o.id + '.' + k);
         }
       }
+    }
+    // Snapshot/record coherence: when the snapshot carries the extended
+    // `objects` key, it must equal the pinned roster — a snapshot that
+    // disagrees with the record is tampering, not a merge to resolve.
+    // Legacy snapshots (no `objects` key) skip this, preserving history.
+    if (snapshot.objects !== undefined) {
+      assert(record.objects !== null, 'snapshot pins objects the record does not');
+      assert(JSON.stringify(snapshot.objects) === JSON.stringify(record.objects),
+        'snapshot/record object divergence');
     }
     if (patches !== null) {
       const patchIds = new Set(patches.map((p) => p.id));
@@ -245,12 +266,16 @@ export function resumeLivingCity(corridors, record, expected = {}) {
       seen.add(id);
     }
   }
-  return {
+  // The revived state carries `objects` ONLY when the checkpoint pinned a
+  // roster — legacy revivals have no such key, exactly like legacy snapshots,
+  // so post-restore ticks serialize identically to uninterrupted runs.
+  const revivedState = {
     seed: snapshot.seed, tickCount: snapshot.tick, zones, pedestrians, lanes,
     world: JSON.parse(JSON.stringify(meta.world)),
     patches,
-    objects: restoredObjects,
     ecoDay: meta.ecoDay === undefined ? null : meta.ecoDay,
     appliedReports: [...applied],
   };
+  if (restoredObjects !== null) revivedState.objects = restoredObjects;
+  return revivedState;
 }

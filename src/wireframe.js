@@ -7,11 +7,11 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { interpret, runQuery, describe } from './ask.js';
 import { createJournal, projectEnu, JournalEventType, hashWorldState } from './core-journal.js';
-import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS, TICKS_PER_DAY } from './living-city.js';
+import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS, TICKS_PER_DAY, establishAlley } from './living-city.js';
 import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
-import { buildAlley, snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, NO_DECISION_TEXT } from './rat-perception.js';
+import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, NO_DECISION_TEXT } from './rat-perception.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 
@@ -200,19 +200,21 @@ function renderMotiveStrip(simHour) {
     motiveStripEl.appendChild(wrap);
   }
 }
-// --- P017.6 read-only perception bridge: what the selected rat knows.
-// Page-level projection state only — never written into livingCity, never
-// snapshotted, never journaled. Every read below is a pure function of
-// live state; any failure renders the empty state, never invented data,
-// and never interrupts the city tick.
-let ratAlley = null;
+// --- P017.6/P017.7 read-only perception bridge: what the selected rat
+// knows. Page-level selection state only — the alley itself is
+// simulation-owned (establishAlley) and the snapshot reads live sim
+// state. Never written, never snapshotted, never journaled: every read
+// below is a pure function of live state; any failure renders the empty
+// state, never invented data, and never interrupts the city tick.
 let selectedRatId = null;
 const ratDetailsEl = document.getElementById('rat-perception');
 const ratSelectEl = document.getElementById('rat-select');
 const ratViewEl = document.getElementById('rat-view');
 function renderRatPanel() {
   try {
-    if (!livingCity || !ratAlley) { ratViewEl.textContent = NO_DECISION_TEXT; return; }
+    // Authoritative sim state or nothing: the panel reads the world's own
+    // patches/objects and never reconstructs them.
+    if (!livingCity || !livingCity.patches || !livingCity.objects) { ratViewEl.textContent = NO_DECISION_TEXT; return; }
     const alive = livingCity.pedestrians.filter((p) => p.alive);
     if (ratSelectEl.options.length !== alive.length) {
       ratSelectEl.textContent = '';
@@ -227,9 +229,9 @@ function renderRatPanel() {
     selectedRatId = rat ? rat.id : null;
     const view = snapshotLiveRat({ rat, tick: livingCity.tickCount,
       ecoDay: Math.floor(livingCity.tickCount / TICKS_PER_DAY),
-      patches: ratAlley.patches, objects: ratAlley.objects });
+      patches: livingCity.patches, objects: livingCity.objects });
     if (!view) { ratViewEl.textContent = NO_DECISION_TEXT; return; }
-    const patchesById = Object.fromEntries(ratAlley.patches.map((p) => [p.id, p]));
+    const patchesById = Object.fromEntries(livingCity.patches.map((p) => [p.id, p]));
     const live = refreshLiveAvailability(view, patchesById, livingCity.tickCount);
     const head = journal.lastChecksum ? journal.lastChecksum.slice(0, 12) : 'none';
     ratViewEl.textContent = renderRatPanelText(view, live) +
@@ -289,11 +291,11 @@ async function advanceCityTick() {
 }
 function startLivingCity(corridors) {
   livingCity = createLivingCity(corridors);
-  // Display-only alley for the perception bridge: pinned outside the
-  // simulation snapshot so resume/replay never see it. A build failure
-  // leaves the panel empty; the city itself is unaffected.
-  try { ratAlley = buildAlley(livingCity.lanes); }
-  catch { ratAlley = null; }
+  // Simulation-owned alley: the world owns existence from here on; the
+  // panel only reads. A failure leaves the panel empty; the city itself
+  // is unaffected and legacy states (no alley) never see this key.
+  try { establishAlley(livingCity); }
+  catch { /* panel reads turn empty; city unaffected */ }
   const positions = new Float32Array(livingCity.pedestrians.length * 3);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));

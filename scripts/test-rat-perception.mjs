@@ -68,7 +68,7 @@ assert.throws(() => { view.actorId = 'rat-X'; }, TypeError, 'frozen view rejects
 assert(view.chosen && view.chosen.objectId === 'dumpster-1', 'rich dumpster chosen live');
 const text = renderRatPanelText(view, refreshLiveAvailability(view, patchesById, TICK));
 assert(text.includes('rat rat-A · decision tick 21'), 'panel header');
-assert(text.includes('dumpster-1: fresh 1kg'), 'evidence line');
+assert(text.includes('dumpster-1 [simulated]: fresh 1kg'), 'evidence line with provenance');
 assert(text.includes('ELIGIBLE dumpster-1/scavenge-fresh'), 'ranking line');
 assert(text.includes('investigate-scent score') && text.includes('action-type-unimplemented'), 'rejection reasons shown');
 assert(text.includes('chosen: dumpster-1/scavenge-fresh'), 'choice line');
