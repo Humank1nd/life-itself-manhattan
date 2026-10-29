@@ -281,3 +281,7 @@ Versioned Observation → ProposedAction → WorldEvent → Receipt (`src/action
 ## One citizen, one verified consequence — Extraction 020 (P017.3)
 
 Deterministic citizen agency on the live sim: perceive → propose → validate+commit → apply exactly once → shutdown/restart → same causal future. The neediest citizen decides at tick 12, commits once (duplicates rejected), and 18 further ticks match the uninterrupted run bit-identically. Run `npm run test:citizen-consequence`. See `docs/extraction-020-citizen-consequence.md`. No model involved.
+
+## Phase A rat ecology — Extraction 021
+
+Deterministic nutrient metabolism for one block: waste rots, roaches bloom on rot (biomass pools, not individuals), rats read forage opportunity, sanitation resets. Mass exactly conserved; 10-year stability; byte-identical replay. Run `npm run test:ecology`. See `docs/extraction-021-rat-ecology.md`.

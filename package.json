@@ -27,6 +27,7 @@
     "test:provider-lifecycle": "node scripts/test-provider-lifecycle.mjs",
     "test:action-contract": "node scripts/test-action-contract.mjs",
     "test:citizen-consequence": "node scripts/test-citizen-consequence.mjs",
+    "test:ecology": "node scripts/test-ecology.mjs",
     "test:public-tree": "node scripts/test-public-tree.mjs",
     "test:licensed-content": "node scripts/test-licensed-content.mjs",
     "test:city-recovery": "node scripts/test-city-recovery.mjs",
