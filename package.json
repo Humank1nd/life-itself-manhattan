@@ -26,6 +26,7 @@
     "test:pacejka": "node scripts/test-pacejka.mjs",
     "test:provider-lifecycle": "node scripts/test-provider-lifecycle.mjs",
     "test:action-contract": "node scripts/test-action-contract.mjs",
+    "test:citizen-consequence": "node scripts/test-citizen-consequence.mjs",
     "test:city-recovery": "node scripts/test-city-recovery.mjs",
     "test:lingbot": "node scripts/test-lingbot-conditioning.mjs",
     "build:capture": "node scripts/build-capture-pilot.mjs",

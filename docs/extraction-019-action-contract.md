@@ -19,6 +19,11 @@ island's StateJournal can seal them unchanged.
 
 ## Boundaries
 
+- Exactly-once split: `commitAction` checks the applied set but never
+  mutates it; the caller records the ID after the effect applies
+  (`applyEventOnce` checks and records). Commit and apply share one
+  record, rebuilt from the checkpointed event log on restore — replay
+  is rejected at both gates even after a restart.
 - No journal writes here: commitment produces the event object; the
   page appends it to the StateJournal at ask/tick time (a later slice
   wires walker actions into the tick loop once seating covers acting,

@@ -80,12 +80,15 @@ export function validateAction(action, { citizenIds, positions, tick, lanes = nu
 // enforces causal order against the last committed tick, and rejects
 // already-applied event IDs. The journal seals the event; this layer
 // never rewrites history.
+// Commit checks the applied set but never mutates it: the caller records
+// the ID after the effect applies, so commit and apply share one
+// exactly-once record. The journal seals the event; this layer never
+// rewrites history.
 export function commitAction(action, ctx, appliedIds = new Set(), lastTick = -1) {
   validateAction(action, ctx);
   assert(action.tick >= lastTick, 'causal order: action predates last commit');
   const eventId = `ev-${action.tick}-${action.actionId}`;
   assert(!appliedIds.has(eventId), 'duplicate execution');
-  appliedIds.add(eventId);
   return {
     schemaVersion: EVENT_CONTRACT,
     eventId,
