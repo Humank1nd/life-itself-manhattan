@@ -31,6 +31,7 @@
     "test:ecology": "node scripts/test-ecology.mjs",
     "test:rat-foraging": "node scripts/test-rat-foraging.mjs",
     "test:rat-colony": "node scripts/test-rat-colony.mjs",
+    "test:rat-survival": "node scripts/test-rat-survival.mjs",
     "test:public-tree": "node scripts/test-public-tree.mjs",
     "test:licensed-content": "node scripts/test-licensed-content.mjs",
     "test:city-recovery": "node scripts/test-city-recovery.mjs",

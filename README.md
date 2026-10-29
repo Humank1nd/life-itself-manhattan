@@ -297,3 +297,7 @@ Two rats, one patch: grazing and scent marks measurably change the second rat's 
 ## 365-day world clock — Extraction 024 (Phase B, B01)
 
 Named seasons, year rollover, deterministic skips identical to continuous stepping, and seasonal checkpoint restore carrying the ecological day. Run `npm run test:world-clock`. See `docs/extraction-024-world-clock.md`.
+
+## Rat survival — Extraction 025 (Phase B, B02)
+
+Thirst as a ninth motive, age-weakened recovery after 200 days, terminal mortality (starvation, injury, old age) with recorded causes and frozen corpses. Vitals round-trip checkpoints. Run `npm run test:rat-survival`. See `docs/extraction-025-rat-survival.md`.

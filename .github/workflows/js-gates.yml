@@ -59,6 +59,7 @@ jobs:
           npm run test:ecology
           npm run test:rat-foraging
           npm run test:rat-colony
+          npm run test:rat-survival
           npm run test:public-tree
           npm run test:licensed-content
           npm run test:city-recovery

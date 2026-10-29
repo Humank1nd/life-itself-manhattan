@@ -51,7 +51,7 @@ console.log('PASS: seeds diverge, bad inputs rejected, endpoint reversal is boun
   const city = createLivingCity(corridors, { seed: 11, pedestrians: 24 });
   for (const p of city.pedestrians) {
     assert.equal(Object.keys(p.traits).length, 16);
-    assert.equal(Object.keys(p.motives).length, 8);
+    assert.equal(Object.keys(p.motives).length, 9);
   }
   const bySleep = [...city.pedestrians].sort((a, b) => b.traits.sleep_need - a.traits.sleep_need);
   assert(bySleep[0].traits.sleep_need > bySleep[bySleep.length - 1].traits.sleep_need, 'trait spread');
