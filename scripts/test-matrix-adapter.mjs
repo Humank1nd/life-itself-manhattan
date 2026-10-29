@@ -23,14 +23,10 @@ assert.equal(JSON.stringify(rebuilt, null, 2) + '\n',
 assert.deepEqual(plan.scene.allowed, MATRIX_SCENES);
 // ffmpeg path with synthetic frames (proves the SHA gate fails closed on
 // non-verified bytes; real capture bytes are CI-only and never committed).
-try {
-  execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' });
-} catch {
-  console.log('SKIP ffmpeg checks: ffmpeg not installed');
-}
-let ffmpegOk = true;
-try { execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' }); } catch { ffmpegOk = false; }
-if (ffmpegOk) {
+// Do not claim the synthetic-byte rejection ran if FFmpeg is unavailable.
+execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' });
+execFileSync('ffprobe', ['-version'], { stdio: 'ignore' });
+{
   const dir = mkdtempSync(join(tmpdir(), 'matrix-test-frames-'));
   for (const f of plan.video.inputFrameFiles) {
     execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y',
