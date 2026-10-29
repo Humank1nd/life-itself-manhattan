@@ -65,6 +65,24 @@ licensed reference to land, the line is cut, not the rule. The twist
 must work as pure dramatic irony for players who never make the
 connection, and as recognition for players who do.
 
+## Timelines as branches, grounded in Earth-1218 (founder direction)
+
+In Marvel's own map, Earth-1218 is our world: the universe where
+superheroes do not exist and Marvel is fiction. We ground the repo
+there. `main` is Earth-1218 — no capes, no Stones, no licensed proper
+nouns in any committed file, on any pushed ref, on any branch. The
+shipped game and every public branch stay inside that universe, where
+the twist reads as dramatic irony rather than franchise content.
+
+Variant timelines — branches that explore licensed-adjacent readings,
+the combination-gated epilogue drafts, anything that names names —
+exist **local-only and are never pushed**. The `licensed/` overlay
+rule already enforces the mechanism (git-ignored means unpushable);
+this states the doctrine: a pushed ref containing Marvel IP is a
+policy violation no matter which branch it sits on, and the CI gate's
+public-tree-clean assertion is its tripwire. Merges into `main` are
+timeline collapses: only Earth-1218-compatible content survives them.
+
 ## Licensed-references toggle (private testing only)
 
 Licensed text, if it is ever written, lives ONLY in a git-ignored
