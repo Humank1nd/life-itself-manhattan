@@ -19,13 +19,15 @@ const run = (events) => events.reduce((p, [e, x]) => step(p, e, x), createProvid
 {
   const p = run([['REQUEST', goodIntent()], ['BEGIN_VALIDATION'], ['VALIDATION_OK'],
     ['HANDSHAKE_OK'], ['START_RENDER'],
-    ['RENDER_COMPLETE', { providerId: 'ephemeral-1', modelWeightsSha256: 'c'.repeat(64), configurationSha256: 'd'.repeat(64), outputSha256: ['e'.repeat(64)] }],
+    ['RENDER_COMPLETE', { intentSha256: 'a'.repeat(64), providerId: 'ephemeral-1', modelWeightsSha256: 'c'.repeat(64), configurationSha256: 'd'.repeat(64), outputSha256: ['e'.repeat(64)] }],
     ['QUIESCE_COMPLETE']]);
   assert.equal(p.state, 'OFF');
   assert.deepEqual(p.effects, ['allocate-gpu', 'write-receipt', 'release-gpu']);
+  assert.equal(p.approvalVerified, false, 'presence is not proof');
   assert.equal(p.receipt.generated, true);
   assert.equal(p.receipt.historicalGroundTruth, false);
   assert.equal(p.receipt.status, 'complete');
+  assert.equal(p.receipt.intentSha256, 'a'.repeat(64));
 }
 // 2. Validation rejects: each missing/overreaching field fails closed at OFF.
 for (const [label, mutate] of [
@@ -60,7 +62,8 @@ for (const state of ['REQUESTED', 'VALIDATING', 'STARTING', 'READY', 'RUNNING'])
     assert.equal(p.state, 'FAILED', `${ev} from ${state}`);
     const q = run([...setup, [ev], ['BEGIN_QUIESCE'], ['QUIESCE_COMPLETE']]);
     assert.equal(q.state, 'OFF', `recover ${ev} from ${state}`);
-    assert(q.effects.includes('release-gpu'), 'release on recovery');
+    // Review finding 1: exactly one release per allocation, on QUIESCING→OFF.
+    assert.equal(q.effects.filter((e) => e === 'release-gpu').length, 1, 'single release');
   }
 }
 // 5. No FAILED→RUNNING shortcut, no auto-retry, unknown events are loud.
@@ -72,11 +75,17 @@ for (const state of ['REQUESTED', 'VALIDATING', 'STARTING', 'READY', 'RUNNING'])
   assert.equal(p.state, 'FAILED');
   assert.throws(() => step(createProvider(), 'BOGUS_EVENT'), /unknown event/);
 }
-// 6. Receipts require complete provider results; never historical.
+// 6. Receipts require caller-supplied canonical hashes and nonempty
+// outputs; placeholders and leaks are refused (review finding 3).
 {
-  assert.throws(() => buildReceipt(goodIntent(), { providerId: 'x' }), /incomplete/);
-  const r = buildReceipt(goodIntent(), { providerId: 'x', modelWeightsSha256: 'f'.repeat(64), configurationSha256: '0'.repeat(64), outputSha256: [] });
+  const goodResult = { providerId: 'x', modelWeightsSha256: 'f'.repeat(64), configurationSha256: '0'.repeat(64), outputSha256: ['1'.repeat(64)] };
+  assert.throws(() => buildReceipt(goodIntent(), goodResult), /must be 64 hex chars/);
+  assert.throws(() => buildReceipt('intent-unhashed-local-only', goodResult), /placeholders are not receipts/);
+  assert.throws(() => buildReceipt('a'.repeat(64), { ...goodResult, outputSha256: [] }), /nonempty/);
+  assert.throws(() => buildReceipt('a'.repeat(64), { ...goodResult, outputSha256: ['not-a-hash'] }), /nonempty/);
+  const r = buildReceipt('a'.repeat(64), goodResult);
   assert.equal(r.historicalGroundTruth, false);
   assert.equal(r.generated, true);
+  assert.equal(r.intentSha256, 'a'.repeat(64));
 }
 console.log('PASS provider lifecycle — full OFF→OFF cycle with allocate/release, 8 intent rejections, fail-closed kill/timeout/budget from all 5 active stages, no FAILED→RUNNING shortcut, honest receipts');
