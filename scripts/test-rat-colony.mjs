@@ -11,7 +11,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 const corridors = JSON.parse(readFileSync(new URL('../data/streets-enu.json', import.meta.url), 'utf8'));
 const corridorSha256 = createHash('sha256').update(JSON.stringify(corridors)).digest('hex');
-const HUNGRY = { hunger: 20, comfort: 70, hygiene: 70, bladder: 70, energy: 70, fun: 70, social: 70, env: 70 };
+const HUNGRY = { hunger: 20, thirst: 70, comfort: 70, hygiene: 70, bladder: 70, energy: 70, fun: 70, social: 70, env: 70 };
 const mem = () => ({ visits: {} });
 function richPatch(id, x) {
   const p = createPatch({ id, x, z: 0, moisture: 0.8, warmth: 0.7, disturbance: 0.1 });

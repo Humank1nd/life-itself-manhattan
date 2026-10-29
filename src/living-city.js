@@ -118,7 +118,7 @@ export function createLivingCity(corridors, { seed = DEFAULT_SEED, pedestrians =
     crowd.push({ id: 'ped_' + (i + 1), laneIndex, segmentIndex, fraction,
       direction, speed, x, z, state: 'walking',
       traits, rates: motiveRateModifiers(traits), motives: initMotives(),
-      memory: { visits: {} } });
+      memory: { visits: {} }, ageTicks: 0, injury: 0, starveTicks: 0, alive: true, death: null });
   }
   const zones = ZONE_DEFINITIONS.map((z) => makeZone(z.id, z.lat, z.lon, z.type, z.radiusKm));
   return { seed, tickCount: 0, zones, pedestrians: crowd, lanes,
@@ -161,26 +161,43 @@ function advancePedestrian(ped, lane, seconds) {
   [ped.x, ped.z] = positionOnLane(lane, ped.segmentIndex, ped.fraction);
 }
 
+export const TICKS_PER_DAY = 288; // 5-minute ticks: 288 make a day
+export const LIFESPAN_DAYS = 365; // one-year natural span; death is terminal
+// Deterministic mortality: starvation (no food/drink AND no energy for 3
+// ticks), lethal injury, or old age. Returns a cause string or null.
+export function checkMortality(ped, tick) {
+  if (ped.injury >= 100) return 'injury';
+  if (ped.starveTicks >= 3) return 'starvation';
+  if (Math.floor(ped.ageTicks / TICKS_PER_DAY) > LIFESPAN_DAYS) return 'age';
+  return null;
+}
 export function tickLivingCity(state) {
   state.tickCount += 1;
   tickCity(state.zones, state.world);
   const context = crowdContext(state.tickCount % 24);
   for (const ped of state.pedestrians) {
+    if (!ped.alive) continue; // the dead do not walk; history keeps them
+    ped.ageTicks += 1;
     advancePedestrian(ped, state.lanes[ped.laneIndex], TICK_MS / 1000);
-    ped.motives = tickMotives(ped.motives, ped.rates, context);
+    ped.motives = tickMotives(ped.motives, ped.rates,
+      { ...context, ageDays: Math.floor(ped.ageTicks / TICKS_PER_DAY) });
+    if ((ped.motives.hunger <= 0 || ped.motives.thirst <= 0) && ped.motives.energy <= 0) ped.starveTicks += 1;
+    else ped.starveTicks = 0;
+    const cause = checkMortality(ped, state.tickCount);
+    if (cause) { ped.alive = false; ped.state = 'dead'; ped.death = { cause, tick: state.tickCount }; }
   }
   return state;
 }
 
 export function citySnapshot(state) {
   // Include reproducible state, exclude immutable lane geometry already in data/.
-  // Traits ride along (seed-derived but explicit for audit); motives are live.
+  // Traits ride along (seed-derived but explicit for audit); motives and vitals are live.
   return {
     seed: state.seed, tick: state.tickCount,
     zones: state.zones.map(({ id, lat, lon, type, radiusKm, pop, jobs, money, happy }) =>
       ({ id, lat, lon, type, radiusKm, pop, jobs, money, happy })),
-    pedestrians: state.pedestrians.map(({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives, memory }) =>
-      ({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives, memory: memory || { visits: {} } })),
+    pedestrians: state.pedestrians.map(({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives, memory, ageTicks, injury, starveTicks, alive, death }) =>
+      ({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives, memory: memory || { visits: {} }, ageTicks, injury, starveTicks, alive, death })),
   };
 }
 
@@ -196,7 +213,8 @@ export function citySummary(state) {
     }
   }
   const lowest = Object.keys(moodLow).sort((a, b) => moodLow[a] - moodLow[b])[0] || null;
+  const deaths = state.pedestrians.filter((p) => !p.alive).length;
   return { tick: state.tickCount, simHour: state.tickCount % 24,
     people: state.pedestrians.length, zones: state.zones.length, happiness,
-    mood: state.pedestrians.length ? { mean: Math.round(moodSum / moodN), lowest } : null };
+    deaths, mood: state.pedestrians.length ? { mean: Math.round(moodSum / moodN), lowest } : null };
 }

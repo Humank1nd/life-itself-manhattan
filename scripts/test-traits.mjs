@@ -38,7 +38,7 @@ for (const seed of [0, 1, 7, 42, 20261028, 999999]) {
   assert.equal(cultureCompatibility(pkg, fixed), fixture.compat);
 }
 // 6. Motives: Sims keys, init, drain ordering, trait modulation, clamp, recovery, determinism.
-assert.deepEqual([...MOTIVES], ['hunger', 'comfort', 'hygiene', 'bladder', 'energy', 'fun', 'social', 'env']);
+assert.deepEqual([...MOTIVES], ['hunger', 'thirst', 'comfort', 'hygiene', 'bladder', 'energy', 'fun', 'social', 'env']);
 {
   const m0 = initMotives();
   for (const m of MOTIVES) assert.equal(m0[m], 70);
@@ -60,10 +60,10 @@ assert.deepEqual([...MOTIVES], ['hunger', 'comfort', 'hygiene', 'bladder', 'ener
   const low = motiveSummary({ ...initMotives(), bladder: 5 });
   assert.equal(low.lowest, 'bladder');
   // Crowd pilot: clock-driven context + exact formatter.
-  assert.deepEqual(crowdContext(12), { eating: true, resting: false, washing: false, relieving: false, playing: true, socializing: true, comfortZone: true, pleasantEnv: true });
-  assert.deepEqual(crowdContext(3), { eating: false, resting: true, washing: false, relieving: false, playing: false, socializing: false, comfortZone: true, pleasantEnv: false });
-  assert.equal(formatMoodLine({ hunger: 70, comfort: 70, hygiene: 70, bladder: 70, energy: 62, fun: 70, social: 71, env: 70 }),
-    'hunger 70 · comfort 70 · hygiene 70 · bladder 70 · energy 62 · fun 70 · social 71 · env 70');
+  assert.deepEqual(crowdContext(12), { eating: true, drinking: false, resting: false, washing: false, relieving: false, playing: true, socializing: true, comfortZone: true, pleasantEnv: true });
+  assert.deepEqual(crowdContext(3), { eating: false, drinking: false, resting: true, washing: false, relieving: false, playing: false, socializing: false, comfortZone: true, pleasantEnv: false });
+  assert.equal(formatMoodLine({ hunger: 70, thirst: 70, comfort: 70, hygiene: 70, bladder: 70, energy: 62, fun: 70, social: 71, env: 70 }),
+    'hunger 70 · thirst 70 · comfort 70 · hygiene 70 · bladder 70 · energy 62 · fun 70 · social 71 · env 70');
   {
     const rates = motiveRateModifiers(sampleTraits(GENOME_PRIORS, 11));
     const a = tickMotives(tickMotives(initMotives(), rates, crowdContext(9)), rates, crowdContext(9));
@@ -71,4 +71,4 @@ assert.deepEqual([...MOTIVES], ['hunger', 'comfort', 'hygiene', 'bladder', 'ener
     assert.deepEqual(a, b);
   }
 }
-console.log('PASS traits+motives — 16 quarry traits with priors, seeded determinism, jitter bounds, centered distributions, bit-exact culture compatibility, 8 Sims motives with trait-modulated dynamics, 500-tick clamp');
+console.log('PASS traits+motives — 16 quarry traits with priors, seeded determinism, jitter bounds, centered distributions, bit-exact culture compatibility, 9 Sims motives with trait-modulated dynamics, 500-tick clamp');

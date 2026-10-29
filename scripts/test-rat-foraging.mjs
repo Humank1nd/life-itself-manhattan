@@ -125,7 +125,7 @@ const ped = { id: 'rat-1', x: 90, z: 90 };
 // 4. Swapped ecology => different behavior, same rat.
 {
   const base = { id: 'rat-x', x: 0, z: 0 };
-  const motives = { hunger: 20, comfort: 70, hygiene: 70, bladder: 70, energy: 70, fun: 70, social: 70, env: 70 };
+  const motives = { hunger: 20, thirst: 70, comfort: 70, hygiene: 70, bladder: 70, energy: 70, fun: 70, social: 70, env: 70 };
   const mem = { visits: {} };
   const eastRich = createPatch({ id: 'e', x: 40, z: 0, moisture: 0.8, warmth: 0.7, disturbance: 0.1 });
   const westPoor = createPatch({ id: 'w', x: -40, z: 0, moisture: 0.3, warmth: 0.3, disturbance: 0.5 });

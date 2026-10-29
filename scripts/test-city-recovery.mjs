@@ -89,4 +89,16 @@ assert.throws(() => JSON.parse('{"tick": 12, broken'), /Unexpected token|Expecte
   const bad = clone(); bad.snapshot.pedestrians = bad.snapshot.pedestrians.slice(1);
   assert.throws(() => T(bad), /citizen roster mismatch/);
 }
-console.log(`PASS city recovery — ${N} ticks uninterrupted == tick-${K} restore + continue, snapshots/summaries/trajectories/motives identical, 13 fail-closed integrity proofs`);
+// Applied report IDs ride the checkpoint and are restored verbatim:
+// a report applied before shutdown stays applied after restart.
+{
+  const withIds = buildResumptionRecord({ snapshot: citySnapshot(cut), corridorsSha256: corridorSha256, world: cut.world, appliedReports: ['rr-1', 'rr-2'] });
+  assert.deepEqual(withIds.appliedReports, ['rr-1', 'rr-2']);
+  const revived2 = resumeLivingCity(corridors, JSON.parse(JSON.stringify(withIds)), trust);
+  const seen = new Set(revived2.appliedReports);
+  assert(seen.has('rr-1') && seen.has('rr-2'), 'applied set restored');
+  assert.throws(() => buildResumptionRecord({ snapshot: citySnapshot(cut), corridorsSha256: corridorSha256, world: cut.world, appliedReports: ['x', 'x'] }), /duplicated applied report/);
+  const bad = JSON.parse(JSON.stringify(withIds)); bad.appliedReports.push(7);
+  assert.throws(() => resumeLivingCity(corridors, bad, trust), /applied report id/);
+}
+console.log(`PASS city recovery — ${N} ticks uninterrupted == tick-${K} restore + continue, snapshots/summaries/trajectories/motives identical, applied IDs persist, 16 fail-closed integrity proofs`);
