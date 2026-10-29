@@ -4,7 +4,9 @@ on:
   pull_request:
     paths:
       - "capture/**"
+      - "src/conditioning-envelope.js"
       - "scripts/cloud-capture-times-square.mjs"
+      - "scripts/verify-conditioning-envelope.mjs"
       - ".github/workflows/cloud-times-square-capture.yml"
       - "data/times-square-building-versions-v1.json"
       - "data/city-scene-v1.json"
@@ -46,6 +48,11 @@ jobs:
           CAPTURE_OUT: ${{ runner.temp }}/times-square-capture
           PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
         run: node scripts/cloud-capture-times-square.mjs
+
+      - name: Verify source, frame bytes and Phase 016 conditioning envelope
+        env:
+          CAPTURE_OUT: ${{ runner.temp }}/times-square-capture
+        run: node scripts/verify-conditioning-envelope.mjs
 
       - name: Upload ephemeral verified RGB/depth/building-ID artifact
         uses: actions/upload-artifact@v4
