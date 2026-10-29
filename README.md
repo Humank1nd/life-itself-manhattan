@@ -250,3 +250,13 @@ envelope stay evaluation-side truth; only clean RGB enters the clip.
 Run `npm run build:matrix-plan` and `npm run test:matrix-adapter`.
 See `docs/extraction-016-matrix-adapter.md`. Bounded cloud inference
 (S016-04) remains blocked on rights, cost, and approval.
+
+## Quarry traits + Sims motives — Extraction 014 (dark code)
+
+The quarry's 16-trait personality engine (`src/traits.js`, priors and
+jitter bounds verbatim from `development.py`) and the eight Sims motives
+(`src/motives.js`, same keys as the gods-eye-view dashboard) as pure,
+seeded, gated functions. No walker behavior changes — seating the trait
+engine is an open founder ruling; the port proposes trait→motive rate
+maps (sleep_need→energy, social_drive→social, novelty_seeking→fun).
+Run `npm run test:traits`. See `docs/extraction-014-traits-and-motives.md`.
