@@ -54,7 +54,7 @@ Any private, separately held interpretation or experimental overlay is **not sou
 
 - `licensed/` is ignored by Git as a convenience, but must never be tracked or included in a release. Local-only optional inputs are disabled by default; valid input plus an explicit flag is required to activate the experimental loader.
 - `npm run test:public-tree` checks the **current checkout's tracked files** for restricted paths and a narrow set of explicitly prohibited franchise-specific identifiers. It rejects force-added and renamed files with those signatures, including non-`licensed/` paths. This is a tripwire, not a comprehensive copyright clearance or an all-ref guarantee.
-- The GitHub CI workflow exercises this gate for pull requests and pushes; a push is already public when push-triggered CI starts. Local pre-push checks are advisable, and repository permissions/protection may be needed for enforceable publication control.
+- GitHub Actions are disabled. Run `npm run test:public-tree` locally before every push and review its results; this gate checks the local tracked tree but cannot prevent publication if bypassed. Firebase preview and production artifacts require separate inspection before deployment.
 - Release/deployment pipelines must also inspect their own produced artifacts. Passing a source-tree scan cannot prove that some unrelated build or upload is clean.
 - The entire published work must remain original in expression, not merely have familiar names removed.
 
