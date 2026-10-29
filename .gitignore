@@ -4,3 +4,4 @@ __pycache__/
 core/target/
 .DS_Store
 
+.firebase/
