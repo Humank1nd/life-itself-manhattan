@@ -51,6 +51,8 @@ const ped = { id: 'rat-1', x: 90, z: 90 };
   assert(aSeen < aNew, 'recent visit discounts appeal');
 }
 // 3. Live round-trip: decide, commit, apply, checkpoint, restore, identical future.
+// All validation context derives from the city under test — never from a
+// closed-over original. Patches ride the wire and are rehydrated on restore.
 {
   const city = createLivingCity(corridors, { seed: 11, pedestrians: 24 });
   for (let n = 0; n < 5; n++) tickLivingCity(city);
@@ -61,27 +63,57 @@ const ped = { id: 'rat-1', x: 90, z: 90 };
   for (let d = 0; d < 8; d++) tickPatch(rich, { day: d });
   const patches = [rich];
   const applied = new Set();
-  const obs = (id, tick) => ({ schemaVersion: 'life-itself-observation/1.0.0', observationId: id, observerId: rat.id, tick, kind: 'local-survey', summary: 'food-scent' });
-  const ctxFor = (c, tick, last) => ({ citizenIds: c.pedestrians.map((p) => p.id),
-    positions: Object.fromEntries(c.pedestrians.map((p) => p.id === rat.id ? [p.id, { x: rat.x, z: rat.z }] : [p.id, p])),
-    tick, lanes: city.lanes, lastTick: last });
-  const action = { ...proposeForage(rat, rat.motives, patches, rat.memory, 8, 5), basis: [obs('o1', 5)] };
+  const obs = (actor, id, tick) => ({ schemaVersion: 'life-itself-observation/1.0.0', observationId: id, observerId: actor, tick, kind: 'local-survey', summary: 'food-scent' });
+  const ctxFor = (c, actor, tick, last) => ({ citizenIds: c.pedestrians.map((p) => p.id),
+    positions: Object.fromEntries(c.pedestrians.map((p) => [p.id, p])),
+    tick, lanes: c.lanes, lastTick: last });
+  const r0 = city.pedestrians[0];
+  const action = { ...proposeForage(r0, r0.motives, patches, r0.memory, 8, 5), basis: [obs(r0.id, 'o1', 5)] };
   assert(action, 'forage action proposed');
-  validateAction(action, ctxFor(city, 5, -1));
-  const ev = commitAction(action, ctxFor(city, 5, -1), applied, -1);
+  validateAction(action, ctxFor(city, r0.id, 5, -1));
+  const ev = commitAction(action, ctxFor(city, r0.id, 5, -1), applied, -1);
   applyEventOnce(city, ev, applied);
-  rememberVisit(rat.memory, 'dumpster-1', 8);
+  rememberVisit(r0.memory, 'dumpster-1', 8);
+  // Reference second proposal from the identical post-apply state: replay
+  // must reproduce exactly this, not the pre-move proposal.
+  const actionRef = { ...proposeForage(r0, r0.motives, patches, r0.memory, 8, 5), basis: [obs(r0.id, 'o1', 5)] };
   const log = [ev];
   const record = buildResumptionRecord({ snapshot: citySnapshot(city), corridorsSha256: corridorSha256, world: city.world });
   const trust = { corridorsSha256: corridorSha256, world: city.world, citizenIds: city.pedestrians.map((p) => p.id) };
   const wire = JSON.parse(JSON.stringify({ record, log, patches: patches.map((p) => JSON.parse(JSON.stringify(p))) }));
   const revived = resumeLivingCity(corridors, wire.record, trust);
+  // Restored patches drive restored decisions: re-propose from the revived
+  // world and the rehydrated ecology, and require the identical action.
+  const r1 = revived.pedestrians[0];
+  const patchesBack = wire.patches;
+  const action2 = { ...proposeForage(r1, r1.motives, patchesBack, r1.memory, 8, 5), basis: [obs(r1.id, 'o1', 5)] };
+  assert.deepEqual({ ...action2, basis: action2.basis.map((o) => o.observationId) },
+    { ...actionRef, basis: actionRef.basis.map((o) => o.observationId) }, 'same world+ecology => same decision');
   const appliedB = new Set();
   for (const e of wire.log) appliedB.add(e.eventId);
-  assert.throws(() => commitAction(action, ctxFor(revived, 5, -1), appliedB, -1), /duplicate/);
+  assert.throws(() => commitAction(action2, ctxFor(revived, r1.id, 5, -1), appliedB, -1), /duplicate/);
   assert.throws(() => applyEventOnce(revived, wire.log[0], appliedB), /duplicate/);
   const ref = [];
   for (let n = 0; n < 10; n++) { tickLivingCity(city); ref.push(JSON.stringify(citySnapshot(city))); }
   for (let n = 0; n < 10; n++) { tickLivingCity(revived); assert.equal(JSON.stringify(citySnapshot(revived)), ref[n], `divergence at +${n + 1}`); }
+}
+// 4. Swapped ecology => different behavior, same rat.
+{
+  const base = { id: 'rat-x', x: 0, z: 0 };
+  const motives = { hunger: 20, comfort: 70, hygiene: 70, bladder: 70, energy: 70, fun: 70, social: 70, env: 70 };
+  const mem = { visits: {} };
+  const eastRich = createPatch({ id: 'e', x: 40, z: 0, moisture: 0.8, warmth: 0.7, disturbance: 0.1 });
+  const westPoor = createPatch({ id: 'w', x: -40, z: 0, moisture: 0.3, warmth: 0.3, disturbance: 0.5 });
+  addWaste(eastRich, 25); seedRoaches(eastRich, 2);
+  for (let d = 0; d < 8; d++) { tickPatch(eastRich, { day: d }); tickPatch(westPoor, { day: d }); }
+  const aEast = proposeForage(base, motives, [eastRich, westPoor], mem, 8, 4);
+  assert(aEast && aEast.params.to.x > 0, 'heads east to the rich patch');
+  const eastPoor = createPatch({ id: 'e', x: 40, z: 0, moisture: 0.3, warmth: 0.3, disturbance: 0.5 });
+  const westRich = createPatch({ id: 'w', x: -40, z: 0, moisture: 0.8, warmth: 0.7, disturbance: 0.1 });
+  addWaste(westRich, 25); seedRoaches(westRich, 2);
+  for (let d = 0; d < 8; d++) { tickPatch(eastPoor, { day: d }); tickPatch(westRich, { day: d }); }
+  const aWest = proposeForage(base, motives, [eastPoor, westRich], mem, 8, 4);
+  assert(aWest && aWest.params.to.x < 0, 'heads west when richness swaps');
+  assert.notDeepEqual(aEast.params.to, aWest.params.to, 'same rat, swapped ecology => different target');
 }
 console.log('PASS rat foraging — scent radius, rich beats poor, satiation abstains, memory discounts, forage-committed once, restore reproduces future identically');
