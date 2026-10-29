@@ -2,6 +2,8 @@
 
 **Status:** Developer pilot, draft-only. Not a trained Manhattan world model, historical reconstruction, rendered video, Quest experience, or merged implementation.
 
+**Reference only (founder ruling, 2026-10-28):** this packet is preserved as research material. It is not a product dependency, and its bridge is not on the commercial product path. See `docs/decision-phase-014-renderer-strategy.md`.
+
 ## Recovered canonical interfaces (verified on Houston, October 28, 2026)
 
 - Base: `Humank1nd/life-itself-manhattan` draft PR #6, commit

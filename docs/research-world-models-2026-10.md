@@ -15,6 +15,11 @@ Matrix-Game's own abstract bottoms out at a desktop RTX 5070 Ti
 (58 FPS); treat all performance figures as the papers' claims under
 the papers' conditions.
 
+**Strategy of record (founder ruling, 2026-10-28):** see
+`decision-phase-014-renderer-strategy.md`. Matrix-Game 4.0 is the
+primary research direction, renderer-neutral capture is the immediate
+implementation priority, and LingBot material is reference only.
+
 ## The five most relevant
 
 1. **Matrix-Game 4.0** — arXiv:2610.27999, Oct 20, Skywork AI and
