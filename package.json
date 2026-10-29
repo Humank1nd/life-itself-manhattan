@@ -24,9 +24,7 @@
     "build:capture": "node scripts/build-capture-pilot.mjs",
     "test:capture": "node scripts/test-capture-pipeline.mjs",
     "pilot:prepare": "node scripts/lingbot-pilot.mjs --prepare",
-    "pilot:health": "node scripts/lingbot-pilot.mjs --health",
-    "check:lingbot": "node scripts/check-lingbot-readiness.mjs",
-    "test:lingbot:readiness": "node scripts/test-lingbot-readiness.mjs"
+    "pilot:health": "node scripts/lingbot-pilot.mjs --health"
   },
   "type": "module",
   "version": "0.1.0"
