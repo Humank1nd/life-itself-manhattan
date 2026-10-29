@@ -1,0 +1,55 @@
+name: JS gates
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "data/**"
+      - "package.json"
+      - ".github/workflows/js-gates.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: js-gates-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: All Node gates + endpoint validation
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout immutable PR revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Node 24 on ephemeral GitHub runner
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Run every committed gate (zero dependencies)
+        run: |
+          npm run test:city
+          npm run test:evidence
+          npm run test:atlas
+          npm run test:catalog
+          npm run build:photo-links && npm run test:alignment
+          npm run test:facades
+          npm run test:memory
+          npm run test:lingbot
+          npm run build:capture && npm run test:capture
+          npm run build:envelope && npm run test:envelope
+          npm run build:matrix-plan && npm run test:matrix-adapter
+          npm run test:traits
+          npm run test:sumo-lanes
+          npm run test:camera-tour
+          npm run test:pacejka
+          npm run validate:city
+          python3 endpoint/test_endpoint_core.py

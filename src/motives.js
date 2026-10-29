@@ -47,3 +47,23 @@ export function motiveSummary(motives) {
   const vals = MOTIVES.map((m) => motives[m]);
   return { lowest: MOTIVES[vals.indexOf(Math.min(...vals))], mean: vals.reduce((a, b) => a + b, 0) / vals.length };
 }
+// Crowd-average pilot context from the city clock (display-only; walkers
+// are not individualized until the seating ruling). Meals midday/evening,
+// play afternoons, company while the city is awake, rest after midnight.
+export function crowdContext(simHour) {
+  const h = ((simHour % 24) + 24) % 24;
+  const inR = (a, b) => h >= a && h < b;
+  return {
+    eating: inR(7, 9) || inR(12, 13) || inR(18, 20),
+    resting: inR(23, 24) || inR(0, 5),
+    washing: false,
+    relieving: false,
+    playing: inR(12, 14) || inR(17, 19),
+    socializing: inR(8, 22),
+    comfortZone: true,
+    pleasantEnv: inR(9, 17),
+  };
+}
+export function formatMoodLine(motives) {
+  return MOTIVES.map((m) => `${m} ${Math.round(motives[m])}`).join(' · ');
+}

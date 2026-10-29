@@ -45,4 +45,22 @@ for (let n = 0; n < 100; n++) tickLivingCity(small);
 assert.ok(small.pedestrians.every((p) => p.fraction >= 0 && p.fraction <= 1));
 console.log('PASS: seeds diverge, bad inputs rejected, endpoint reversal is bounded');
 
-console.log('PASS: living-city adapter verified (3 groups)');
+// Seated traits (founder ruling 1a): every walker carries a seeded
+// personality and live motives; sleep_need drives energy drain.
+{
+  const city = createLivingCity(corridors, { seed: 11, pedestrians: 24 });
+  for (const p of city.pedestrians) {
+    assert.equal(Object.keys(p.traits).length, 16);
+    assert.equal(Object.keys(p.motives).length, 8);
+  }
+  const bySleep = [...city.pedestrians].sort((a, b) => b.traits.sleep_need - a.traits.sleep_need);
+  assert(bySleep[0].traits.sleep_need > bySleep[bySleep.length - 1].traits.sleep_need, 'trait spread');
+  for (let n = 0; n < 60; n++) tickLivingCity(city);
+  for (const p of city.pedestrians) for (const k of Object.keys(p.motives)) assert(p.motives[k] >= 0 && p.motives[k] <= 100, 'motive bounds');
+  assert(bySleep[0].motives.energy < bySleep[bySleep.length - 1].motives.energy, 'sleep_need drives energy drain');
+  const s = citySummary(city);
+  assert(s.mood && typeof s.mood.mean === 'number' && typeof s.mood.lowest === 'string', 'crowd mood summary');
+  console.log(`PASS: seated traits — 24 walkers, sleepiest energy ${bySleep[0].motives.energy.toFixed(1)} vs rested ${bySleep[bySleep.length - 1].motives.energy.toFixed(1)}, crowd mood ${s.mood.mean} (${s.mood.lowest} lowest)`);
+}
+
+console.log('PASS: living-city adapter verified (4 groups)');
