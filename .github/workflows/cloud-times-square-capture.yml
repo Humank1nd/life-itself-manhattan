@@ -19,14 +19,12 @@ concurrency:
 
 jobs:
   capture:
-    name: Hosted runner — current 2026 geometry, RGB/depth/BIN IDs
+    name: Hosted runner - current 2026 geometry, RGB/depth/building IDs
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 18
     env:
       CI: "true"
-      CAPTURE_OUT: ${{ runner.temp }}/times-square-capture
-      PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
     steps:
       - name: Checkout immutable PR revision
         uses: actions/checkout@v4
@@ -37,12 +35,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-          check-latest: false
 
       - name: Install render/test dependencies on hosted runner only
+        env:
+          PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
         run: npm install --no-save --no-package-lock --no-audit --no-fund three@0.160.0 pngjs@7.0.0 puppeteer@24.31.0
 
       - name: Render and verify nine synchronized passes
+        env:
+          CAPTURE_OUT: ${{ runner.temp }}/times-square-capture
+          PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
         run: node scripts/cloud-capture-times-square.mjs
 
       - name: Upload ephemeral verified RGB/depth/building-ID artifact
