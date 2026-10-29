@@ -31,7 +31,7 @@ function hungryColony() {
 }
 function autonomyCtx(journal) {
   const applied = new Set(), ledger = [], lastTick = { n: -1 };
-  return { applied, ledger, lastTick,
+  return { applied, ledger, lastTick, integrity: { fault: null },
     journalAppend: (type, tick, payload) => journal.append(type, tick, payload) };
 }
 // One uninterrupted reference run: tick the city, step autonomy, collect.
@@ -153,7 +153,7 @@ for (const e of log) assert(ctx.applied.has(e.eventId), 'every committed event a
   assert.equal(await revivedJournal.verifyChain(), true);
   // Continue the restored world with a fresh autonomy context over the
   // rebuilt exactly-once set — the causal future must match the reference.
-  const contCtx = { applied: revivedApplied, ledger: [], lastTick: { n: K },
+  const contCtx = { applied: revivedApplied, ledger: [], lastTick: { n: K }, integrity: { fault: null },
     journalAppend: (t, k, p) => revivedJournal.append(t, k, p) };
   const revivedState = { ...revived, tickCount: revived.tickCount };
   const contLog = [];

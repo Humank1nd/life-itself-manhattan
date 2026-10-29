@@ -12,7 +12,7 @@ import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
 import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, NO_DECISION_TEXT } from './rat-perception.js';
-import { stepRatAutonomy } from './rat-autonomy.js';
+import { stepRatAutonomy, reconcileIntegrityFault } from './rat-autonomy.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 
@@ -207,7 +207,7 @@ function renderMotiveStrip(simHour) {
 // ledger of genuinely committed outcomes. The simulation owns initiation;
 // the panel only reads.
 const ratCtx = { applied: new Set(), lastTick: { n: -1 }, ledger: [],
-  journalAppend: null };
+  integrity: { fault: null }, journalAppend: null };
 function ratReceiptsFor(actorId) {
   const found = [];
   for (let i = ratCtx.ledger.length - 1; i >= 0 && found.length === 0; i--) {
@@ -245,7 +245,7 @@ function renderRatPanel() {
     const patchesById = Object.fromEntries(livingCity.patches.map((p) => [p.id, p]));
     const live = refreshLiveAvailability(view, patchesById, livingCity.tickCount);
     const head = journal.lastChecksum ? journal.lastChecksum.slice(0, 12) : 'none';
-    ratViewEl.textContent = renderRatPanelText(view, live) +
+    ratViewEl.textContent = renderRatPanelText(view, live, ratCtx.integrity.fault) +
       `\njournal: ${journal.entries.length} entries · head ${head} (read-only context)`;
   } catch {
     ratViewEl.textContent = NO_DECISION_TEXT;
@@ -276,6 +276,32 @@ async function advanceCityTick() {
   try {
     await journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'city_tick' });
     tickLivingCity(livingCity);
+    // P017.8: one autonomous rat may then act on sim-owned state. A failure
+    // here skips the rat for this tick only — the city itself never pauses
+    // for autonomy. An integrity fault blocks further actions until the
+    // journal accepts the missing history (auto-reconciled below, never
+    // UI-triggered); the fault stays visible in the panel meanwhile.
+    if (livingCity.patches && livingCity.objects) {
+      try {
+        if (!ratCtx.journalAppend) ratCtx.journalAppend = (t, k, p) => journal.append(t, k, p);
+        if (ratCtx.integrity.fault) {
+          try {
+            await reconcileIntegrityFault(ratCtx);
+          } catch (recErr) {
+            console.error('Rat ledger reconciliation deferred:', recErr);
+          }
+        }
+        const ecoDay = Math.floor(livingCity.tickCount / TICKS_PER_DAY);
+        const outcome = await stepRatAutonomy(livingCity, ratCtx, livingCity.tickCount, ecoDay);
+        if (ratCtx.ledger.length > 200) ratCtx.ledger.splice(0, ratCtx.ledger.length - 200);
+        if (outcome.status === 'fault') console.error('Rat integrity fault:', outcome.fault.eventId, outcome.fault.failedStage);
+        void outcome;
+      } catch (ratErr) {
+        console.error('Rat autonomy skipped this tick:', ratErr);
+      }
+    }
+    // The tick's state hash is computed AFTER autonomous actions, so the
+    // journaled record covers the world the rat actually changed.
     const summary = citySummary(livingCity);
     const stateHash = await hashWorldState(citySnapshot(livingCity));
     await journal.append(JournalEventType.ACTION, tick, {
@@ -288,20 +314,6 @@ async function advanceCityTick() {
     });
     // Existing world_hash remains the immutable NYC ground-data digest.
     // The mutable simulation gets its own hash in the ACTION record above.
-    // P017.8: one autonomous rat may then act on sim-owned state. Its own
-    // journal entries land before TICK_END; a failure here skips the rat
-    // for this tick only — the city itself never pauses for autonomy.
-    if (livingCity.patches && livingCity.objects) {
-      try {
-        if (!ratCtx.journalAppend) ratCtx.journalAppend = (t, k, p) => journal.append(t, k, p);
-        const ecoDay = Math.floor(livingCity.tickCount / TICKS_PER_DAY);
-        const outcome = await stepRatAutonomy(livingCity, ratCtx, livingCity.tickCount, ecoDay);
-        if (ratCtx.ledger.length > 200) ratCtx.ledger.splice(0, ratCtx.ledger.length - 200);
-        void outcome;
-      } catch (ratErr) {
-        console.error('Rat autonomy skipped this tick:', ratErr);
-      }
-    }
     await journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
     renderCityPeople();
     showCityState();
@@ -326,6 +338,7 @@ function startLivingCity(corridors) {
   ratCtx.applied.clear();
   ratCtx.ledger.length = 0;
   ratCtx.lastTick.n = -1;
+  ratCtx.integrity.fault = null;
   selectedRatId = null;
   const positions = new Float32Array(livingCity.pedestrians.length * 3);
   const geometry = new THREE.BufferGeometry();

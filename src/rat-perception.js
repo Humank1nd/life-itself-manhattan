@@ -134,10 +134,15 @@ export function refreshLiveAvailability(viewModel, patchesById, tick) {
 // Plain-text panel rendering shared by the gate and the browser panel,
 // so the tested wording IS the shipped wording. Null view → the exact
 // empty-state string; stale live data → an explicit historical banner
-// with current values alongside, never stale values as current.
-export function renderRatPanelText(viewModel, live) {
+// with current values alongside, never stale values as current. A fault
+// record adds an explicit integrity banner: partial execution is never
+// displayed as an abstention ('chosen: none') without that banner.
+export function renderRatPanelText(viewModel, live, fault = null) {
   if (!viewModel) return NO_DECISION_TEXT;
   const lines = [];
+  if (fault) {
+    lines.push(`INTEGRITY FAULT: event ${fault.eventId} applied at tick ${fault.tick} but journaling failed at ${fault.failedStage}; consequential actions halted until reconciled — shown values are current world state, history incomplete`);
+  }
   lines.push(`rat ${viewModel.actorId} · decision tick ${viewModel.asOfTick} · policy ${viewModel.policyRevision}`);
   if (live && live.stale) {
     lines.push(`historical snapshot from tick ${live.asOfTick} — current tick ${live.currentTick}; snapshot values are NOT current`);
