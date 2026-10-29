@@ -213,3 +213,116 @@ async function runToStatus(city, ctx, want, ticks = 6) {
 }
 
 console.log('PASS rat reconciliation — repeated and ambiguous failures stay exactly-once: progress-tracked retries, adopted post-write appends, single marker, verified chain');
+
+// ---- P017.8c: strict uniqueness and payload verification ----
+// StateJournal-backed sink with drop / land-then-throw modes plus a
+// strict entries-based resolver: exactly one ID- and payload-consistent
+// record adopts; duplicates and conflicting-yet-hash-valid records hold
+// the fault. Uses the same matcher the browser panel uses.
+function strictBacked() {
+  const journal = new StateJournal();
+  const gate = { drop: new Set(), land: new Set(), calls: 0 };
+  const ctx = { applied: new Set(), ledger: [], lastTick: { n: -1 }, integrity: { fault: null },
+    journalAppend: async (type, tick, payload) => {
+      gate.calls++;
+      if (gate.drop.has(gate.calls)) throw new Error('drop @' + gate.calls);
+      const entry = await journal.append(type, tick, payload);
+      if (gate.land.has(gate.calls)) throw new Error('post-write callback boom @' + gate.calls);
+      return entry;
+    },
+    journalEntries: async () => journal.entries };
+  return { journal, gate, ctx };
+}
+const DECISION_ID = 'dec-3-ped_45'; // deterministic first autonomous meal
+const EVENT_ID = 'ev-3-act-3-ped_45-autonomy';
+const countStage = (journal, stage, eventId) =>
+  journal.entries.filter((e) => journalEntryMatchesStage(e, { stage, eventId, decisionId: DECISION_ID })).length;
+
+// C1: right ID, wrong actor and content — hash-valid, but not this rat's record.
+{
+  const city = hungryColony();
+  const sb = strictBacked();
+  await sb.journal.append('action', 3, { kind: 'rat-decision',
+    decision: { decisionId: DECISION_ID, actorId: 'ped_X', tick: 3, evaluated: [], chosen: null, policyRevision: 'x' } });
+  const out = await runToStatus(city, sb.ctx, 'fault');
+  assert.equal(out.fault.failedStage, 'decision', 'conflicting content fails the stage');
+  assert.deepEqual(out.fault.completedStages, [], 'nothing adopted from a conflict');
+  assert.equal(sb.ctx.ledger.length, 0, 'no receipt on a conflicted history');
+  assert.equal(countStage(sb.journal, 'decision', EVENT_ID), 1, 'no second decision appended over the conflict');
+  assert(sb.ctx.applied.has(out.event.eventId), 'the world still changed — hence the fault, not an abstain');
+  const view = snapshotLiveRat({ rat: city.pedestrians.find((p) => p.id === 'ped_45'),
+    tick: city.tickCount, ecoDay: ecoDayOf(city), patches: city.patches, objects: city.objects });
+  const text = renderRatPanelText(view, refreshLiveAvailability(view,
+    Object.fromEntries(city.patches.map((p) => [p.id, p])), city.tickCount), out.fault);
+  assert(text.includes('INTEGRITY FAULT') && text.includes(out.event.eventId), 'conflict visible, receipt withheld');
+}
+
+// C2: duplicate IDs — two records, one ID, no append over either.
+{
+  const city = hungryColony();
+  const sb = strictBacked();
+  const dup = { kind: 'rat-decision', decision: { decisionId: DECISION_ID, actorId: 'ped_45', tick: 3 } };
+  await sb.journal.append('action', 3, dup);
+  await sb.journal.append('action', 3, JSON.parse(JSON.stringify(dup)));
+  const out = await runToStatus(city, sb.ctx, 'fault');
+  assert.equal(out.fault.failedStage, 'decision');
+  assert.equal(countStage(sb.journal, 'decision', EVENT_ID), 2, 'duplicates detected, never papered over');
+}
+
+// C3: right ID, wrong entry tick — a record from another moment.
+{
+  const city = hungryColony();
+  const sb = strictBacked();
+  await sb.journal.append('action', 999, { kind: 'rat-decision',
+    decision: { decisionId: DECISION_ID, actorId: 'ped_45', tick: 3, evaluated: [], chosen: null, policyRevision: 'scavenge-v1' } });
+  const out = await runToStatus(city, sb.ctx, 'fault');
+  assert.equal(out.fault.failedStage, 'decision', 'tick mismatch is a conflict');
+}
+
+// C4: reconcile-time conflict — the missing effect has a hash-valid impostor.
+{
+  const city = hungryColony();
+  const sb = strictBacked();
+  sb.gate.drop = new Set([3]); // effect genuinely missed at commit
+  const f = await runToStatus(city, sb.ctx, 'fault');
+  assert.deepEqual(f.fault.completedStages, ['decision', 'event']);
+  await sb.journal.append('action', 3, { kind: 'scavenge-effect',
+    effect: { takenKg: 999, hunger: 0, fresh: 0, eatenKg: 0 },
+    receipt: { actionId: f.event.actionId, status: 'committed', eventId: f.event.eventId } });
+  await assert.rejects(reconcileIntegrityFault(sb.ctx), /conflicted: effect/);
+  assert(sb.ctx.integrity.fault, 'fault retained on conflict');
+  assert.equal(countStage(sb.journal, 'effect', f.event.eventId), 1, 'impostor stands alone; no third effect');
+  await assert.rejects(reconcileIntegrityFault(sb.ctx), /conflicted: effect/);
+  assert.equal(countStage(sb.journal, 'effect', f.event.eventId), 1, 'retry adds nothing over a conflict');
+}
+
+// C5: adopted-correct control on the strict path — land-then-throw resolves clean.
+{
+  const city = hungryColony();
+  const sb = strictBacked();
+  sb.gate.land = new Set([1]);
+  const out = await runToStatus(city, sb.ctx, 'acted');
+  assert.equal(countStage(sb.journal, 'decision', out.event.eventId), 1);
+  assert.equal(countStage(sb.journal, 'event', out.event.eventId), 1);
+  assert.equal(countStage(sb.journal, 'effect', out.event.eventId), 1);
+  assert.equal(sb.ctx.ledger.length, 1, 'genuine receipt released');
+  assert.equal(await sb.journal.verifyChain(), true);
+}
+
+// C6: marker conflict — a wrong late-arrival marker blocks the receipt.
+{
+  const city = hungryColony();
+  const sb = strictBacked();
+  sb.gate.drop = new Set([3]);
+  const f = await runToStatus(city, sb.ctx, 'fault');
+  await sb.journal.append('action', 3, { kind: 'rat-reconciliation',
+    eventId: f.event.eventId, lateStages: ['decision'], originalTick: 3 });
+  await assert.rejects(reconcileIntegrityFault(sb.ctx), /conflicted: marker/);
+  assert(sb.ctx.integrity.fault, 'fault retained on marker conflict');
+  assert.equal(countStage(sb.journal, 'effect', f.event.eventId), 1, 'effect landed once');
+  assert.equal(sb.journal.entries.filter((e) => e.payload && e.payload.kind === 'rat-reconciliation').length, 1,
+    'no second marker over the conflict');
+  assert.equal(sb.ctx.ledger.length, 0, 'receipt still withheld');
+}
+
+console.log('PASS rat strict-stages — duplicate, conflicting, and tick-mismatched yet hash-valid records hold the fault; only exactly-one-consistent stages adopt and release receipts');

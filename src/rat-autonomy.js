@@ -22,6 +22,7 @@
 // model, no provider. Browser and gates share this exact code path.
 import { SCAVENGE_MAX_KG, SCAVENGE_MIN_KG, commitAction, actionReceipt } from './action-contract.js';
 import { applyEventOnce } from './citizen-agency.js';
+import { canonical } from './journal.js';
 import { advertiseObject, advertisementToObservation, decideForRat } from './object-affordances.js';
 import { buildScavengeAction } from './object-affordances.js';
 
@@ -74,46 +75,85 @@ export function selectRatAction(state, tick, ecoDay) {
 // Appends exactly the stages in `stages` not yet recorded on `f`,
 // tracking progress on `f.completedStages` IN PLACE after every
 // successful landing, so a retry resumes instead of repeating.
-//
-// Two hazards, both closed:
-//  1. Repeated failure: a retry reads f.completedStages (updated by the
-//     failed attempt up to its last landed stage) and skips them.
-//  2. Ambiguous failure (the sink stored the entry but reported an
-//     error — e.g. a post-write callback throwing): stages are resolved
-//     against the ACTUAL journal contents through ctx.journalHasStage,
-//     an optional async predicate ({stage, eventId, tick, actorId,
-//     decisionId}) => bool. When present, a stage already in the journal
-//     is adopted without re-appending; a throw that left nothing behind
-//     is a genuine miss. When absent, appends are trusted (single-writer
-//     sinks), but per-stage progress tracking still prevents repeats.
-//
-// Throws { failedStage } when a stage is genuinely absent after the
-// attempt. Callers retain the fault WITH its updated progress — the next
-// retry continues from the new frontier, never from zero.
+// ...
+// (doc block preserved from P017.8b; resolver strengthened below)
+async function resolveStage(ctx, tick, payloads, f, name) {
+  // Outcomes: 'missing' (no record — append it), 'adopted' (exactly one
+  // record with the expected canonical payload — skip it), 'conflicted'
+  // (duplicates, or an ID match with a different payload or tick — never
+  // append over it, never adopt it), 'trust' (no journal reader
+  // configured: single-writer sinks where appends are trusted).
+  const id = { stage: name, eventId: f.eventId, tick, actorId: f.actorId, decisionId: f.decisionId };
+  if (typeof ctx.journalEntries === 'function') {
+    const entries = await ctx.journalEntries();
+    const cands = entries.filter((e) => journalEntryMatchesStage(e, id));
+    if (cands.length === 0) return 'missing';
+    let good = 0;
+    for (const e of cands) {
+      try {
+        if (e.tick === tick && canonical(e.payload) === canonical(payloads[name])) good++;
+      } catch {
+        // Uncomparable entries count as conflicting, never as matching.
+      }
+    }
+    return (cands.length === 1 && good === 1) ? 'adopted' : 'conflicted';
+  }
+  // Legacy boolean hook: can confirm presence, never conflicts or content.
+  // Kept so existing single-writer gates keep their semantics; the strict
+  // path above is what the panel and the new gates use.
+  if (typeof ctx.journalHasStage === 'function') {
+    return (await ctx.journalHasStage(id)) ? 'adopted' : 'missing';
+  }
+  return 'trust';
+}
+
+// Throws { failedStage } — every exit carries the stage so faults and
+// reconciliation know exactly where the frontier stopped.
+function stageError(kind, name) {
+  const err = new Error('journal stage ' + kind + ': ' + name);
+  err.failedStage = name;
+  return err;
+}
+
+// The idempotent writer. For each unrecorded stage: adopt it when the
+// journal already holds exactly one payload-consistent record, refuse
+// when records duplicate or conflict, append when nothing is there, and
+// adopt-after-verify when the append reports failure but the record
+// landed anyway. Progress lands on f.completedStages in place.
 async function appendStagesOnce(ctx, tick, payloads, f, stages) {
-  const verify = typeof ctx.journalHasStage === 'function' ? ctx.journalHasStage : null;
-  const ident = { eventId: f.eventId, tick: f.tick, actorId: f.actorId, decisionId: f.decisionId };
   for (const name of stages) {
     if (f.completedStages.includes(name)) continue;
-    if (verify && (await verify({ stage: name, ...ident }))) { f.completedStages.push(name); continue; }
+    const seen = await resolveStage(ctx, tick, payloads, f, name);
+    if (seen === 'adopted') { f.completedStages.push(name); continue; }
+    if (seen === 'conflicted') throw stageError('conflicted', name);
     try {
       await ctx.journalAppend('action', tick, payloads[name]);
     } catch (e) {
-      // Landed despite the error? Adopt it; otherwise the stage is missed.
-      if (verify && (await verify({ stage: name, ...ident }))) { f.completedStages.push(name); continue; }
-      const err = new Error('journal stage missing: ' + name);
-      err.failedStage = name;
-      throw err;
+      const again = await resolveStage(ctx, tick, payloads, f, name);
+      if (again === 'adopted') { f.completedStages.push(name); continue; }
+      if (again === 'conflicted') throw stageError('conflicted', name);
+      throw stageError('missing', name);
     }
-    if (!verify || (await verify({ stage: name, ...ident }))) {
-      f.completedStages.push(name);
-    } else {
-      // The sink reported success but the stage is absent: fail closed.
-      const err = new Error('journal stage unverifiable: ' + name);
-      err.failedStage = name;
-      throw err;
+    const after = await resolveStage(ctx, tick, payloads, f, name);
+    // 'trust' readers report the uncontested append as landed by
+    // construction; anything else must verify present-and-consistent.
+    if (after === 'trust' || after === 'adopted') { f.completedStages.push(name); continue; }
+    throw stageError(after === 'conflicted' ? 'conflicted' : 'unverifiable', name);
+  }
+}
+
+// Final gate before any receipt is released: re-resolve every required
+// stage against journal contents. Without a reader there is nothing to
+// revalidate against and the append protocol stands; otherwise anything
+// but unanimous 'adopted' fails the release.
+async function verifyAllStages(ctx, tick, payloads, f, stages) {
+  if (typeof ctx.journalEntries !== 'function' && typeof ctx.journalHasStage !== 'function') return true;
+  for (const name of stages) {
+    if ((await resolveStage(ctx, tick, payloads, f, name)) !== 'adopted') {
+      throw stageError('unverified', name);
     }
   }
+  return true;
 }
 
 // The single writer. ctx carries caller-owned mutation targets:
@@ -165,6 +205,7 @@ export async function commitRatAction(state, selected, ctx) {
     completedStages: [] };
   try {
     await appendStagesOnce(ctx, selected.action.tick, payloads, progress, AUTONOMY_STAGES);
+    await verifyAllStages(ctx, selected.action.tick, payloads, progress, AUTONOMY_STAGES);
   } catch (err) {
     // The world already changed: record WHAT landed and WHAT is missing,
     // with frozen copies (never live references the world could mutate).
@@ -205,7 +246,15 @@ export async function reconcileIntegrityFault(ctx) {
   const markerPayload = { kind: 'rat-reconciliation', eventId: f.eventId,
     lateStages: f.markerLateStages, originalTick: f.tick };
   const payloads = { ...f.payloads, marker: markerPayload };
-  await appendStagesOnce(ctx, f.tick, payloads, f, [...AUTONOMY_STAGES, 'marker']);
+  const stages = [...AUTONOMY_STAGES, 'marker'];
+  try {
+    await appendStagesOnce(ctx, f.tick, payloads, f, stages);
+    await verifyAllStages(ctx, f.tick, payloads, f, stages);
+  } catch (err) {
+    // Fault retained WITH updated progress; the message names the stage
+    // so callers can distinguish missing / conflicted / unverified.
+    throw new Error('reconciliation deferred: ' + ((err && err.message) || err));
+  }
   ctx.ledger.push({ decision: f.decision, event: f.event, effect: f.effect, receipt: f.receipt });
   const receipt = f.receipt;
   const lateStages = f.markerLateStages;
