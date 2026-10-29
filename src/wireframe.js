@@ -7,10 +7,11 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { interpret, runQuery, describe } from './ask.js';
 import { createJournal, projectEnu, JournalEventType, hashWorldState } from './core-journal.js';
-import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS } from './living-city.js';
+import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS, TICKS_PER_DAY } from './living-city.js';
 import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
+import { buildAlley, snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, NO_DECISION_TEXT } from './rat-perception.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 
@@ -165,6 +166,9 @@ function showCityState() {
     ' (hour ' + s.simHour + ':00, happiness ' + s.happiness + '/100)' +
     (cityPaused ? ' · PAUSED' : '');
   renderMotiveStrip(s.simHour);
+  // Perception panel follows the city tick but only when open; it reads
+  // live state and cannot feed anything back into the simulation.
+  if (ratDetailsEl && ratDetailsEl.open) renderRatPanel();
 }
 // Crowd-average motive pilot (display-only): one fixed-seed trait set
 // stands in for the crowd until walkers are individualized.
@@ -195,6 +199,54 @@ function renderMotiveStrip(simHour) {
     wrap.appendChild(bar);
     motiveStripEl.appendChild(wrap);
   }
+}
+// --- P017.6 read-only perception bridge: what the selected rat knows.
+// Page-level projection state only — never written into livingCity, never
+// snapshotted, never journaled. Every read below is a pure function of
+// live state; any failure renders the empty state, never invented data,
+// and never interrupts the city tick.
+let ratAlley = null;
+let selectedRatId = null;
+const ratDetailsEl = document.getElementById('rat-perception');
+const ratSelectEl = document.getElementById('rat-select');
+const ratViewEl = document.getElementById('rat-view');
+function renderRatPanel() {
+  try {
+    if (!livingCity || !ratAlley) { ratViewEl.textContent = NO_DECISION_TEXT; return; }
+    const alive = livingCity.pedestrians.filter((p) => p.alive);
+    if (ratSelectEl.options.length !== alive.length) {
+      ratSelectEl.textContent = '';
+      for (const p of alive) {
+        const opt = document.createElement('option');
+        opt.value = p.id; opt.textContent = p.id;
+        ratSelectEl.appendChild(opt);
+      }
+      if (selectedRatId && alive.some((p) => p.id === selectedRatId)) ratSelectEl.value = selectedRatId;
+    }
+    const rat = alive.find((p) => p.id === ratSelectEl.value) || alive[0] || null;
+    selectedRatId = rat ? rat.id : null;
+    const view = snapshotLiveRat({ rat, tick: livingCity.tickCount,
+      ecoDay: Math.floor(livingCity.tickCount / TICKS_PER_DAY),
+      patches: ratAlley.patches, objects: ratAlley.objects });
+    if (!view) { ratViewEl.textContent = NO_DECISION_TEXT; return; }
+    const patchesById = Object.fromEntries(ratAlley.patches.map((p) => [p.id, p]));
+    const live = refreshLiveAvailability(view, patchesById, livingCity.tickCount);
+    const head = journal.lastChecksum ? journal.lastChecksum.slice(0, 12) : 'none';
+    ratViewEl.textContent = renderRatPanelText(view, live) +
+      `\njournal: ${journal.entries.length} entries · head ${head} (read-only context)`;
+  } catch {
+    ratViewEl.textContent = NO_DECISION_TEXT;
+  }
+}
+if (ratSelectEl && document.getElementById('rat-refresh')) {
+  document.getElementById('rat-refresh').addEventListener('click', () => {
+    selectedRatId = ratSelectEl.value || selectedRatId;
+    renderRatPanel();
+  });
+  ratSelectEl.addEventListener('change', () => {
+    selectedRatId = ratSelectEl.value;
+    renderRatPanel();
+  });
 }
 function renderCityPeople() {
   if (!livingCityPoints || !livingCity) return;
@@ -237,6 +289,11 @@ async function advanceCityTick() {
 }
 function startLivingCity(corridors) {
   livingCity = createLivingCity(corridors);
+  // Display-only alley for the perception bridge: pinned outside the
+  // simulation snapshot so resume/replay never see it. A build failure
+  // leaves the panel empty; the city itself is unaffected.
+  try { ratAlley = buildAlley(livingCity.lanes); }
+  catch { ratAlley = null; }
   const positions = new Float32Array(livingCity.pedestrians.length * 3);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));

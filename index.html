@@ -40,8 +40,14 @@
   #city-status { margin-top: 8px; font-size: 12px; opacity: 0.85; }
   #motive-strip { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 6px; font-size: 11px; opacity: 0.9; }
   .motive { display: flex; align-items: center; gap: 4px; }
-  .motive .bar { width: 44px; height: 6px; background: #0d1420; border: 1px solid #245267; border-radius: 3px; }
-  .motive .fill { height: 100%; background: #75ddce; border-radius: 2px; }
+    .motive .bar { width: 44px; height: 6px; background: #0d1420; border: 1px solid #245267; border-radius: 3px; }
+    .motive .fill { height: 100%; background: #75ddce; border-radius: 2px; }
+    #rat-perception { border-top: 1px solid #345167; margin-top: 6px; padding-top: 6px; }
+    #rat-perception > summary { font-weight: 650; cursor: pointer; }
+    #rat-perception-controls { display: flex; gap: 7px; align-items: center; margin-top: 5px; }
+    #rat-perception-controls select { background: #0d1420; color: #cfe6ff; border: 1px solid #2b6cb0; border-radius: 6px; padding: 4px 8px; font-size: 12px; }
+    #rat-perception-controls button { background: #142836; border: 1px solid #3a687d; border-radius: 6px; color: #e9faff; padding: 4px 9px; cursor: pointer; font-size: 12px; }
+    #rat-view { white-space: pre-wrap; font-size: 11px; color: #b8d6e4; max-height: 180px; overflow: auto; margin: 5px 0 0; }
   #city-toggle { margin-top: 5px; background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0; border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
   #city-toggle:disabled { opacity: 0.5; cursor: default; }
   #tour-button { margin-top: 5px; background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0; border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
@@ -146,7 +152,15 @@
   <button type="button" id="city-toggle" disabled>Pause living city</button>
   <button type="button" id="tour-button" disabled>Take the cinematic tour</button>
   <p id="tour-status" aria-live="polite"></p>
-  <div id="motive-strip" aria-label="Crowd motives, aggregate pilot"></div>
+    <div id="motive-strip" aria-label="Crowd motives, aggregate pilot"></div>
+    <details id="rat-perception">
+      <summary>Rat perception · read-only</summary>
+      <div id="rat-perception-controls">
+        <select id="rat-select" aria-label="Selected rat"></select>
+        <button type="button" id="rat-refresh">Refresh reading</button>
+      </div>
+      <pre id="rat-view" aria-live="polite">No rat decision available</pre>
+    </details>
   <p id="pick">Click any building to see its record.</p>
   <p id="journal">Journal: the island's history is starting…</p>
   <button type="button" id="verify">Verify the island's history</button>
