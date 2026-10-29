@@ -36,6 +36,13 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Install and verify FFmpeg on ephemeral hosted runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          command -v ffprobe
+          ffmpeg -hide_banner -encoders | grep -q libx264
+
       - name: Rebuild plan and run adapter gate
         run: npm run build:matrix-plan && npm run test:matrix-adapter
 
@@ -56,6 +63,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "24"
+
+      - name: Install and verify FFmpeg on ephemeral hosted runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          command -v ffprobe
+          ffmpeg -hide_banner -encoders | grep -q libx264
 
       - name: Install render dependencies on hosted runner only
         env:
