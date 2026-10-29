@@ -285,3 +285,7 @@ Deterministic citizen agency on the live sim: perceive → propose → validate+
 ## Phase A rat ecology — Extraction 021
 
 Deterministic nutrient metabolism for one block: waste rots, roaches bloom on rot (biomass pools, not individuals), rats read forage opportunity, sanitation resets. Mass exactly conserved; 10-year stability; byte-identical replay. Run `npm run test:ecology`. See `docs/extraction-021-rat-ecology.md`.
+
+## Ecology drives decisions — Extraction 022 (Phase A integration)
+
+A hungry rat smells nearby patches, weighs hunger/safety/memory, and moves toward the best one — different ecology, different behavior, proven on the living sim with checkpoint/restore. Citizen memory now persists across restarts. Run `npm run test:rat-foraging`. See `docs/extraction-022-rat-foraging.md`.

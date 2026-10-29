@@ -71,6 +71,7 @@ export function resumeLivingCity(corridors, record, expected = {}) {
     for (const [k, v] of Object.entries(ped.traits)) assert(isNum(v) && v >= -1 && v <= 1, 'trait bounds: ' + ped.id + '.' + k);
     assert(ped.motives, 'motives missing: ' + ped.id);
     for (const m of MOTIVES) assert(isNum(ped.motives[m]) && ped.motives[m] >= 0 && ped.motives[m] <= 100, 'motive bounds: ' + ped.id + '.' + m);
+    assert(ped.memory && typeof ped.memory.visits === 'object', 'scent memory missing: ' + ped.id);
     // On-lane proof: recompute position from (lane, segment, fraction) and
     // require the stored x/z to match. Corridor swaps change waypoints and fail.
     const a = lane.waypoints[ped.segmentIndex], b = lane.waypoints[ped.segmentIndex + 1];

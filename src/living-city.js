@@ -114,10 +114,11 @@ export function createLivingCity(corridors, { seed = DEFAULT_SEED, pedestrians =
     const direction = random() < 0.5 ? 1 : -1;
     const speed = 1.1 + random() * 0.4;
     const [x, z] = positionOnLane(lane, segmentIndex, fraction);
-    const traits = sampleTraits(undefined, seed * 31 + i);
+    const traits = sampleTraits(undefined, seed * 1000 + i);
     crowd.push({ id: 'ped_' + (i + 1), laneIndex, segmentIndex, fraction,
       direction, speed, x, z, state: 'walking',
-      traits, rates: motiveRateModifiers(traits), motives: initMotives() });
+      traits, rates: motiveRateModifiers(traits), motives: initMotives(),
+      memory: { visits: {} } });
   }
   const zones = ZONE_DEFINITIONS.map((z) => makeZone(z.id, z.lat, z.lon, z.type, z.radiusKm));
   return { seed, tickCount: 0, zones, pedestrians: crowd, lanes,
@@ -178,8 +179,8 @@ export function citySnapshot(state) {
     seed: state.seed, tick: state.tickCount,
     zones: state.zones.map(({ id, lat, lon, type, radiusKm, pop, jobs, money, happy }) =>
       ({ id, lat, lon, type, radiusKm, pop, jobs, money, happy })),
-    pedestrians: state.pedestrians.map(({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives }) =>
-      ({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives })),
+    pedestrians: state.pedestrians.map(({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives, memory }) =>
+      ({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives, memory: memory || { visits: {} } })),
   };
 }
 
