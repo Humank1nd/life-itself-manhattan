@@ -7,6 +7,10 @@
 // We intentionally do NOT import GTA, cops, collision physics, mission logic,
 // or visual gait/IK. This island-view adapter operates directly in ENU meters.
 // A seeded crowd and fixed timestep make replay deterministic.
+// Walkers carry quarry traits (Extraction 014, founder-seated): each
+// pedestrian's motive rates derive from its own seeded personality.
+import { sampleTraits, motiveRateModifiers } from './traits.js';
+import { initMotives, tickMotives, crowdContext, MOTIVES } from './motives.js';
 export const TICK_MS = 5000;
 export const SIDEWALK_OFFSET_M = 6.2;
 export const DEFAULT_SEED = 20261028;
@@ -110,8 +114,10 @@ export function createLivingCity(corridors, { seed = DEFAULT_SEED, pedestrians =
     const direction = random() < 0.5 ? 1 : -1;
     const speed = 1.1 + random() * 0.4;
     const [x, z] = positionOnLane(lane, segmentIndex, fraction);
+    const traits = sampleTraits(undefined, seed * 31 + i);
     crowd.push({ id: 'ped_' + (i + 1), laneIndex, segmentIndex, fraction,
-      direction, speed, x, z, state: 'walking' });
+      direction, speed, x, z, state: 'walking',
+      traits, rates: motiveRateModifiers(traits), motives: initMotives() });
   }
   const zones = ZONE_DEFINITIONS.map((z) => makeZone(z.id, z.lat, z.lon, z.type, z.radiusKm));
   return { seed, tickCount: 0, zones, pedestrians: crowd, lanes,
@@ -157,23 +163,38 @@ function advancePedestrian(ped, lane, seconds) {
 export function tickLivingCity(state) {
   state.tickCount += 1;
   tickCity(state.zones, state.world);
-  for (const ped of state.pedestrians) advancePedestrian(ped, state.lanes[ped.laneIndex], TICK_MS / 1000);
+  const context = crowdContext(state.tickCount % 24);
+  for (const ped of state.pedestrians) {
+    advancePedestrian(ped, state.lanes[ped.laneIndex], TICK_MS / 1000);
+    ped.motives = tickMotives(ped.motives, ped.rates, context);
+  }
   return state;
 }
 
 export function citySnapshot(state) {
   // Include reproducible state, exclude immutable lane geometry already in data/.
+  // Traits ride along (seed-derived but explicit for audit); motives are live.
   return {
     seed: state.seed, tick: state.tickCount,
     zones: state.zones.map(({ id, pop, jobs, money, happy }) => ({ id, pop, jobs, money, happy })),
-    pedestrians: state.pedestrians.map(({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z }) =>
-      ({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z })),
+    pedestrians: state.pedestrians.map(({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives }) =>
+      ({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives })),
   };
 }
 
 export function citySummary(state) {
   const happiness = state.zones.length
     ? Math.round(state.zones.reduce((sum, z) => sum + z.happy, 0) / state.zones.length) : 0;
+  let moodSum = 0, moodN = 0;
+  const moodLow = {};
+  for (const ped of state.pedestrians) {
+    for (const m of MOTIVES) {
+      moodSum += ped.motives[m]; moodN++;
+      if (!(m in moodLow) || ped.motives[m] < moodLow[m]) moodLow[m] = ped.motives[m];
+    }
+  }
+  const lowest = Object.keys(moodLow).sort((a, b) => moodLow[a] - moodLow[b])[0] || null;
   return { tick: state.tickCount, simHour: state.tickCount % 24,
-    people: state.pedestrians.length, zones: state.zones.length, happiness };
+    people: state.pedestrians.length, zones: state.zones.length, happiness,
+    mood: state.pedestrians.length ? { mean: Math.round(moodSum / moodN), lowest } : null };
 }
