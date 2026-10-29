@@ -51,5 +51,6 @@ jobs:
           npm run test:sumo-lanes
           npm run test:camera-tour
           npm run test:pacejka
+          npm run test:provider-lifecycle
           npm run validate:city
           python3 endpoint/test_endpoint_core.py

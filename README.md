@@ -264,3 +264,8 @@ Run `npm run test:traits`. See `docs/extraction-014-traits-and-motives.md`.
 ## God's Eye View integration — Extraction 017 (slices 1–4)
 
 Ported from the working GEV checkout (36 commits ahead, 2776/2777 suites green, preserved on `preserve/gev-dev-20261028`): SUMO lane topology for downtown + Midtown-south (`src/sumo-lanes.js`, exact-transform only — the flat 111320 constant is a gated-out trap), an aggregate crowd-motive strip in the HUD, a 6-leg cinematic tour through the island's own flight machinery, and the Pacejka MF96 tire core verbatim. Walkers, missions, live feeds and engine systems are assessed with costed options in the doc, not ported. Run `npm run test:sumo-lanes`, `test:camera-tour`, `test:pacejka`. See `docs/extraction-017-gev-integration.md`.
+
+## Provider lifecycle reducer — P016-L1 (no GPU)
+
+Pure state machine for the Persistent World / Ephemeral Renderer contract
+(PR #20): `src/provider-lifecycle.js` implements OFF→REQUESTED→VALIDATING→STARTING→READY→RUNNING→QUIESCING→OFF with fail-closed kill/timeout/budget from every active stage, no FAILED→RUNNING shortcut, 8 intent validation rails, honest receipts (`generated:true`, `historicalGroundTruth:false`). No I/O, no timers, no model. Run `npm run test:provider-lifecycle`.
