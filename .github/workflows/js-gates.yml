@@ -1,9 +1,10 @@
 name: JS gates
 
 on:
+  push:
   pull_request:
     paths:
-      - "src/**"
+      - "**"
       - "scripts/**"
       - "data/**"
       - "package.json"
@@ -54,6 +55,7 @@ jobs:
           npm run test:provider-lifecycle
           npm run test:action-contract
           npm run test:citizen-consequence
+          npm run test:public-tree
           npm run test:licensed-content
           npm run test:city-recovery
           npm run test:world-checkpoint
