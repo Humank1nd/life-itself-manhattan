@@ -22,7 +22,7 @@ export function validateIntent(intent) {
   return { ok: reasons.length === 0, reasons };
 }
 export function createProvider() {
-  return { state: 'OFF', intent: null, rejection: null, effects: [], receipt: null };
+  return { state: 'OFF', intent: null, rejection: null, effects: [], receipt: null, allocated: false };
 }
 const FAIL_CLOSED = new Set(['TIMEOUT', 'CANCELLED', 'BUDGET_EXHAUSTED', 'PROVIDER_KILLED']);
 export function step(p, event, payload) {
@@ -44,14 +44,17 @@ export function step(p, event, payload) {
       if (event === 'REQUEST') {
         const v = validateIntent(payload);
         if (!v.ok) return { ...p, rejection: v.reasons };
-        return { ...p, state: 'REQUESTED', intent: payload, rejection: null };
+        // Approval IDs are presence-checked only at this layer: L1 has no
+        // independent approval registry to consult. The state records that
+        // explicitly so no caller mistakes a nonempty string for authorization.
+        return { ...p, state: 'REQUESTED', intent: payload, rejection: null, approvalVerified: false };
       }
       return { ...p, effects: [...p.effects, 'log-ignored'] };
     case 'REQUESTED':
       if (event === 'BEGIN_VALIDATION') return { ...p, state: 'VALIDATING' };
       return fail(event);
     case 'VALIDATING':
-      if (event === 'VALIDATION_OK') return { ...p, state: 'STARTING', effects: [...p.effects, 'allocate-gpu'] };
+      if (event === 'VALIDATION_OK') return { ...p, state: 'STARTING', allocated: true, effects: [...p.effects, 'allocate-gpu'] };
       if (event === 'VALIDATION_REJECTED') return { ...p, state: 'OFF', intent: null, effects: [...p.effects, 'no-allocation'] };
       return fail(event);
     case 'STARTING':
@@ -63,27 +66,44 @@ export function step(p, event, payload) {
       return fail(event);
     case 'RUNNING':
       if (event === 'RENDER_COMPLETE') {
-        const receipt = buildReceipt(p.intent, payload);
+        const receipt = buildReceipt(payload && payload.intentSha256, payload);
         return { ...p, state: 'QUIESCING', receipt, effects: [...p.effects, 'write-receipt'] };
       }
       return fail(event);
     case 'FAILED':
-      if (event === 'BEGIN_QUIESCE') return { ...p, state: 'QUIESCING', effects: [...p.effects, 'release-gpu'] };
+      // Release happens exactly once, on QUIESCING→OFF below — entering
+      // QUIESCING only parks for cleanup. Emitting release here too would
+      // double-count one allocation (review finding 1).
+      if (event === 'BEGIN_QUIESCE') return { ...p, state: 'QUIESCING' };
       return fail(event);
     case 'QUIESCING':
-      if (event === 'QUIESCE_COMPLETE') return { ...p, state: 'OFF', intent: null, effects: [...p.effects, 'release-gpu'] };
+      // One release per actual allocation: states that never allocated
+      // (REQUESTED/VALIDATING failures) record no-allocation instead.
+      if (event === 'QUIESCE_COMPLETE') {
+        return p.allocated
+          ? { ...p, state: 'OFF', intent: null, allocated: false, effects: [...p.effects, 'release-gpu'] }
+          : { ...p, state: 'OFF', intent: null, effects: [...p.effects, 'no-allocation'] };
+      }
       return fail(event);
     default:
       return fail(event);
   }
 }
-export function buildReceipt(intent, result) {
+export function buildReceipt(intentSha256, result) {
+  // The reducer cannot hash: it is pure and sync with no crypto. The caller
+  // supplies the canonical intent SHA (computed externally, e.g. sha256sum);
+  // the reducer validates its shape and refuses placeholders and empty
+  // outputs (review finding 3). No placeholder is ever a receipt.
+  if (!HEX64.test(intentSha256 || '')) {
+    throw new Error('lifecycle: intentSha256 must be 64 hex chars — placeholders are not receipts');
+  }
   if (!result || typeof result.providerId !== 'string' || !HEX64.test(result.modelWeightsSha256 || '')
-    || !HEX64.test(result.configurationSha256 || '') || !Array.isArray(result.outputSha256)) {
-    throw new Error('lifecycle: incomplete provider result — no receipt');
+    || !HEX64.test(result.configurationSha256 || '') || !Array.isArray(result.outputSha256)
+    || result.outputSha256.length === 0 || !result.outputSha256.every((h) => HEX64.test(h))) {
+    throw new Error('lifecycle: incomplete provider result — nonempty hashed outputs required');
   }
   return {
-    intentSha256: intent && intent._sha ? intent._sha : 'intent-unhashed-local-only',
+    intentSha256,
     providerId: result.providerId,
     modelWeightsSha256: result.modelWeightsSha256,
     configurationSha256: result.configurationSha256,
