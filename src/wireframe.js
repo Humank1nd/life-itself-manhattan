@@ -8,6 +8,9 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { interpret, runQuery, describe } from './ask.js';
 import { createJournal, projectEnu, JournalEventType, hashWorldState } from './core-journal.js';
 import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS } from './living-city.js';
+import { sampleTraits, motiveRateModifiers } from './traits.js';
+import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
+import { tourLegs } from './camera-tour.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 
@@ -161,6 +164,37 @@ function showCityState() {
     ' sidewalk lanes · ' + s.zones + ' simulated zones · city tick ' + s.tick +
     ' (hour ' + s.simHour + ':00, happiness ' + s.happiness + '/100)' +
     (cityPaused ? ' · PAUSED' : '');
+  renderMotiveStrip(s.simHour);
+}
+// Crowd-average motive pilot (display-only): one fixed-seed trait set
+// stands in for the crowd until walkers are individualized.
+const crowdTraits = sampleTraits(undefined, 7);
+const crowdRates = motiveRateModifiers(crowdTraits);
+let crowdMotives = initMotives();
+const motiveStripEl = document.getElementById('motive-strip');
+function renderMotiveStrip(simHour) {
+  crowdMotives = tickMotives(crowdMotives, crowdRates, crowdContext(simHour));
+  motiveStripEl.textContent = '';
+  const label = document.createElement('span');
+  label.textContent = 'Crowd motives (pilot):';
+  label.style.opacity = '0.7';
+  motiveStripEl.appendChild(label);
+  for (const m of MOTIVES) {
+    const wrap = document.createElement('span');
+    wrap.className = 'motive';
+    wrap.title = `${m} ${Math.round(crowdMotives[m])}`;
+    const name = document.createElement('span');
+    name.textContent = m.slice(0, 3);
+    const bar = document.createElement('span');
+    bar.className = 'bar';
+    const fill = document.createElement('span');
+    fill.className = 'fill';
+    fill.style.width = `${Math.round(crowdMotives[m])}%`;
+    bar.appendChild(fill);
+    wrap.appendChild(name);
+    wrap.appendChild(bar);
+    motiveStripEl.appendChild(wrap);
+  }
 }
 function renderCityPeople() {
   if (!livingCityPoints || !livingCity) return;
@@ -193,10 +227,10 @@ async function advanceCityTick() {
     renderCityPeople();
     showCityState();
   } catch (err) {
-    cityPaused = true;
-    cityStatusEl.textContent = 'Living City paused after a simulation error. See console.';
-    cityToggleEl.textContent = 'Resume living city';
-    console.error('Living City tick failed:', err);
+  cityPaused = true;
+  cityStatusEl.textContent = 'Living City paused after a simulation error. See console.';
+  cityToggleEl.textContent = 'Resume living city';
+  console.error('Living City tick failed:', err);
   } finally {
     livingCityBusy = false;
   }
@@ -214,6 +248,7 @@ function startLivingCity(corridors) {
   renderCityPeople();
   showCityState();
   cityToggleEl.disabled = false;
+  tourButtonEl.disabled = false;
   if (livingCityTimer !== null) clearInterval(livingCityTimer);
   livingCityTimer = setInterval(() => { advanceCityTick().catch(console.error); }, TICK_MS);
 }
@@ -472,8 +507,52 @@ function stepFlight() {
   t = 1 - Math.pow(1 - t, 3); // easeOutCubic
   camera.position.lerpVectors(flight.fromPos, flight.toPos, t);
   controls.target.lerpVectors(flight.fromTgt, flight.toTgt, t);
-  if (t >= 1) { flight = null; controls.enabled = true; }
+  if (t >= 1) {
+    flight = null;
+    if (!tour) controls.enabled = true;
+    else tourHoldUntil = performance.now() + tour.legs[tour.i].holdMs;
+  }
 }
+// Cinematic tour driver (slice 3): chains the island's own flight
+// machinery leg by leg. A grab or ESC cancels; walkers keep ticking.
+let tour = null;
+let tourHoldUntil = 0;
+const tourButtonEl = document.getElementById('tour-button');
+const tourStatusEl = document.getElementById('tour-status');
+function stopTour(msg) {
+  tour = null;
+  flight = null;
+  controls.enabled = true;
+  tourButtonEl.disabled = false;
+  tourButtonEl.textContent = 'Take the cinematic tour';
+  if (msg) tourStatusEl.textContent = msg;
+}
+function startTourLeg() {
+  const leg = tour.legs[tour.i];
+  tourStatusEl.textContent = `Cinematic tour · ${leg.title} (${tour.i + 1}/${tour.legs.length}) — grab or ESC to exit`;
+  flight = {
+    t0: performance.now(), dur: leg.durMs,
+    fromPos: camera.position.clone(), toPos: new THREE.Vector3(...leg.toPos),
+    fromTgt: controls.target.clone(), toTgt: new THREE.Vector3(...leg.toTgt),
+  };
+  controls.enabled = false;
+}
+tourButtonEl.addEventListener('click', () => {
+  if (tour) { stopTour('Cinematic tour exited.'); return; }
+  tour = { legs: tourLegs(), i: 0 };
+  controls.enabled = false;
+  tourButtonEl.disabled = false;
+  tourButtonEl.textContent = 'Exit the tour';
+  startTourLeg();
+});
+addEventListener('keydown', (e) => { if (e.key === 'Escape' && tour) stopTour('Cinematic tour exited.'); });
+setInterval(() => {
+  if (tour && !flight && performance.now() >= tourHoldUntil) {
+    tour.i++;
+    if (tour.i >= tour.legs.length) { stopTour('Cinematic tour complete — FiDi to Central Park South.'); return; }
+    startTourLeg();
+  }
+}, 200);
 
 askForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -531,7 +610,8 @@ const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 let downX = 0, downY = 0;
 renderer.domElement.addEventListener('pointerdown', (e) => {
   downX = e.clientX; downY = e.clientY;
-  if (flight) { flight = null; controls.enabled = true; } // a grab cancels the flight
+  if (tour) stopTour();
+  else if (flight) { flight = null; controls.enabled = true; } // a grab cancels the flight
 });
 renderer.domElement.addEventListener('pointerup', (e) => {
   if (!islandBuildings) return;

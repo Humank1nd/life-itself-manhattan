@@ -7,7 +7,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { TRAITS, GENOME_PRIORS, priorFor, sampleTraits, cultureCompatibility, motiveRateModifiers } from '../src/traits.js';
-import { MOTIVES, initMotives, tickMotives, motiveSummary } from '../src/motives.js';
+import { MOTIVES, initMotives, tickMotives, motiveSummary, crowdContext, formatMoodLine } from '../src/motives.js';
 const fixture = JSON.parse(readFileSync(new URL('./trait-parity.json', import.meta.url), 'utf8'));
 
 // 1. Trait inventory + priors match the quarry exactly.
@@ -59,5 +59,16 @@ assert.deepEqual([...MOTIVES], ['hunger', 'comfort', 'hygiene', 'bladder', 'ener
   assert(rec.social > 10, 'company recovers social');
   const low = motiveSummary({ ...initMotives(), bladder: 5 });
   assert.equal(low.lowest, 'bladder');
+  // Crowd pilot: clock-driven context + exact formatter.
+  assert.deepEqual(crowdContext(12), { eating: true, resting: false, washing: false, relieving: false, playing: true, socializing: true, comfortZone: true, pleasantEnv: true });
+  assert.deepEqual(crowdContext(3), { eating: false, resting: true, washing: false, relieving: false, playing: false, socializing: false, comfortZone: true, pleasantEnv: false });
+  assert.equal(formatMoodLine({ hunger: 70, comfort: 70, hygiene: 70, bladder: 70, energy: 62, fun: 70, social: 71, env: 70 }),
+    'hunger 70 · comfort 70 · hygiene 70 · bladder 70 · energy 62 · fun 70 · social 71 · env 70');
+  {
+    const rates = motiveRateModifiers(sampleTraits(GENOME_PRIORS, 11));
+    const a = tickMotives(tickMotives(initMotives(), rates, crowdContext(9)), rates, crowdContext(9));
+    const b = tickMotives(tickMotives(initMotives(), rates, crowdContext(9)), rates, crowdContext(9));
+    assert.deepEqual(a, b);
+  }
 }
 console.log('PASS traits+motives — 16 quarry traits with priors, seeded determinism, jitter bounds, centered distributions, bit-exact culture compatibility, 8 Sims motives with trait-modulated dynamics, 500-tick clamp');

@@ -35,16 +35,21 @@ bounds). Same traits, priors, bounds, determinism — different stream.
 The compatibility formula is bit-exact (same ops, same order;
 verified against the quarry's own output).
 
-## The seating question (open, for the founder)
+## The seating question — DECIDED (founder ruling 1a)
+
+Traits (slow: who the sim *is*) and motives (fast: what the sim *needs*)
+are different timescales, not competitors. Ruling 1a seats
+**trait-seeded motives**: every walker carries a seeded 16-trait
+personality (`seed * 31 + index`); motive drain/recovery rates derive
+from it; motives tick with the 5-second city clock under clock-derived
+context; snapshots carry traits+motives (traits stay seed-derivable
+but are explicit for audit); summaries carry crowd mood. Verified:
+sleepiest walker 55.4 vs most-rested 65.7 energy after 60 ticks.
 
 Traits (who the sim IS, slow) and motives (what the sim NEEDS,
-fast) are different timescales, not competitors. The port proposes
-trait→motive rate maps (`motiveRateModifiers`): sleep_need drives
+fast) use these rate maps (`motiveRateModifiers`): sleep_need drives
 energy drain, social_drive drives social drain/recovery,
 novelty_seeking drives fun drain/recovery, stress_recovery_rate drives
 comfort rebound, emotional_intensity scales recovery amplitude.
-Wiring walkers to either system awaits the ruling; the journal and
-determinism rails already fit both (seeded agents, tick-wrapped
-history).
 
 Run `npm run test:traits` for the gate.
