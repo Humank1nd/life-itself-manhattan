@@ -44,6 +44,27 @@ only where it pays.
   1 subway vent, 1 sanitation cycle; 10–20 rats as seeded walkers
   with rat motive profiles; roaches as population nodes.
 
+## Hidden-setting structure (founder direction)
+
+The shipped game never names, quotes, depicts, or alludes to any
+licensed setting, character, dialogue, music, likeness, or plot event.
+All knowledge in the sim is local and sensory; all text is original
+expression. The true-timeline interpretation — a Manhattan five years
+after half of all life vanished, 2018–2023 — is NEVER stated in the
+product. It is player-inferred: the dates plus a combination-gated
+epilogue written entirely in original words (a van, a storage-unit
+console, ordinary crumbs and warmth, one footstep that is no longer
+ordinary). Ideas (a disappearance, a span of years) are not any
+party's expression; the product contains only its own.
+
+Concretely: no Marvel proper nouns in code, docs, assets, strings, or
+comments — including Snap, Blip, Thanos, Avengers, Endgame, Quantum
+Tunnel, or any character name. The combination-gated epilogue is
+reviewed under the same rule before it ships: if a line needs a
+licensed reference to land, the line is cut, not the rule. The twist
+must work as pure dramatic irony for players who never make the
+connection, and as recognition for players who do.
+
 ## Temporal setting: an original ecological shock (founder decision)
 
 The simulation opens with a sudden 50% population cull across all
