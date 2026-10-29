@@ -25,6 +25,8 @@
     "test:capture": "node scripts/test-capture-pipeline.mjs",
     "build:envelope": "node scripts/build-conditioning-envelope.mjs",
     "test:envelope": "node scripts/test-conditioning-envelope.mjs",
+    "build:matrix-plan": "node scripts/build-matrix-plan.mjs",
+    "test:matrix-adapter": "node scripts/test-matrix-adapter.mjs",
     "pilot:prepare": "node scripts/lingbot-pilot.mjs --prepare",
     "pilot:health": "node scripts/lingbot-pilot.mjs --health"
   },
