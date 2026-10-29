@@ -234,3 +234,17 @@ Run `npm run build:envelope` to rebuild and `npm run test:envelope`
 for the gate (12 drift + 4 depth-contract guards). See
 `docs/extraction-016-conditioning-envelope.md`. Matrix-Game I/O review
 and any bounded inference remain blocked on separate authorization.
+
+## Matrix-Game adapter plan — Phase 016 (S016-03b, no model)
+
+Cloud-only adapter design; no weights, no inference. A deterministic
+invocation plan (`data/matrix-invocation-plan-v1.json`) names the 3
+verified RGB frame SHAs in pose order, the released 864×480 @ 8 fps
+h264 contract (T=1-then-T=4 blocks), and an explicitly unselected
+scene checkpoint — plus a pure-ffmpeg assembler that refuses unverified
+bytes before encoding. Depth, ID masks, identity graphs, and the
+envelope stay evaluation-side truth; only clean RGB enters the clip.
+
+Run `npm run build:matrix-plan` and `npm run test:matrix-adapter`.
+See `docs/extraction-016-matrix-adapter.md`. Bounded cloud inference
+(S016-04) remains blocked on rights, cost, and approval.

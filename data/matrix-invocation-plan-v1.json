@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "life-itself-matrix-plan/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "basedOn": {
+    "envelopeSchema": "life-itself-conditioning-envelope/1.0.0",
+    "captureContract": "life-itself-cloud-capture/1.0.0",
+    "manifestSha256": "7e7948935c7b9894e38278f8b54877725ebd002bcaea5227c5aed796dddf185b",
+    "frameShas": [
+      "e25fa5c6370964502bfac71422ce64e569ead4613a07a9ba8a5cbb5d7614f78f",
+      "dad630ee01f5328fe464902fcad2f07ba3a290aa3e8ec48e1e41e7efec0d6eb4",
+      "7350ff65421f770d9d921cb65b25fe6f559f50958f1afd41443de4851b63e396"
+    ],
+    "geometryStatus": "current-snapshot-only"
+  },
+  "scene": {
+    "checkpoint": "none-approved",
+    "allowed": [
+      "castle",
+      "ancient-egypt",
+      "racing"
+    ],
+    "sink": "undeclared",
+    "sinkRules": {
+      "castle": "kv-only-sink-generates-first-frame",
+      "ancient-egypt": "kv-only-sink-generates-first-frame",
+      "racing": "supplied-sink-as-frame-zero-future-rope"
+    },
+    "note": "No Manhattan checkpoint released; selection needs rights review and separate approval."
+  },
+  "video": {
+    "width": 864,
+    "height": 480,
+    "fps": 8,
+    "codec": "libx264",
+    "pixFmt": "yuv420p",
+    "repeatsPerFrame": 4,
+    "crf": 18,
+    "preset": "veryfast",
+    "inputFrames": 3,
+    "inputFrameFiles": [
+      "pose-00-rgb.png",
+      "pose-01-rgb.png",
+      "pose-02-rgb.png"
+    ],
+    "outputFrames": 12,
+    "blockCadence": "T=1-then-T=4-consecutive-pad-then-trim-tail",
+    "captions": "not-supported-until-scene-selected"
+  },
+  "prompt": {
+    "mode": "fixed",
+    "text": null,
+    "status": "unreviewed-placeholder-required-at-approved-run"
+  },
+  "rights": {
+    "training": "not-authorized",
+    "historicalClaim": "none",
+    "modelEffects": "not-authorized-until-reviewed"
+  },
+  "model": {
+    "provider": "none",
+    "weightsDownloaded": false,
+    "inferenceExecuted": false
+  }
+}

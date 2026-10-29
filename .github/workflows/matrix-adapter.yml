@@ -1,0 +1,74 @@
+name: Matrix adapter gate
+
+on:
+  pull_request:
+    paths:
+      - "src/matrix-adapter.js"
+      - "scripts/build-matrix-plan.mjs"
+      - "scripts/test-matrix-adapter.mjs"
+      - "scripts/assemble-matrix-video.mjs"
+      - "data/matrix-invocation-plan-v1.json"
+      - "data/conditioning-envelope-v1.json"
+      - ".github/workflows/matrix-adapter.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: matrix-adapter-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    name: Invocation plan, no model
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout immutable PR revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Node 24 on ephemeral GitHub runner
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Rebuild plan and run adapter gate
+        run: npm run build:matrix-plan && npm run test:matrix-adapter
+
+  video:
+    name: Assemble RGB clip from fresh capture
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      CI: "true"
+    steps:
+      - name: Checkout immutable PR revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Node 24 on ephemeral GitHub runner
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install render dependencies on hosted runner only
+        env:
+          PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
+        run: npm install --no-save --no-package-lock --no-audit --no-fund three@0.160.0 pngjs@7.0.0 puppeteer@24.31.0
+
+      - name: Render fresh cloud capture into ephemeral storage
+        env:
+          CAPTURE_OUT: ${{ runner.temp }}/times-square-capture
+          PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
+        run: node scripts/cloud-capture-times-square.mjs
+
+      - name: Assemble Matrix-Game input clip from verified RGB frames
+        env:
+          CAPTURE_OUT: ${{ runner.temp }}/times-square-capture
+        run: node scripts/assemble-matrix-video.mjs "$CAPTURE_OUT" data/matrix-invocation-plan-v1.json "$RUNNER_TEMP/matrix-input.mp4"
