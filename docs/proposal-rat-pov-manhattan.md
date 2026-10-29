@@ -44,59 +44,23 @@ only where it pays.
   1 subway vent, 1 sanitation cycle; 10–20 rats as seeded walkers
   with rat motive profiles; roaches as population nodes.
 
-## Hidden-setting structure (founder direction)
+## Public-world and variant-boundary doctrine
 
-The shipped game never names, quotes, depicts, or alludes to any
-licensed setting, character, dialogue, music, likeness, or plot event.
-All knowledge in the sim is local and sensory; all text is original
-expression. The true-timeline interpretation — a Manhattan five years
-after half of all life vanished, 2018–2023 — is NEVER stated in the
-product. It is player-inferred: the dates plus a combination-gated
-epilogue written entirely in original words (a van, a storage-unit
-console, ordinary crumbs and warmth, one footstep that is no longer
-ordinary). Ideas (a disappearance, a span of years) are not any
-party's expression; the product contains only its own.
+The public codebase represents an original, source-grounded Manhattan world. Its story, ecological disruption, characters, scenes, and words must be independently expressive and usable without third-party entertainment properties. Do not commit character names, franchise-specific terms, logos, assets, or story text drawn from protected fictional settings. The project's internal branch metaphor calls public integration a *timeline collapse*: only independently shippable material may land.
 
-Concretely: no Marvel proper nouns in code, docs, assets, strings, or
-comments — including Snap, Blip, Thanos, Avengers, Endgame, Quantum
-Tunnel, or any character name. The combination-gated epilogue is
-reviewed under the same rule before it ships: if a line needs a
-licensed reference to land, the line is cut, not the rule. The twist
-must work as pure dramatic irony for players who never make the
-connection, and as recognition for players who do.
+Any private, separately held interpretation or experimental overlay is **not source for this repository**. Keep it outside Git and deployment inputs, and obtain rights review before any external use. `.gitignore` reduces accidental staging but does NOT forbid `git add -f`, prevent a push, protect other directories, or grant distribution rights.
 
-## Timelines as branches, grounded in Earth-1218 (founder direction)
+## Public content safeguards
 
-In Marvel's own map, Earth-1218 is our world: the universe where
-superheroes do not exist and Marvel is fiction. We ground the repo
-there. `main` is Earth-1218 — no capes, no Stones, no licensed proper
-nouns in any committed file, on any pushed ref, on any branch. The
-shipped game and every public branch stay inside that universe, where
-the twist reads as dramatic irony rather than franchise content.
+- `licensed/` is ignored by Git as a convenience, but must never be tracked or included in a release. Local-only optional inputs are disabled by default; valid input plus an explicit flag is required to activate the experimental loader.
+- `npm run test:public-tree` checks the **current checkout's tracked files** for restricted paths and a narrow set of explicitly prohibited franchise-specific identifiers. It rejects force-added and renamed files with those signatures, including non-`licensed/` paths. This is a tripwire, not a comprehensive copyright clearance or an all-ref guarantee.
+- The GitHub CI workflow exercises this gate for pull requests and pushes; a push is already public when push-triggered CI starts. Local pre-push checks are advisable, and repository permissions/protection may be needed for enforceable publication control.
+- Release/deployment pipelines must also inspect their own produced artifacts. Passing a source-tree scan cannot prove that some unrelated build or upload is clean.
+- The entire published work must remain original in expression, not merely have familiar names removed.
 
-Variant timelines — branches that explore licensed-adjacent readings,
-the combination-gated epilogue drafts, anything that names names —
-exist **local-only and are never pushed**. The `licensed/` overlay
-rule already enforces the mechanism (git-ignored means unpushable);
-this states the doctrine: a pushed ref containing Marvel IP is a
-policy violation no matter which branch it sits on, and the CI gate's
-public-tree-clean assertion is its tripwire. Merges into `main` are
-timeline collapses: only Earth-1218-compatible content survives them.
+## Optional local overlay (not published)
 
-## Licensed-references toggle (private testing only)
-
-Licensed text, if it is ever written, lives ONLY in a git-ignored
-local `licensed/` directory with a `manifest.json` envelope
-(`life-itself-licensed-overlay/1.0.0`). It is never committed, never
-deployed — GitHub Pages artifacts cannot contain it, because git
-cannot see it. `src/licensed-content.js` resolves to disabled unless
-the caller explicitly opts in AND a valid manifest exists; malformed
-anything stays off. The gate (`npm run test:licensed-content`) uses
-SAMPLE placeholder text in `/tmp` and asserts the public tree has no
-`licensed/` directory. Clearance checklist before any toggle-on
-outside private testing: exact licensed material identified, rights
-holder terms reviewed, written clearance filed, distribution scope
-bounded. Until then the toggle has nothing to turn on.
+The optional loader uses the versioned `life-itself-licensed-overlay/1.0.0` manifest schema. It returns disabled unless explicitly enabled and supplied a valid manifest. Fixtures use invented placeholder text only. Private experimentation does not imply authorization to publish third-party material. The public product must work identically without the overlay.
 
 ## Temporal setting: an original ecological shock (founder decision)
 
