@@ -273,3 +273,7 @@ Pure state machine for the Persistent World / Ephemeral Renderer contract
 ## Deterministic shutdown/restart — Extraction 018 (P016-L2b)
 
 Proven continuation, not assumed: `src/city-resume.js` rebuilds lane geometry from pinned corridors and proves every pedestrian on-lane, pins zone geography and world config, recomputes motive rates from stored traits. 30 ticks uninterrupted == tick-12 serialize/restore/continue, bit-identical at every tick, plus 10 fail-closed and 2 divergence proofs. Run `npm run test:city-recovery`. See `docs/extraction-018-city-recovery.md`.
+
+## Autonomous action/event contract — Extraction 019 (Phase 017, slice 017.2)
+
+Versioned Observation → ProposedAction → WorldEvent → Receipt (`src/action-contract.js`): closed space (no teleports, no future observations, no stranger socializing), deterministic event IDs, journal-shaped commits with `generated:false`. 3 happy paths + 11 fail-closed rejections. Run `npm run test:action-contract`. See `docs/extraction-019-action-contract.md`. No model, no provider.

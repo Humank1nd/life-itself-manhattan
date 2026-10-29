@@ -52,6 +52,7 @@ jobs:
           npm run test:camera-tour
           npm run test:pacejka
           npm run test:provider-lifecycle
+          npm run test:action-contract
           npm run test:city-recovery
           npm run test:world-checkpoint
           npm run validate:city
