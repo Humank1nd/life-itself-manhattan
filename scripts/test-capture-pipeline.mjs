@@ -36,3 +36,19 @@ for (const mutate of [
   assert.throws(() => validateCaptureSpec(bad, byBin));
 }
 console.log(`PASS: renderer-neutral capture spec — ${stats.buildings} current buildings, ${stats.frames} frames (rgb/depth/segmentation x ${CAPTURE_WAYPOINTS_ENU.length} waypoints), one shared path with the conditioning packet, deterministic rebuild, 8 drift mutations rejected`);
+
+// Recorded browser runs (data/capture-run-*-manifest.json): metadata-only
+// evidence. When present, frame IDs and ENU poses must exactly equal the
+// spec's; pixels never enter the repo and are not checked here.
+import { existsSync } from 'node:fs';
+const runPath = new URL('../data/capture-run-browser-001-manifest.json', import.meta.url);
+if (existsSync(runPath)) {
+  const run = JSON.parse(readFileSync(runPath, 'utf8'));
+  assert.equal(run.schemaVersion, 'life-itself-capture-run/1.0.0', 'run schema');
+  assert.deepEqual(run.frames.map((f) => f.id), spec.frames.map((f) => f.id), 'run frame IDs');
+  assert.deepEqual(run.frames.map((f) => f.poseEnu), spec.frames.map((f) => f.poseEnu), 'run poses');
+  assert.equal(run.legend.length, spec.buildings.length, 'run legend size');
+  console.log(`PASS: recorded browser run browser-001 — ${run.frames.length} frames, poses and legend match spec`);
+} else {
+  console.log('NOTE: no recorded browser run present (data/capture-run-browser-001-manifest.json absent)');
+}

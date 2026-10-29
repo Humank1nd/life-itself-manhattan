@@ -210,12 +210,14 @@ and UE centimeters. The geometry is the current snapshot only; the
 spec's historical claim is `none`, and its validator rejects training
 flips, vendor relabeling, invented buildings, and path drift.
 
-Open `capture.html` to run it in a browser: one click downloads the
-nine frames plus a run manifest that records the run. Use
+Open `capture.html` to run it in a browser (also linked from the island HUD):
+one click downloads the nine frames plus a run manifest that records
+the run. The first browser run is recorded
+(`data/capture-run-browser-001-manifest.json`, headless Chromium
+2026-10-29, 9/9 frames, zero page errors). Use
 `npm run build:capture` to rebuild the spec and `npm run test:capture`
-for the gate. See `docs/capture-pipeline.md`. The first real browser
-capture run has not been recorded yet; the spec and the tool are what
-this step ships.
+for the gate, which also validates the recorded run. See
+`docs/capture-pipeline.md`.
 
 ## Provider-neutral conditioning envelope — Phase 016 (S016-01/02)
 

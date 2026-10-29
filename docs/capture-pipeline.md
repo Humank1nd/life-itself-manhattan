@@ -1,8 +1,8 @@
 # Renderer-neutral capture pipeline
 
-**Status:** spec and browser tool implemented; logic gated in Node.
-The first real browser capture run has not been recorded yet. A run
-records itself: the tool downloads a `capture-manifest.json` next to
+**Status:** spec and browser tool implemented and logic-gated in Node;
+first browser run recorded 2026-10-29 (`data/capture-run-browser-001-manifest.json`).
+A run records itself: the tool downloads a `capture-manifest.json` next to
 the frames, and that file is the run's evidence.
 
 **Extraction number:** pending the founder's ruling on the
@@ -68,8 +68,13 @@ manifest. Rebuild or re-verify the spec any time:
 
 ```
 npm run build:capture   # rebuilds data/capture-pilot-v1.json
-npm run test:capture    # validates spec, determinism, shared path
+npm run test:capture    # validates spec, determinism, shared path — plus the recorded browser run when present
 ```
+
+Recorded runs live under `data/capture-run-*-manifest.json` (metadata
+only; pixels stay out of the repo). The first: `browser-001`, captured
+headless Chromium 2026-10-29, 9/9 frames, zero page errors, frame IDs
+and ENU poses exactly the spec's. Re-verify: `npm run test:capture`.
 
 ## Files
 
