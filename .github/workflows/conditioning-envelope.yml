@@ -1,0 +1,40 @@
+name: Conditioning envelope gate
+
+on:
+  pull_request:
+    paths:
+      - "src/conditioning-envelope.js"
+      - "scripts/build-conditioning-envelope.mjs"
+      - "scripts/test-conditioning-envelope.mjs"
+      - "data/conditioning-envelope-v1.json"
+      - "data/cloud-capture-manifest-40799078997.json"
+      - "data/capture-pilot-v1.json"
+      - ".github/workflows/conditioning-envelope.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: conditioning-envelope-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  envelope:
+    name: Provider-neutral envelope, no model
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout immutable PR revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Node 24 on ephemeral GitHub runner
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Rebuild envelope and run contract gate
+        run: npm run build:envelope && npm run test:envelope

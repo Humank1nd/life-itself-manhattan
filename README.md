@@ -216,3 +216,21 @@ nine frames plus a run manifest that records the run. Use
 for the gate. See `docs/capture-pipeline.md`. The first real browser
 capture run has not been recorded yet; the spec and the tool are what
 this step ships.
+
+## Provider-neutral conditioning envelope — Phase 016 (S016-01/02)
+
+Cloud-only schema and test work; no model involved. A deterministic,
+metadata-only envelope (`data/conditioning-envelope-v1.json`) built from
+the verified PR #11 cloud manifest: **622 BIN/version identities**,
+25 visible IDs, 9 hashed frames (RGB, linear-Z depth, building-ID),
+full camera intrinsics with handedness, and a pilot-vs-cloud
+compatibility block that forbids treating the two image contracts as
+shared pixel space. Depth values are contract-pinned — Phase 014's
+8-bit grayscale distance is not Phase 015's 24-bit linear-Z, and any
+cross-contract numeric use fails closed until an audited conversion
+exists.
+
+Run `npm run build:envelope` to rebuild and `npm run test:envelope`
+for the gate (12 drift + 4 depth-contract guards). See
+`docs/extraction-016-conditioning-envelope.md`. Matrix-Game I/O review
+and any bounded inference remain blocked on separate authorization.

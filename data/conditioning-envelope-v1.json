@@ -1,0 +1,212 @@
+{
+  "schemaVersion": "life-itself-conditioning-envelope/1.0.0",
+  "worldId": "life-itself:manhattan",
+  "captureContract": "life-itself-cloud-capture/1.0.0",
+  "sourceSnapshotAt": "2026-10-28",
+  "geometryStatus": "current-snapshot-only",
+  "historicalClaim": "none",
+  "sourceManifest": {
+    "runId": "cloud-times-square-capture",
+    "manifestSha256": "7e7948935c7b9894e38278f8b54877725ebd002bcaea5227c5aed796dddf185b",
+    "cityManifestSha256": "95f34b21557995e4ec2eb6fabda02c3b5ba9e40667aea83a37882736cadf9af6",
+    "buildingVersionsSha256": "8817654017e59e3031d7495f8b78a5039d9b8e760e9447ad056d91f3a1e56406",
+    "gitCommit": "76e921afd330ded3263c53747e4c1a929a3f33c6"
+  },
+  "camera": {
+    "poseStatus": "synthetic-unverified-demo-path",
+    "frame": {
+      "axes": [
+        "east",
+        "up",
+        "-north"
+      ],
+      "units": "meters",
+      "origin": {
+        "lat": 40.758,
+        "lon": -73.9855,
+        "elev": 10
+      }
+    },
+    "handedness": "right-handed-enu-east-up-minus-north",
+    "poses": [
+      {
+        "index": 0,
+        "positionM": [
+          160,
+          115,
+          210
+        ],
+        "targetM": [
+          0,
+          48,
+          -22
+        ]
+      },
+      {
+        "index": 1,
+        "positionM": [
+          140,
+          115,
+          210
+        ],
+        "targetM": [
+          0,
+          48,
+          -22
+        ]
+      },
+      {
+        "index": 2,
+        "positionM": [
+          120,
+          115,
+          210
+        ],
+        "targetM": [
+          0,
+          48,
+          -22
+        ]
+      }
+    ],
+    "intrinsics": {
+      "width": 640,
+      "height": 360,
+      "fovDeg": 62,
+      "nearM": 0.5,
+      "farM": 1400,
+      "aspect": 1.7777777777777777
+    },
+    "ueConversion": "none-in-this-contract"
+  },
+  "passes": {
+    "rgb": {
+      "encoding": "sRGB-PNG-no-HUD",
+      "files": [
+        {
+          "file": "pose-00-rgb.png",
+          "sha256": "e25fa5c6370964502bfac71422ce64e569ead4613a07a9ba8a5cbb5d7614f78f",
+          "bytes": 6397,
+          "width": 640,
+          "height": 360
+        },
+        {
+          "file": "pose-01-rgb.png",
+          "sha256": "dad630ee01f5328fe464902fcad2f07ba3a290aa3e8ec48e1e41e7efec0d6eb4",
+          "bytes": 6098,
+          "width": 640,
+          "height": 360
+        },
+        {
+          "file": "pose-02-rgb.png",
+          "sha256": "7350ff65421f770d9d921cb65b25fe6f559f50958f1afd41443de4851b63e396",
+          "bytes": 6161,
+          "width": 640,
+          "height": 360
+        }
+      ]
+    },
+    "depth": {
+      "encoding": "rgb24-linear-camera-Z-near-far",
+      "files": [
+        {
+          "file": "pose-00-depth.png",
+          "sha256": "d88590f91d6eb75eedab5deb0e69065667ad006cfcf5b4ecade3068debae772d",
+          "bytes": 436294,
+          "width": 640,
+          "height": 360
+        },
+        {
+          "file": "pose-01-depth.png",
+          "sha256": "dadd75c2d3ca9aa5828fdedb35e0109e8e3a7ba304e2d6811919f457bae06c31",
+          "bytes": 444403,
+          "width": 640,
+          "height": 360
+        },
+        {
+          "file": "pose-02-depth.png",
+          "sha256": "2e547df406d8c5cc1c3f12b67953e9f9fd8772acc96c5f9b3c6449f9ca397476",
+          "bytes": 452257,
+          "width": 640,
+          "height": 360
+        }
+      ]
+    },
+    "buildingId": {
+      "encoding": "rgb24-id-0-background",
+      "files": [
+        {
+          "file": "pose-00-building-id.png",
+          "sha256": "cc93ce3d189d31a44fd750fcd3c75c7cc26c51b3fc90daaf209240ab3d450a14",
+          "bytes": 9962,
+          "width": 640,
+          "height": 360
+        },
+        {
+          "file": "pose-01-building-id.png",
+          "sha256": "472feac8f9de33215f5a6cdb825f045b5d180a62518abcfb32cda8836d9ba970",
+          "bytes": 10226,
+          "width": 640,
+          "height": 360
+        },
+        {
+          "file": "pose-02-building-id.png",
+          "sha256": "31e915f5e3f60f7dc4c63b334a5f9c969e8334783b16a19e86e2b7cdfcd056b9",
+          "bytes": 10453,
+          "width": 640,
+          "height": 360
+        }
+      ]
+    }
+  },
+  "identities": {
+    "count": 622,
+    "visibleIds": [
+      41,
+      42,
+      43,
+      44,
+      47,
+      50,
+      52,
+      54,
+      55,
+      56,
+      58,
+      126,
+      136,
+      137,
+      138,
+      139,
+      460,
+      466,
+      477,
+      510,
+      548,
+      559,
+      568,
+      575,
+      585
+    ],
+    "idSpace": "manifest-index-crosswalked-to-BIN-and-versionId-not-color-numbers"
+  },
+  "compatibility": {
+    "pilotContract": "life-itself-capture/1.0.0",
+    "sharedPixelSpace": false,
+    "sharedCameraPath": false,
+    "pilotRaster": "512x512-fov55",
+    "cloudRaster": "640x360-fov62",
+    "pilotDepth": "gray8-inverted-distance",
+    "cloudDepth": "rgb24-linear-camera-Z-near-far"
+  },
+  "rights": {
+    "training": "not-authorized",
+    "modelEffects": "not-authorized-until-reviewed",
+    "historicalClaim": "none",
+    "licensePolicy": "current NYC Open Data geometry only; no third-party pretrained model or historical image"
+  },
+  "model": {
+    "provider": "none",
+    "inferenceExecuted": false
+  }
+}
