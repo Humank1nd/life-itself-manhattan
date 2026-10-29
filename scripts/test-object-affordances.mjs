@@ -74,6 +74,7 @@ assert.equal(ad0.objectKind, 'dumpster');
 assert.equal(ad0.patchId, 'deli-1');
 assert.deepEqual(ad0.position, { x: pO.x, z: pO.z });
 assert.equal(ad0.evidence.fresh, 0.5, 'evidence carries actual stock');
+assert.equal(ad0.evidence.freshKg, 0.5, 'evidence carries validated stock under the scoring name');
 assert('forageValue' in ad0.evidence && 'disturbance' in ad0.evidence, 'evidence carries attraction + risk');
 assert(!('occupancy' in ad0.evidence), 'no invented object occupancy');
 assert.deepEqual(ad0.candidates.map((c) => c.interactionId), ['scavenge-fresh', 'investigate-scent']);
@@ -257,6 +258,23 @@ for (const [amt, why] of [[0.9, 'overdraw'], [0, 'zero'], [-0.5, 'negative'], [N
   assert.throws(() => commitAction({ ...actionA, actionId: 'dead' },
     { ...ctxFor(TICK), agentsById: { 'rat-A': dead, 'rat-B': ratB } }, new Set(), -1), /dead/);
 }
+// Malformed evidence fails closed: constructors validate, the decision
+// layer never substitutes zero coordinates, zero disturbance, or stock.
+assert.throws(() => advertiseObject(dumpster, { ...patch, fresh: NaN }, { tick: TICK, ecoDay: ECO_DAY }), /patch field fresh/);
+{
+  const badAd = JSON.parse(JSON.stringify(ad0));
+  delete badAd.evidence;
+  assert.throws(() => decideForRat({ rat: ratA, motives: ratA.motives, advertisements: [badAd], patchesById, objectsById, tick: TICK }), /evidence missing/);
+  const badAd2 = JSON.parse(JSON.stringify(ad0));
+  badAd2.evidence.disturbance = Infinity;
+  assert.throws(() => decideForRat({ rat: ratA, motives: ratA.motives, advertisements: [badAd2], patchesById, objectsById, tick: TICK }), /evidence field disturbance/);
+  const badAd3 = JSON.parse(JSON.stringify(ad0));
+  badAd3.position = { x: 0, z: NaN };
+  assert.throws(() => decideForRat({ rat: ratA, motives: ratA.motives, advertisements: [badAd3], patchesById, objectsById, tick: TICK }), /position/);
+  const badAd4 = JSON.parse(JSON.stringify(ad0));
+  badAd4.schemaVersion = 'life-itself-affordance/9.9.9';
+  assert.throws(() => decideForRat({ rat: ratA, motives: ratA.motives, advertisements: [badAd4], patchesById, objectsById, tick: TICK }), /advertisement schema/);
+}
 // Duplicate WorldEvent (stock held sufficient on a clone so validation
 // passes and the exactly-once event-ID gate is what fires).
 {
@@ -277,7 +295,7 @@ for (const [amt, why] of [[0.9, 'overdraw'], [0, 'zero'], [-0.5, 'negative'], [N
   const acts = [
     buildScavengeAction({ actorId: 'rat-A', tick: TICK, observation: oA, objectId: 'dumpster-1', patchId: 'deli-1', amountKg: 0.5 }),
     buildScavengeAction({ actorId: 'rat-B', tick: TICK, observation: oB, objectId: 'dumpster-1', patchId: 'deli-1', amountKg: 0.5 }),
-  ].sort((a, b) => a.actorId.localeCompare(b.actorId)); // deterministic serial order
+  ].sort((a, b) => (a.actorId < b.actorId ? -1 : a.actorId > b.actorId ? 1 : 0)); // deterministic serial order
   const compCtx = { citizenIds, positions: positions(), tick: TICK, lanes, patchesById: P, objectsById, agentsById: agentsById() };
   const compApplied = new Set();
   const compState = { pedestrians: [{ ...ratA, motives: mkMotives(20) }, { ...ratB, motives: mkMotives(20) }], patches: [fx0] };

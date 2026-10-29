@@ -48,6 +48,9 @@ const assert = (ok, why) => { if (!ok) throw new Error('affordance: ' + why); };
 const isId = (v) => typeof v === 'string' && v.length > 0 && v.length <= 128;
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
+// Runtime-independent string order (code-unit comparison): deterministic
+// across engines and ICU configurations, unlike localeCompare.
+const cmpStr = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 export const round4 = (v) => {
   assert(isNum(v), 'score must be finite before rounding');
   return Math.round(v * 10000) / 10000;
@@ -84,8 +87,12 @@ export function advertiseObject(object, patch, { tick, ecoDay }) {
   assert(isNum(forage), 'advertise: forageValue non-finite');
   const evidence = {
     // Grounded consumable stock (kg). The ONLY quantity commit trusts.
+    // Exposed under both the patch-field name (`fresh`, per the §2 schema)
+    // and the scoring name (`freshKg`): one validated value, two labels.
     fresh: patch.fresh,
-    // Attraction/ranking signal (0..100). Not inventory — never consumed.
+    freshKg: patch.fresh,
+    // Attraction/ranking signal (0..100), computed via forageValue() —
+    // not a stored patch property. Not inventory — never consumed.
     forageValue: forage,
     disturbance: patch.disturbance,
     // Actual occupancy-adjacent information available: how many scent marks
@@ -220,12 +227,22 @@ export function decideForRat({ rat, motives, advertisements, patchesById, object
   const actorId = rat.id;
   const evaluated = [];
   // Stable candidate ordering across advertisements and within each ad.
-  const ads = [...advertisements].sort((a, b) => String(a.objectId).localeCompare(String(b.objectId)));
+  // Code-unit comparison: identical byte order on every engine/ICU.
+  const ads = [...advertisements].sort((a, b) => cmpStr(String(a.objectId), String(b.objectId)));
   for (const ad of ads) {
     assert(ad && ad.schemaVersion === AFFORDANCE_CONTRACT, 'decision: advertisement schema');
+    // Fail closed on malformed evidence: never substitute zero coordinates,
+    // zero disturbance, or missing stock. The constructor above guarantees
+    // these, so a violation means tampering or a foreign producer.
+    assert(ad.evidence && typeof ad.evidence === 'object', 'decision: advertisement evidence missing');
+    for (const k of ['fresh', 'freshKg', 'forageValue', 'disturbance']) {
+      assert(isNum(ad.evidence[k]), 'decision: evidence field ' + k);
+    }
+    assert(ad.position && isNum(ad.position.x) && isNum(ad.position.z), 'decision: advertisement position');
+    assert(Number.isInteger(ad.tick) && ad.tick >= 0, 'decision: advertisement tick');
     const object = objectsById[ad.objectId];
     const patch = patchesById[ad.patchId];
-    const cands = [...(ad.candidates || [])].sort((a, b) => String(a.interactionId).localeCompare(String(b.interactionId)));
+    const cands = [...(ad.candidates || [])].sort((a, b) => cmpStr(String(a.interactionId), String(b.interactionId)));
     for (const c of cands) {
       const rejectionReasons = [];
       let eligible = true;
@@ -249,23 +266,21 @@ export function decideForRat({ rat, motives, advertisements, patchesById, object
           const s = scoreScavenge({ hunger: motives.hunger, freshKg: patch.fresh, disturbance: patch.disturbance, distanceM });
           score = s.score; factors = s.factors;
         } else {
-          // Still produce a deterministic score for the audit trail when
-          // inputs are sane (e.g. out-of-range still scores); when stock
-          // inputs are unusable, score stays 0 with explanatory factors.
-          try {
-            const s = scoreScavenge({ hunger: motives.hunger,
-              freshKg: isNum(freshKg) && freshKg >= 0 ? freshKg : 0,
-              disturbance: patch ? patch.disturbance : 0, distanceM: isNum(distanceM) ? distanceM : 0 });
-            score = s.score; factors = { ...s.factors, ineligible: true };
-          } catch { score = 0; factors = { ineligible: true }; }
+          // Ineligible: record a zero score with NO invented inputs. The
+          // audit trail keeps eligibility + rejection reasons; a score is
+          // only meaningful for an eligible candidate or the scored-but-
+          // never-executable investigation fallback below.
+          score = 0; factors = { ineligible: true };
         }
       } else if (c.interactionId === 'investigate-scent') {
         // Different utility estimate; never executable until implemented.
+        // Scored only when the live inputs are valid — otherwise zero with
+        // no substitution.
         fail('action-type-unimplemented');
-        try {
-          const s = scoreInvestigate({ disturbance: patch ? patch.disturbance : 0, distanceM: isNum(distanceM) ? distanceM : 0 });
+        if (patch && object && isNum(patch.disturbance) && isNum(distanceM)) {
+          const s = scoreInvestigate({ disturbance: patch.disturbance, distanceM });
           score = s.score; factors = s.factors;
-        } catch { score = 0; factors = { ineligible: true }; }
+        } else { score = 0; factors = { ineligible: true }; }
       } else {
         fail('unknown-interaction-type');
         score = 0; factors = { ineligible: true };
@@ -275,8 +290,11 @@ export function decideForRat({ rat, motives, advertisements, patchesById, object
     }
   }
   // Deterministic ranking: eligible only, score desc, then stable order.
-  // (evaluated is already in stable order, so a stable max-pick keeps the
-  // first on ties.)
+  // (evaluated is in runtime-independent code-unit order and the pick is
+  // strictly-greater, so the first entry wins ties on every engine.)
+  // The winner is the highest-scoring ELIGIBLE candidate — investigation
+  // is always ineligible (no executable action type), so `chosen` is
+  // either an executable commitment or null. Never hardcoded by identity.
   let chosen = null;
   for (const e of evaluated) {
     if (!e.eligible) continue;
