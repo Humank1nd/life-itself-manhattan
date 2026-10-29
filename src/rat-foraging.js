@@ -5,7 +5,7 @@
 // lawful move toward the chosen patch. No model, no provider.
 // Memory lives on the citizen (ped.memory.visits) so it checkpointed
 // with the world and survives shutdown/restart.
-import { forageValue } from './ecology.js';
+import { forageValue, crowdFactor } from './ecology.js';
 export const SMELL_RADIUS_M = 60;
 export const MEMORY_DECAY_PER_DAY = 0.9;
 export const FORAGE_THRESHOLD = 8;
@@ -20,13 +20,14 @@ export function sensePatches(ped, patches, radiusM = SMELL_RADIUS_M) {
   return out;
 }
 
-// Perceived value: current forage discounted by disturbance and by
-// recent visits (scent-memory: exploited patches fade until they recover).
-export function patchAppeal(patch, forage, memory, day) {
-  const seen = memory && memory.visits && memory.visits[patch.id];
-  const freshness = seen ? Math.pow(MEMORY_DECAY_PER_DAY, Math.max(0, day - seen.day)) : 1;
-  const familiar = seen ? 1 - 0.5 * freshness : 1;
-  return forage * familiar * (1 - 0.5 * patch.disturbance);
+// Perceived value: current forage discounted by disturbance, own recent
+// visits (scent-memory), and other rats' fresh marks (crowding).
+export function patchAppeal(patch, forage, memory, day, selfId = null) {
+  const mem = memory && memory.visits && memory.visits[patch.id];
+  const freshness = mem ? Math.pow(MEMORY_DECAY_PER_DAY, Math.max(0, day - mem.day)) : 1;
+  const familiar = mem ? 1 - 0.5 * freshness : 1;
+  const crowd = selfId ? crowdFactor(patch, selfId, day) : 1;
+  return forage * familiar * crowd * (1 - 0.5 * patch.disturbance) + 5 * (1 - patch.disturbance);
 }
 
 // Deterministic forage proposal. Returns a move action or null (fall
@@ -41,7 +42,7 @@ export function proposeForage(ped, motives, patches, memory, ecoDay, tick) {
   if (!sensed.length) return null;
   let best = null, bestScore = -Infinity;
   for (const s of sensed) {
-    const score = patchAppeal(s.patch, s.forage, memory, ecoDay);
+    const score = patchAppeal(s.patch, s.forage, memory, ecoDay, ped.id);
     if (score > bestScore) { bestScore = score; best = s; }
   }
   if (!best || bestScore < FORAGE_THRESHOLD) return null;

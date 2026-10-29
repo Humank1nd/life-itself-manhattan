@@ -289,3 +289,7 @@ Deterministic nutrient metabolism for one block: waste rots, roaches bloom on ro
 ## Ecology drives decisions — Extraction 022 (Phase A integration)
 
 A hungry rat smells nearby patches, weighs hunger/safety/memory, and moves toward the best one — different ecology, different behavior, proven on the living sim with checkpoint/restore. Citizen memory now persists across restarts. Run `npm run test:rat-foraging`. See `docs/extraction-022-rat-foraging.md`.
+
+## Rat colony: shared depletion and scent — Extraction 023
+
+Two rats, one patch: grazing and scent marks measurably change the second rat's subsequent decision — no scripts, no direct coupling, only shared world state. Scent survives shutdown/restart with the checkpoint. Run `npm run test:rat-colony`. See `docs/extraction-023-rat-colony.md`.
