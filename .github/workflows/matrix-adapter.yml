@@ -62,6 +62,9 @@ jobs:
           PUPPETEER_CACHE_DIR: ${{ runner.temp }}/puppeteer
         run: npm install --no-save --no-package-lock --no-audit --no-fund three@0.160.0 pngjs@7.0.0 puppeteer@24.31.0
 
+      - name: Install ffmpeg on hosted runner only
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
       - name: Render fresh cloud capture into ephemeral storage
         env:
           CAPTURE_OUT: ${{ runner.temp }}/times-square-capture
