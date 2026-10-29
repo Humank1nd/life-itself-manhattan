@@ -5,6 +5,11 @@
 // Effects are lawful by construction: rest/socialize adjust motives in
 // bounds; moves land on the citizen's own lane segment (projection,
 // never teleport). For the journal-shaped event, see action-contract.js.
+//
+// Durability rule: commit and apply consult the SAME applied set, and
+// that set is rebuilt from the checkpointed event log on restore. A
+// repeated commit or a repeated apply of the same event ID fails;
+// there is no path that executes one committed event twice.
 import { validateObservation, validateAction, commitAction } from './action-contract.js';
 const clamp100 = (v) => Math.max(0, Math.min(100, v));
 
@@ -55,7 +60,8 @@ export function propose(state, pedId, observation) {
     params: { to: { x: a[0] + (b[0] - a[0]) * t, z: a[1] + (b[1] - a[1]) * t } } };
 }
 
-// Lawful effects, applied exactly once per committed event.
+// Lawful effects for one committed event. Pure in/out except the state it
+// is given; use applyEventOnce for the durable exactly-once path.
 export function applyEvent(state, event) {
   if (event.type === 'rest') {
     const ped = state.pedestrians.find((p) => p.id === event.actorId);
@@ -85,6 +91,28 @@ export function applyEvent(state, event) {
     return { fraction: t };
   }
   throw new Error('agency: unknown effect ' + event.type);
+}
+
+// Durable exactly-once: the same applied set guards commit AND apply.
+// Restore rebuilds it from the checkpointed event log, so a replayed
+// event is rejected at both gates even after a restart.
+export function applyEventOnce(state, event, applied) {
+  if (applied.has(event.eventId)) throw new Error('agency: duplicate effect ' + event.eventId);
+  const out = applyEvent(state, event);
+  applied.add(event.eventId);
+  return out;
+}
+
+// Rebuild authoritative deduplication state from a checkpointed log.
+// Unknown entries fail closed: the log must contain whole events.
+export function rebuildApplied(log) {
+  const applied = new Set();
+  for (const e of log) {
+    if (!e || typeof e.eventId !== 'string') throw new Error('agency: corrupt event log entry');
+    if (applied.has(e.eventId)) throw new Error('agency: duplicate event in log ' + e.eventId);
+    applied.add(e.eventId);
+  }
+  return applied;
 }
 
 export { validateObservation, validateAction, commitAction };

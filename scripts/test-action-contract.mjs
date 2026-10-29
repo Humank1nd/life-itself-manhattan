@@ -25,6 +25,7 @@ const soc = { ...move, actionId: 'a3', type: 'socialize', params: { with: 'ped_2
 assert.equal(validateAction(soc, ctx), true);
 const applied = new Set();
 const ev = commitAction(soc, ctx, applied, -1);
+applied.add(ev.eventId); // caller records after the effect applies; commit only checks
 assert.equal(ev.eventId, 'ev-40-a3');
 assert.equal(ev.generated, false);
 assert.deepEqual(ev.basis, ['o1']);
