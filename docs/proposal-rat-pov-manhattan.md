@@ -9,7 +9,7 @@ only where it pays.
 ## Non-negotiables (inherited)
 
 - Deterministic tick, seeded agents, gated modules, no pixels or model
-  weights in the repo, cloud CI on every touching PR.
+  weights in the repo, local zero-infrastructure tests on every touching change; Firebase preview channels for visual review. GitHub Actions and Pages are not deployment gates.
 - The existing P016/P017 stack is the foundation, not a reference:
   traits, motives, action contract, citizen agency, resumption,
   checkpoints, journal. Rat POV reuses all of it.
@@ -62,24 +62,33 @@ Any private, separately held interpretation or experimental overlay is **not sou
 
 The optional loader uses the versioned `life-itself-licensed-overlay/1.0.0` manifest schema. It returns disabled unless explicitly enabled and supplied a valid manifest. Fixtures use invented placeholder text only. Private experimentation does not imply authorization to publish third-party material. The public product must work identically without the overlay.
 
-## Temporal setting: an original ecological shock (founder decision)
+## Temporal setting: fourth-year survival (founder revision)
 
-The simulation opens with a sudden 50% population cull across all
-modeled species — rats, roaches, and the human systems that produce
-waste and sanitation — followed by species-dependent recovery. No
-licensed setting, no third-party characters, locations, or events are
-referenced anywhere in the scenario; the mechanics (abrupt halving,
-disrupted sanitation schedules, vacant-shelter expansion, phased
-recovery) are identical with or without any borrowed fiction, so the
-commercial path stays open under the repo's licensing posture.
+**This supersedes the former five-year playable timeline.** The unexplained ecological catastrophe occurred roughly three years before the playable year starts. The player controls one surviving rat through the **fourth year** of the changed city: **365 in-world days**, leading toward a hidden, ordinary-looking final environmental interaction. Earlier years exist as authoritative background world history, not playable day-by-day time. No third-party fictional universe, named character, or protected story beat belongs in a pushed file or deployed artifact.
 
-Three simulated phases: immediate collapse (familiar scent trails and
-food sources violently disrupted), colony adaptation over subsequent
-years (expansion into abandoned areas against declining human food
-supply), and a changed urban ecosystem at the far horizon. The rat
-knows nothing of causes — only disappearance, disruption, and
-transformation of habitat. That constraint is load-bearing: all
-knowledge in the sim is local and sensory, never expositional.
+The focal rat has a **one-year expected-life design premise**, not a scientifically fixed lifespan or guaranteed end date. Hunger, dehydration, injury, exposure, and predators are meaningful mortal risks; biological age and prior conditions may affect resilience. The player never receives an exposition dump about the catastrophe or its global implications.
+
+### Player pacing and time compression
+
+- **Main path target:** 30–60 real hours to traverse the in-world year and reach the original ending.
+- **Completionist target:** 90–120+ real hours for exploration, scent mapping, colony relationships, nest preservation, and ecological observations in that *same* year.
+- **Active day:** approximately 12–20 real minutes at baseline, adjustable after playtesting. A continuous 365-day playthrough at that rate would require roughly 73–122 hours, so the shorter main path **requires explicit rest, nesting, and safe time-skip compression**. A flat constant-speed clock cannot meet both time targets.
+- **Two clocks:** stable 5-second authoritative simulation ticks for active areas; deterministic coarse daily/weekly advancement for unattended patches. A time skip must apply resource depletion, nutrient conversion, roach population changes, colony movements, hazards, aging, and journal receipts in a reproducible order, with no free survival.
+- **Seasonal arcs:** spring establishes shelter and scent-memory; summer accelerates spoilage and exposure; autumn tightens resources and territorial pressure; winter intensifies shelter and energy demands. Region-specific conditions remain source-grounded or labeled simulation assumptions.
+- **Ending:** an otherwise mundane small-creature interaction can become consequential; keep it fully original, sensory, and independently meaningful, without named external lore or a particular protected sequence.
+- **Mortality:** death ends the focal rat's life. Whether the player restarts or continues as a new rat must preserve world causality and be a separate explicit design choice; do not silently resurrect the same identity.
+
+### Verification gates for the year clock
+
+1. Exactly 365 in-world days progress monotonically without tick/revision rollback, with deterministic leap/calendar semantics declared.
+2. Active stepping, rest, and batched advancement produce equivalent canonical outcomes for the same modeled inputs and RNG stream, or differences are explicitly versioned as approximations—not falsely asserted bit-identical.
+3. A full-year accelerated pure-CPU reference test completes with finite, nonnegative nutrients and valid citizens, rat age, colony data, and event order.
+4. Post-commit checkpoint+restore across seasonal boundaries reproduces the same world and deduplication state; no event effect executes twice.
+5. Main-path and completionist hours are **targets to measure in playtests**, not guarantees from the day-length formula.
+
+### Renderer and world-model boundary
+
+A renderer/game-engine donor may inspire separation of update loops from visual presentation, but does not replace the existing Life Itself authoritative ENU geography, motives, action contracts, journal, or checkpoints. Scents and resource fields are simulation state. Three.js, WebGPU, or future neural imagery consume snapshots; none author the canonical world. Do not import external engine code without an independent source/license and compatibility review.
 
 ## Explicitly out of Phase A (including any licensed framing)
 
