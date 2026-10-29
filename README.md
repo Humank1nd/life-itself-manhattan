@@ -301,3 +301,7 @@ Named seasons, year rollover, deterministic skips identical to continuous steppi
 ## Rat survival — Extraction 025 (Phase B, B02)
 
 Thirst as a ninth motive, age-weakened recovery after 200 days, terminal mortality (starvation, injury, old age) with recorded causes and frozen corpses. Vitals round-trip checkpoints. Run `npm run test:rat-survival`. See `docs/extraction-025-rat-survival.md`.
+
+## World-model grounding contract — Extraction 026
+
+Typed, hash-attributed component data in; verified, reconciled, and shown moving the next rat decision. Tampered/unknown/duplicate reports fail closed with the world untouched. Run `npm run test:grounding-contract`. See `docs/extraction-026-grounding-contract.md`.
