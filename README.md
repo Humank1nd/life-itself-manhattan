@@ -277,3 +277,7 @@ Proven continuation, not assumed: `src/city-resume.js` rebuilds lane geometry fr
 ## Autonomous action/event contract — Extraction 019 (Phase 017, slice 017.2)
 
 Versioned Observation → ProposedAction → WorldEvent → Receipt (`src/action-contract.js`): closed space (no teleports, no future observations, no stranger socializing), deterministic event IDs, journal-shaped commits with `generated:false`. 3 happy paths + 11 fail-closed rejections. Run `npm run test:action-contract`. See `docs/extraction-019-action-contract.md`. No model, no provider.
+
+## One citizen, one verified consequence — Extraction 020 (P017.3)
+
+Deterministic citizen agency on the live sim: perceive → propose → validate+commit → apply exactly once → shutdown/restart → same causal future. The neediest citizen decides at tick 12, commits once (duplicates rejected), and 18 further ticks match the uninterrupted run bit-identically. Run `npm run test:citizen-consequence`. See `docs/extraction-020-citizen-consequence.md`. No model involved.
