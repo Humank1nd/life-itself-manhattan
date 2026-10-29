@@ -23,7 +23,8 @@ const payload = { patchId: 'deli-1', wasteKg: 25 };
 const att = attestReport({ sourceId: 'restaurant-pulse', reportId: 'rr-001', payload, sha256: shaOf(payload), tick: 8 });
 assert(verifyReportHash(att, shaOf(payload)));
 const seen = new Set();
-const fx = reconcileReport(world, att, seen);
+const fx = reconcileReport(world, att, seen, shaOf(payload));
+assert.throws(() => reconcileReport(world, JSON.parse(JSON.stringify(att)), new Set(), shaOf({other: 1})), /hash mismatch/, 'no verify-then-reconcile bypass');
 assert.deepEqual(fx, { applied: 'rr-001', source: 'restaurant-pulse' });
 assert.equal(world.patches[0].fresh, 25, 'restaurant waste landed in the world');
 const act = proposeForage(rat, HUNGRY, world.patches, { visits: {} }, 8, 5);
@@ -42,11 +43,11 @@ assert.throws(() => attestReport({ sourceId: 'restaurant-pulse', reportId: '', p
 assert.throws(() => attestReport({ sourceId: 'restaurant-pulse', reportId: 'x', payload: {}, sha256: 'zzz', tick: 0 }), /hash required/);
 {
   const wAtt = attestReport({ sourceId: 'weather-station', reportId: 'w-1', payload: {}, sha256: shaOf({}), tick: 0 });
-  assert.throws(() => reconcileReport({ patches: [] }, wAtt, new Set()), /not implemented/);
-  assert.throws(() => reconcileReport(world, att, seen), /duplicate report/);
+  assert.throws(() => reconcileReport({ patches: [] }, wAtt, new Set(), shaOf({})), /not implemented/);
+  assert.throws(() => reconcileReport(world, att, seen, shaOf(payload)), /duplicate report/);
   const noPatch = attestReport({ sourceId: 'restaurant-pulse', reportId: 'rr-9', payload: { patchId: 'nowhere', wasteKg: 1 }, sha256: shaOf({ patchId: 'nowhere', wasteKg: 1 }), tick: 0 });
-  assert.throws(() => reconcileReport(world, noPatch, new Set()), /unknown patch/);
+  assert.throws(() => reconcileReport(world, noPatch, new Set(), shaOf(noPatch.payload)), /unknown patch/);
   const neg = attestReport({ sourceId: 'restaurant-pulse', reportId: 'rr-10', payload: { patchId: 'deli-1', wasteKg: -5 }, sha256: shaOf({ patchId: 'deli-1', wasteKg: -5 }), tick: 0 });
-  assert.throws(() => reconcileReport(world, neg, new Set()), /wasteKg/);
+  assert.throws(() => reconcileReport(world, neg, new Set(), shaOf(neg.payload)), /wasteKg/);
 }
-console.log('PASS grounding contract — typed attested component data verified, reconciled, and shown moving the next rat decision; tampered/unknown/duplicate/unimplemented all fail closed');
+console.log('PASS grounding contract — typed attested component data verified, reconciled, and shown moving the next rat decision; tampered/unknown/duplicate/unimplemented all fail closed, verification inseparable from reconcile');

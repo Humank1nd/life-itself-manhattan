@@ -25,10 +25,13 @@ export function verifyReportHash(attestation, recomputedSha256) {
   assert(typeof recomputedSha256 === 'string' && recomputedSha256 === attestation.sha256, 'payload hash mismatch');
   return true;
 }
-// Reconcile into the world. Returns a description of the applied effect.
+// Reconcile into the world. The expected hash is REQUIRED: verification
+// happens inside reconcile, so no caller can apply an attested report
+// without proving its bytes. Returns a description of the applied effect.
 // Unknown sources and unimplemented adapters are rejected, never ignored.
-export function reconcileReport(world, attestation, seenIds) {
+export function reconcileReport(world, attestation, seenIds, expectedSha) {
   assert(!seenIds.has(attestation.reportId), 'duplicate report: ' + attestation.reportId);
+  verifyReportHash(attestation, expectedSha);
   if (!IMPLEMENTED.has(attestation.sourceId)) throw new Error('grounding: adapter not implemented for ' + attestation.sourceId);
   const p = attestation.payload;
   if (attestation.sourceId === 'restaurant-pulse') {
