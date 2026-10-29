@@ -52,5 +52,6 @@ jobs:
           npm run test:camera-tour
           npm run test:pacejka
           npm run test:provider-lifecycle
+          npm run test:world-checkpoint
           npm run validate:city
           python3 endpoint/test_endpoint_core.py
