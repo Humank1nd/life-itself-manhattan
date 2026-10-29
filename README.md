@@ -269,3 +269,7 @@ Ported from the working GEV checkout (36 commits ahead, 2776/2777 suites green, 
 
 Pure state machine for the Persistent World / Ephemeral Renderer contract
 (PR #20): `src/provider-lifecycle.js` implements OFF→REQUESTED→VALIDATING→STARTING→READY→RUNNING→QUIESCING→OFF with fail-closed kill/timeout/budget from every active stage, no FAILED→RUNNING shortcut, 8 intent validation rails, honest receipts (`generated:true`, `historicalGroundTruth:false`). No I/O, no timers, no model. Run `npm run test:provider-lifecycle`.
+
+## Deterministic shutdown/restart — Extraction 018 (P016-L2b)
+
+Proven continuation, not assumed: `src/city-resume.js` rebuilds lane geometry from pinned corridors and proves every pedestrian on-lane, pins zone geography and world config, recomputes motive rates from stored traits. 30 ticks uninterrupted == tick-12 serialize/restore/continue, bit-identical at every tick, plus 10 fail-closed and 2 divergence proofs. Run `npm run test:city-recovery`. See `docs/extraction-018-city-recovery.md`.
