@@ -23,7 +23,7 @@ export function createPatch({ id, x, z, wasteKg = 0, moisture = 0.5, warmth = 0.
     if (!(v >= 0 && v <= 1)) throw new Error('ecology: ' + k + ' out of range');
   if (!(wasteKg >= 0)) throw new Error('ecology: waste must be non-negative');
   return { schemaVersion: PATCH_CONTRACT, id, x, z, fresh: wasteKg, rot: 0, residue: 0,
-    biomass: 0, moisture, warmth, disturbance, removedKg: 0, addedKg: wasteKg, day: 0 };
+    biomass: 0, moisture, warmth, disturbance, removedKg: 0, addedKg: wasteKg, eatenKg: 0, marks: [], day: 0 };
 }
 // External inputs are booked: mass is conserved against inputs, never conjured.
 export function addWaste(patch, kg) {
@@ -35,6 +35,28 @@ export function seedRoaches(patch, biomass) {
   if (!(biomass >= 0)) throw new Error('ecology: biomass must be non-negative');
   patch.biomass += biomass; patch.addedKg += biomass;
   return patch;
+}
+// A rat eats: fresh waste becomes rat energy. Tracked, not conjured.
+export function graze(patch, amount) {
+  if (!(amount >= 0)) throw new Error('ecology: graze amount must be non-negative');
+  const taken = Math.min(patch.fresh, amount);
+  patch.fresh -= taken;
+  patch.eatenKg += taken;
+  return taken;
+}
+// Scent marks: who was here, when. Bounded: the trail remembers visitors,
+// not footsteps.
+export function markVisited(patch, ratId, day) {
+  if (typeof ratId !== 'string' || !Number.isInteger(day) || day < 0) throw new Error('ecology: bad scent mark');
+  patch.marks = patch.marks.filter((m) => m.by !== ratId);
+  patch.marks.push({ by: ratId, day });
+  if (patch.marks.length > 20) patch.marks = patch.marks.slice(-20);
+  return patch;
+}
+export function crowdFactor(patch, selfId, day) {
+  let others = 0;
+  for (const m of patch.marks) if (m.by !== selfId && day - m.day <= 3) others++;
+  return Math.pow(0.9, others);
 }
 function carrying(patch) {
   return (patch.rot + 0.3 * patch.fresh + 1) * patch.moisture * patch.warmth * K_SCALE;
@@ -75,7 +97,7 @@ export function forageValue(patch) {
   return Math.max(0, Math.min(100, score));
 }
 export function patchTotals(patch) {
-  return patch.fresh + patch.rot + patch.residue + patch.biomass + patch.removedKg;
+  return patch.fresh + patch.rot + patch.residue + patch.biomass + patch.removedKg + (patch.eatenKg || 0);
 }
 export function patchAdded(patch) {
   return patch.addedKg;
