@@ -13,8 +13,8 @@ import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
 import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, NO_DECISION_TEXT } from './rat-perception.js';
 import { stepRatAutonomy, reconcileIntegrityFault } from './rat-autonomy.js';
-import { dueSanitationReports, attestSanitationReports, commitSanitationBatch, reconcileSanitation } from './sanitation.js';
-import { sha256Hex, canonical } from './journal.js';
+import { stepSanitation } from './sanitation.js';
+import { sha256Hex } from './journal.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 
@@ -298,27 +298,13 @@ async function advanceCityTick() {
     if (livingCity.patches && livingCity.objects) {
       try {
         if (!sanCtx.journalAppend) sanCtx.journalAppend = (t, k, p) => journal.append(t, k, p);
-        if (sanCtx.integrity.fault) {
-          try {
-            await reconcileSanitation(sanCtx);
-          } catch (recErr) {
-            console.error('Sanitation reconciliation deferred:', recErr);
-          }
-        }
-        if (!sanCtx.integrity.fault) {
-          const ecoDay = Math.floor(livingCity.tickCount / TICKS_PER_DAY);
-          const due = dueSanitationReports(livingCity, ecoDay);
-          if (due.length > 0) {
-            const reports = await attestSanitationReports(due, {
-              hashHex: (s) => sha256Hex(s), tick: livingCity.tickCount });
-            const unseen = reports.filter((r) => !sanCtx.seenIds.has(r.attestation.reportId));
-            if (unseen.length > 0) {
-              const sanOut = await commitSanitationBatch(livingCity, unseen, sanCtx);
-              if (sanOut.status === 'fault') console.error('Sanitation integrity fault:', sanOut.fault.reportIds, sanOut.fault.failedStage);
-              void sanOut;
-            }
-          }
-        }
+        const ecoDayS = Math.floor(livingCity.tickCount / TICKS_PER_DAY);
+        const sanOut = await stepSanitation(livingCity, ecoDayS, sanCtx,
+          { hashHex: (s) => sha256Hex(s), tick: livingCity.tickCount });
+        if (sanOut.status === 'fault') console.error('Sanitation integrity fault:', sanOut.fault.reportIds, sanOut.fault.failedStage);
+        else if (sanOut.status === 'blocked') console.error('Sanitation blocked on integrity fault');
+        else if (sanOut.status === 'deferred') console.error('Sanitation deferred:', sanOut.error);
+        void sanOut;
       } catch (sanErr) {
         console.error('Sanitation skipped this tick:', sanErr);
       }

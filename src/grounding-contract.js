@@ -80,9 +80,13 @@ export function validateSanitationReport(world, attestation, seenIds, expectedSh
   assert(Number.isInteger(patch.day) && patch.day >= 0, 'sanitation: patch day missing: ' + p.patchId);
   if (p.day < patch.day) throw new Error('grounding: stale sanitation report for ' + p.patchId);
   if (p.day > patch.day) throw new Error('grounding: future sanitation report for ' + p.patchId);
-  const periodDays = p.periodDays === undefined ? 7 : p.periodDays;
-  assert(Number.isInteger(periodDays) && periodDays > 0, 'sanitation-schedule needs a positive period');
-  assert(sanitationDue(p.day, periodDays), 'unscheduled sanitation report for day ' + p.day);
+  // The simulated cadence is pinned to seven days. Payload attempts to
+  // override the period are rejected outright: a different cadence would
+  // need a separately authorized configuration, not a silent substitution.
+  if (p.periodDays !== undefined && p.periodDays !== 7) {
+    throw new Error('grounding: custom sanitation period not supported for ' + p.patchId);
+  }
+  assert(sanitationDue(p.day, 7), 'unscheduled sanitation report for day ' + p.day);
   for (const k of ['fresh', 'rot', 'residue', 'biomass']) {
     const v = patch[k];
     assert(typeof v === 'number' && Number.isFinite(v) && v >= 0, 'sanitation: patch stock unknown: ' + p.patchId);

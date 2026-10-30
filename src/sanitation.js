@@ -74,20 +74,26 @@ function journalEntryMatchesSanitationMarker(entry, markerId) {
   const p = entry.payload;
   return !!p && p.kind === 'sanitation-reconciliation' && p.markerId === markerId;
 }
+function journalEntryMatchesSanitationMissed(entry, day, patchId) {
+  if (!entry || entry.event_type !== 'action') return false;
+  const p = entry.payload;
+  return !!p && p.kind === 'sanitation-missed' && p.day === day && p.patchId === patchId;
+}
 
 // Resolve one journal stage against actual contents: 'missing' (append
-// it), 'adopted' (exactly one payload-consistent record — skip it),
-// 'conflicted' (duplicates or a same-ID mismatch — hold the fault), or
-// 'trust' (no journal reader configured; single-writer sinks). Identity
-// is the report ID for collection records and the marker ID for the
-// reconciliation marker.
+// it), 'adopted' (exactly one payload-consistent record — skip it), or
+// 'conflicted' (duplicates or a same-ID mismatch — hold the fault).
+// Strict verification is required: without a journal reader the step
+// fails closed instead of reporting success it cannot prove. There is no
+// trust fallback — a failed append with no reader is a fault, never an
+// assumed landing.
 async function resolveStage(ctx, payloads, f, name) {
+  assert(typeof ctx.journalEntries === 'function', 'sanitation needs a journal reader');
+  const entries = await ctx.journalEntries();
   const isMarker = name === 'marker';
   const match = (e) => isMarker
     ? journalEntryMatchesSanitationMarker(e, f.markerId)
     : journalEntryMatchesSanitation(e, { reportId: name });
-  if (typeof ctx.journalEntries !== 'function') return 'trust';
-  const entries = await ctx.journalEntries();
   const cands = entries.filter(match);
   if (cands.length === 0) return 'missing';
   let good = 0;
@@ -109,23 +115,20 @@ async function appendStagesOnce(ctx, tick, payloads, f, stages) {
     const seen = await resolveStage(ctx, payloads, f, name);
     if (seen === 'adopted') { f.completedStages.push(name); continue; }
     if (seen === 'conflicted') throw stageError('conflicted', name);
-    if (seen === 'missing') {
-      try {
-        await ctx.journalAppend('action', tick, payloads[name]);
-      } catch (e) {
-        const again = await resolveStage(ctx, payloads, f, name);
-        if (again === 'adopted') { f.completedStages.push(name); continue; }
-        if (again === 'conflicted') throw stageError('conflicted', name);
-        throw stageError('missing', name);
-      }
+    try {
+      await ctx.journalAppend('action', tick, payloads[name]);
+    } catch (e) {
+      const again = await resolveStage(ctx, payloads, f, name);
+      if (again === 'adopted') { f.completedStages.push(name); continue; }
+      if (again === 'conflicted') throw stageError('conflicted', name);
+      throw stageError('missing', name);
     }
     const after = await resolveStage(ctx, payloads, f, name);
-    if (after === 'trust' || after === 'adopted') { f.completedStages.push(name); continue; }
+    if (after === 'adopted') { f.completedStages.push(name); continue; }
     throw stageError(after === 'conflicted' ? 'conflicted' : 'unverifiable', name);
   }
 }
 async function verifyAllStages(ctx, tick, payloads, f, stages) {
-  if (typeof ctx.journalEntries !== 'function') return true;
   for (const name of stages) {
     if ((await resolveStage(ctx, payloads, f, name)) !== 'adopted') throw stageError('unverified', name);
   }
@@ -134,14 +137,17 @@ async function verifyAllStages(ctx, tick, payloads, f, stages) {
 
 // The only writer. ctx carries caller-owned targets: seenIds (Set,
 // checkpointed via appliedReports — NOT the ledger), ledger (released
-// only after verification), integrity {fault}, journalAppend, optional
-// journalEntries resolver. Returns {status:'acted', results} or
-// {status:'fault', ...}; validation failures throw with nothing mutated.
+// only after verification), integrity {fault}, journalAppend, and the
+// REQUIRED journalEntries resolver (strict verification has no trust
+// fallback: without a readable journal the step fails closed instead of
+// reporting success it cannot prove). Returns {status:'acted', effects}
+// or {status:'fault', ...}; validation failures throw with nothing mutated.
 export async function commitSanitationBatch(state, reports, ctx) {
   assert(ctx && ctx.seenIds instanceof Set, 'sanitation needs a seen-ids set');
   assert(Array.isArray(ctx.ledger), 'sanitation needs a ledger');
-  assert(ctx.integrity && typeof ctx.integrity === 'object', 'sanitation needs an integrity holder');
+  assert(ctx && ctx.integrity && typeof ctx.integrity === 'object', 'sanitation needs an integrity holder');
   assert(typeof ctx.journalAppend === 'function', 'sanitation needs a journal sink');
+  assert(typeof ctx.journalEntries === 'function', 'sanitation needs a journal reader');
   if (ctx.integrity.fault) return { status: 'blocked', fault: ctx.integrity.fault };
   if (!Array.isArray(reports) || reports.length === 0) return { status: 'abstained' };
   assert(state && Array.isArray(state.patches), 'sanitation needs sim-owned patches');
@@ -205,11 +211,75 @@ export async function commitSanitationBatch(state, reports, ctx) {
   return { status: 'acted', effects };
 }
 
-// Reconcile a faulted batch: append exactly the missing collection
-// records, then one idempotent marker, then release the ledger. Progress
-// tracked on the fault resumes instead of repeating; conflicts hold the
-// fault; the receipt-equivalent (ledger) releases only after every
-// required stage verifies exactly once.
+// Explicit missed-collection records. A due day the world metabolized
+// past WITHOUT a reconciled collection is a fact, not a silent gap: it is
+// journaled as such, once. This never backfills mass or invents a
+// collection — the metabolized day stays metabolized; only the absence of
+// collection is recorded. Idempotent: an existing record for the same
+// patch+day is adopted, never duplicated. No ledger (nothing applied), no
+// fault (nothing partial): failures here throw, leaving everything
+// untouched for the next attempt.
+export async function noteMissedSanitation(state, ecoDay, ctx, periodDays = 7) {
+  assert(state && Array.isArray(state.objects), 'missed sanitation needs the sim-owned roster');
+  assert(Array.isArray(state.patches), 'missed sanitation needs sim-owned patches');
+  assert(Number.isInteger(ecoDay) && ecoDay >= 0, 'missed sanitation needs an ecological day');
+  assert(typeof ctx.journalAppend === 'function', 'missed sanitation needs a journal sink');
+  assert(typeof ctx.journalEntries === 'function', 'missed sanitation needs a journal reader');
+  const entries = await ctx.journalEntries();
+  const recorded = [];
+  for (const p of state.patches) {
+    for (let d = 1; d <= ecoDay && d < p.day; d++) {
+      if (!sanitationDue(d, periodDays)) continue;
+      if (ctx.seenIds && ctx.seenIds.has(sanitationReportId(d, p.id))) continue;
+      if (entries.some((e) => journalEntryMatchesSanitationMissed(e, d, p.id))) continue;
+      await ctx.journalAppend('action', ecoDay, { kind: 'sanitation-missed', patchId: p.id,
+        day: d, reason: 'due day metabolized without a reconciled collection', provenance: 'simulated' });
+      recorded.push({ patchId: p.id, day: d });
+    }
+  }
+  return recorded;
+}
+
+// One scheduled tick: reconcile any fault, record missed days, then
+// collect what is due. Never throws on runtime conditions — validation
+// errors, journal outages, and conflicts come back as data ({status:
+// 'blocked' | 'fault' | 'deferred' | 'acted' | 'abstained'}), so a live
+// loop can keep ticking around a stuck sanitation pipeline. Programmer
+// shape errors (bad ctx/deps) still throw.
+export async function stepSanitation(state, ecoDay, ctx, deps) {
+  assert(ctx && ctx.integrity && typeof ctx.integrity === 'object', 'sanitation step needs an integrity holder');
+  assert(ctx && ctx.seenIds instanceof Set, 'sanitation step needs a seen-ids set');
+  assert(Array.isArray(ctx.ledger), 'sanitation step needs a ledger');
+  assert(deps && typeof deps.hashHex === 'function' && Number.isInteger(deps.tick) && deps.tick >= 0,
+    'sanitation step needs a hash function and tick');
+  if (ctx.integrity.fault) {
+    try {
+      await reconcileSanitation(ctx);
+    } catch (e) {
+      return { status: 'blocked', fault: ctx.integrity.fault, error: String((e && e.message) || e) };
+    }
+  }
+  let missed = [], missedError = null;
+  try {
+    missed = await noteMissedSanitation(state, ecoDay, ctx);
+  } catch (e) {
+    missedError = String((e && e.message) || e);
+  }
+  const due = dueSanitationReports(state, ecoDay).filter((d) => !ctx.seenIds.has(sanitationReportId(d.day, d.patchId)));
+  if (due.length === 0) return { status: missed.length ? 'noted-missed' : 'abstained', missed, missedError };
+  let reports;
+  try {
+    reports = await attestSanitationReports(due, { hashHex: deps.hashHex, tick: deps.tick });
+  } catch (e) {
+    return { status: 'deferred', error: String((e && e.message) || e), missed, missedError };
+  }
+  try {
+    const out = await commitSanitationBatch(state, reports, ctx);
+    return { ...out, missed, missedError };
+  } catch (e) {
+    return { status: 'deferred', error: String((e && e.message) || e), missed, missedError };
+  }
+}
 export async function reconcileSanitation(ctx) {
   assert(ctx && ctx.integrity, 'reconcile needs an integrity holder');
   const f = ctx.integrity.fault;
