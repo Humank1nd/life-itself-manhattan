@@ -46,6 +46,7 @@
     "test:rat-perception": "node scripts/test-rat-perception.mjs",
     "test:rat-binding": "node scripts/test-rat-binding.mjs",
     "test:rat-autonomy": "node scripts/test-rat-autonomy.mjs",
+    "test:rat-player": "node scripts/test-rat-player.mjs",
     "test:rat-integrity": "node scripts/test-rat-integrity.mjs",
     "test:rat-pressure": "node scripts/test-rat-pressure.mjs",
     "test:rat-metabolism": "node scripts/test-rat-metabolism.mjs",

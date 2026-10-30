@@ -71,6 +71,46 @@ export function selectRatAction(state, tick, ecoDay) {
   return null;
 }
 
+// Player selection is pure. It names one living, hungry rat and one
+// eligible scavenge. It does not take the policy winner, and it does not
+// substitute a different object or a different rat when the request is
+// unlawful. Nothing here writes the world or the journal.
+export function selectPlayerRatAction(state, tick, ecoDay, choice) {
+  assert(state && Array.isArray(state.pedestrians), 'selection needs pedestrians');
+  assert(Array.isArray(state.patches) && Array.isArray(state.objects), 'selection needs sim-owned alley');
+  assert(Number.isInteger(tick) && tick >= 0, 'selection needs a tick');
+  assert(Number.isInteger(ecoDay) && ecoDay >= 0, 'selection needs an ecoDay');
+  assert(choice && typeof choice.actorId === 'string' && typeof choice.objectId === 'string'
+    && choice.interactionId === 'scavenge-fresh', 'player choice needs actor, object, and scavenge-fresh');
+  const rat = state.pedestrians.find((p) => p.id === choice.actorId) || null;
+  if (!rat) return { status: 'rejected', reason: 'unknown-actor' };
+  if (rat.alive === false) return { status: 'rejected', reason: 'actor-dead' };
+  if (!(rat.motives && isNum(rat.motives.hunger))) return { status: 'rejected', reason: 'hunger-unknown' };
+  if (rat.motives.hunger >= HUNGER_ACT_THRESHOLD) return { status: 'rejected', reason: 'satiated' };
+  const patchesById = Object.fromEntries(state.patches.map((p) => [p.id, p]));
+  const objectsById = Object.fromEntries(state.objects.map((o) => [o.id, o]));
+  const object = objectsById[choice.objectId];
+  if (!object) return { status: 'rejected', reason: 'unknown-object' };
+  const ads = state.objects.map((o) => advertiseObject(o, patchesById[o.patchId], { tick, ecoDay }));
+  const observations = ads.map((ad) => advertisementToObservation(ad, rat.id));
+  const decision = decideForRat({ rat, motives: rat.motives, advertisements: ads,
+    patchesById, objectsById, tick,
+    observationIds: observations.map((o) => o.observationId) });
+  const picked = decision.evaluated.find((entry) => entry.objectId === choice.objectId && entry.interactionId === 'scavenge-fresh') || null;
+  if (!picked) return { status: 'rejected', reason: 'not-offered' };
+  if (!picked.eligible) return { status: 'rejected', reason: picked.rejectionReasons[0] || 'ineligible' };
+  const patch = patchesById[object.patchId];
+  if (!(patch && isNum(patch.fresh) && patch.fresh >= SCAVENGE_MIN_KG)) return { status: 'rejected', reason: 'insufficient-stock' };
+  const amountKg = Math.min(SCAVENGE_MAX_KG, Math.floor(patch.fresh * 100) / 100);
+  if (!(amountKg >= SCAVENGE_MIN_KG && amountKg <= SCAVENGE_MAX_KG)) return { status: 'rejected', reason: 'amount-out-of-bounds' };
+  const basis = observations.find((o) => o.advertisement && o.advertisement.objectId === choice.objectId) || null;
+  if (!basis) return { status: 'rejected', reason: 'no-basis' };
+  const action = buildScavengeAction({ actorId: rat.id, tick,
+    observation: basis, objectId: choice.objectId,
+    patchId: patch.id, amountKg, actionSeq: 'player' });
+  return { status: 'selected', rat, action, decision: { ...decision, chosen: { ...picked } }, observations };
+}
+
 // Idempotent stage writer — the heart of the P017.8b correction.
 // Appends exactly the stages in `stages` not yet recorded on `f`,
 // tracking progress on `f.completedStages` IN PLACE after every
@@ -286,5 +326,16 @@ export async function stepRatAutonomy(state, ctx, tick, ecoDay) {
   if (ctx.integrity.fault) return { status: 'blocked', fault: ctx.integrity.fault };
   const selected = selectRatAction(state, tick, ecoDay);
   if (!selected) return { status: 'abstained' };
+  return commitRatAction(state, selected, ctx);
+}
+
+// One player choice through the same authority as autonomy. Rejection
+// writes nothing. Success commits and journals exactly one scavenge.
+// This step does not also run autonomous selection.
+export async function stepPlayerRatAction(state, ctx, tick, ecoDay, choice) {
+  assert(ctx && ctx.integrity && typeof ctx.integrity === 'object', 'step needs an integrity holder');
+  if (ctx.integrity.fault) return { status: 'blocked', fault: ctx.integrity.fault };
+  const selected = selectPlayerRatAction(state, tick, ecoDay, choice);
+  if (selected.status !== 'selected') return { status: 'rejected', reason: selected.reason };
   return commitRatAction(state, selected, ctx);
 }

@@ -12,7 +12,7 @@ import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
 import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, renderRatAbsence, NO_DECISION_TEXT } from './rat-perception.js';
-import { stepRatAutonomy, reconcileIntegrityFault } from './rat-autonomy.js';
+import { stepRatAutonomy, stepPlayerRatAction, reconcileIntegrityFault } from './rat-autonomy.js';
 import { stepSanitation } from './sanitation.js';
 import { sha256Hex } from './journal.js';
 import { mountTemporalLayer } from './temporal-layer.js';
@@ -239,9 +239,25 @@ function liveRatStatus(rat) {
 }
 // Page-level selection only — never sim state.
 let selectedRatId = null;
+let armedPlayerChoice = null;
 const ratDetailsEl = document.getElementById('rat-perception');
 const ratSelectEl = document.getElementById('rat-select');
+const ratChoiceEl = document.getElementById('rat-choice');
+const ratActEl = document.getElementById('rat-act');
+const ratArmEl = document.getElementById('rat-arm');
 const ratViewEl = document.getElementById('rat-view');
+function playerOutcomeText(outcome) {
+  if (!outcome) return '';
+  if (outcome.status === 'acted' && outcome.receipt) {
+    return `Committed once: ${outcome.receipt.actionId} → ${outcome.receipt.eventId}. The journal has that consequence.`;
+  }
+  if (outcome.status === 'rejected') {
+    return `Not committed (${outcome.reason}). The world did not change, and no other rat acted instead.`;
+  }
+  if (outcome.status === 'blocked') return 'Blocked. The ledger has an integrity fault, so this choice was not committed.';
+  if (outcome.status === 'fault') return `The world changed but the journal did not finish (${outcome.fault && outcome.fault.failedStage}). That is not an abstention.`;
+  return '';
+}
 function renderRatPanel() {
   const committedCount = ratCtx.ledger.length;
   try {
@@ -249,6 +265,7 @@ function renderRatPanel() {
     // patches/objects and never reconstructs them.
     if (!livingCity || !livingCity.patches || !livingCity.objects) {
       ratViewEl.textContent = renderRatAbsence({ cityLoaded: false });
+      if (ratActEl) ratActEl.disabled = true;
       return;
     }
     const alive = livingCity.pedestrians.filter((p) => p.alive);
@@ -266,6 +283,7 @@ function renderRatPanel() {
     selectedRatId = rat ? rat.id : null;
     if (!rat) {
       ratViewEl.textContent = renderRatAbsence({ cityLoaded: true, livingCount: 0, deadCount, committedCount });
+      if (ratActEl) ratActEl.disabled = true;
       return;
     }
     let view = null;
@@ -285,6 +303,21 @@ function renderRatPanel() {
     const patchesById = Object.fromEntries(livingCity.patches.map((p) => [p.id, p]));
     const live = refreshLiveAvailability(view, patchesById, livingCity.tickCount);
     const head = journal.lastChecksum ? journal.lastChecksum.slice(0, 12) : 'none';
+    const eligible = view.evaluated.filter((entry) => entry.eligible && entry.interactionId === 'scavenge-fresh');
+    const signature = eligible.map((entry) => entry.objectId).join('|');
+    if (ratChoiceEl && ratChoiceEl.dataset.options !== signature) {
+      const previous = ratChoiceEl.value;
+      ratChoiceEl.textContent = '';
+      for (const entry of eligible) {
+        const opt = document.createElement('option');
+        opt.value = entry.objectId;
+        opt.textContent = `${entry.objectId} · score ${entry.score}`;
+        ratChoiceEl.appendChild(opt);
+      }
+      if (eligible.some((entry) => entry.objectId === previous)) ratChoiceEl.value = previous;
+      ratChoiceEl.dataset.options = signature;
+    }
+    if (ratActEl) ratActEl.disabled = eligible.length === 0;
     ratViewEl.textContent = liveRatStatus(rat) + '\n' +
       renderRatPanelText(view, live, ratCtx.integrity.fault) +
       `\njournal: ${journal.entries.length} entries · head ${head} (read-only context)`;
@@ -303,6 +336,14 @@ if (ratSelectEl && document.getElementById('rat-refresh')) {
   ratSelectEl.addEventListener('change', () => {
     selectedRatId = ratSelectEl.value;
     renderRatPanel();
+  });
+}
+if (ratActEl && ratChoiceEl) {
+  ratActEl.addEventListener('click', () => {
+    const objectId = ratChoiceEl.value;
+    if (!selectedRatId || !objectId) return;
+    armedPlayerChoice = { actorId: selectedRatId, objectId, interactionId: 'scavenge-fresh' };
+    if (ratArmEl) ratArmEl.textContent = `Armed ${selectedRatId} → ${objectId}. The next city tick submits it once.`;
   });
 }
 function renderCityPeople() {
@@ -348,7 +389,15 @@ async function advanceCityTick() {
           }
         }
         const ecoDay = Math.floor(livingCity.tickCount / TICKS_PER_DAY);
-        const outcome = await stepRatAutonomy(livingCity, ratCtx, livingCity.tickCount, ecoDay);
+        let outcome;
+        if (armedPlayerChoice) {
+          const choice = armedPlayerChoice;
+          armedPlayerChoice = null;
+          outcome = await stepPlayerRatAction(livingCity, ratCtx, livingCity.tickCount, ecoDay, choice);
+          if (ratArmEl) ratArmEl.textContent = playerOutcomeText(outcome);
+        } else {
+          outcome = await stepRatAutonomy(livingCity, ratCtx, livingCity.tickCount, ecoDay);
+        }
         if (ratCtx.ledger.length > 200) ratCtx.ledger.splice(0, ratCtx.ledger.length - 200);
         if (outcome.status === 'fault') console.error('Rat integrity fault:', outcome.fault.eventId, outcome.fault.failedStage);
         void outcome;
