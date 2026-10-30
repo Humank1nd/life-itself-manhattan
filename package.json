@@ -12,6 +12,8 @@
     "test:city": "node scripts/test-living-city.mjs && node scripts/test-city-contract.mjs",
     "test:evidence": "node scripts/test-evidence-graph.mjs",
     "test:external-evidence": "node scripts/test-external-evidence.mjs",
+    "test:nyc-retrieval": "node scripts/test-nyc-retrieval.mjs",
+    "fetch:nyc-evidence": "node scripts/fetch-nyc-evidence.mjs",
     "test:atlas": "node scripts/test-commons-atlas.mjs",
     "test:catalog": "node scripts/test-photo-catalog.mjs",
     "build:photo-links": "node scripts/build-photo-links.mjs",
