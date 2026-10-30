@@ -42,6 +42,7 @@
     "test:rat-binding": "node scripts/test-rat-binding.mjs",
     "test:rat-autonomy": "node scripts/test-rat-autonomy.mjs",
     "test:rat-integrity": "node scripts/test-rat-integrity.mjs",
+    "test:rat-pressure": "node scripts/test-rat-pressure.mjs",
     "test:lingbot": "node scripts/test-lingbot-conditioning.mjs",
     "build:capture": "node scripts/build-capture-pilot.mjs",
     "test:capture": "node scripts/test-capture-pipeline.mjs",

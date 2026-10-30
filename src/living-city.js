@@ -189,16 +189,35 @@ export function checkMortality(ped, tick) {
   if (Math.floor(ped.ageTicks / TICKS_PER_DAY) > LIFESPAN_DAYS) return 'age';
   return null;
 }
+// Alley-forager designation (P017.8e): pedestrians on lane 0 — the alley's
+// own lane — are the designated foragers. Pure roster fact, no state:
+// laneIndex never changes, so the designation survives checkpoint/restore
+// with zero schema. Forager BEHAVIOR (natural hunger) additionally requires
+// the sim-owned alley to exist; see tickLivingCity.
+export function isAlleyForager(ped) {
+  return !!ped && ped.laneIndex === 0;
+}
 export function tickLivingCity(state) {
   state.tickCount += 1;
   tickCity(state.zones, state.world);
   const context = crowdContext(state.tickCount % 24);
+  // Natural foraging pressure (P017.8e): when the simulation owns an alley
+  // roster, designated foragers stop receiving the crowd's scheduled meal
+  // recovery — hunger must emerge from living un-fed, not from a timetable.
+  // Drain is unchanged; legitimate recovery (rest, and committed scavenging
+  // via the autonomy step) is unchanged; the ordinary crowd is untouched.
+  // States without an alley (objects key absent — all legacy states) take
+  // the historical path bit-identically.
+  const alleyActive = Array.isArray(state.objects) && state.objects.length > 0;
   for (const ped of state.pedestrians) {
     if (!ped.alive) continue; // the dead do not walk; history keeps them
     ped.ageTicks += 1;
     advancePedestrian(ped, state.lanes[ped.laneIndex], TICK_MS / 1000);
+    const forageHungry = alleyActive && isAlleyForager(ped);
     ped.motives = tickMotives(ped.motives, ped.rates,
-      { ...context, ageDays: Math.floor(ped.ageTicks / TICKS_PER_DAY) });
+      forageHungry
+        ? { ...context, eating: false, ageDays: Math.floor(ped.ageTicks / TICKS_PER_DAY) }
+        : { ...context, ageDays: Math.floor(ped.ageTicks / TICKS_PER_DAY) });
     if ((ped.motives.hunger <= 0 || ped.motives.thirst <= 0) && ped.motives.energy <= 0) ped.starveTicks += 1;
     else ped.starveTicks = 0;
     const cause = checkMortality(ped, state.tickCount);
