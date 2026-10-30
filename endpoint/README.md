@@ -28,7 +28,10 @@ falls back to its local interpreter — the island never goes mute.
    ```
    Modal prints the endpoint URL (`https://<workspace>--ask-the-island-ask-api.modal.run`).
 4. **Point the page at it:** set `window.ASK_ENDPOINT` in `index.html` to
-   that URL + `/ask`, commit, and confirm GitHub Pages redeployed.
+   that URL + `/ask`, commit, and deploy Firebase hosting
+   (`life-itself-manhattan.web.app` and `.firebaseapp.com`). Those two
+   origins, plus `https://humank1nd.github.io`, are the CORS allowlist in
+   `modal_app.py`. A new host needs a new allowlist entry and a redeploy.
 5. **Smoke test without spending:** `GET /health` returns
    `{ "ok": true, "model": ... }` and makes no model call. The first real
    question asked on the live page is the first credit spent.

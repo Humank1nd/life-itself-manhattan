@@ -35,7 +35,13 @@ image = (
     .add_local_file(os.path.join(_DIR, "endpoint_core.py"), "/root/endpoint_core.py")
 )
 
-ALLOWED_ORIGIN = "https://humank1nd.github.io"
+# The page is hosted on Firebase. GitHub Pages was the original written
+# host and is still allowed; it does not currently serve this app.
+ALLOWED_ORIGINS = [
+    "https://life-itself-manhattan.web.app",
+    "https://life-itself-manhattan.firebaseapp.com",
+    "https://humank1nd.github.io",
+]
 
 
 @app.function(image=image, secrets=[modal.Secret.from_name("meta-model-api")], timeout=180)
@@ -49,7 +55,7 @@ def ask_api():
     web = FastAPI()
     web.add_middleware(
         CORSMiddleware,
-        allow_origins=[ALLOWED_ORIGIN],
+        allow_origins=ALLOWED_ORIGINS,
         allow_methods=["POST", "GET"],
         allow_headers=["Content-Type"],
     )
