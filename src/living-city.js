@@ -11,6 +11,7 @@
 // pedestrian's motive rates derive from its own seeded personality.
 import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { initMotives, tickMotives, crowdContext, MOTIVES } from './motives.js';
+import { tickPatch } from './ecology.js';
 import { buildAlley } from './object-affordances.js';
 export const TICK_MS = 5000;
 export const SIDEWALK_OFFSET_M = 6.2;
@@ -197,8 +198,35 @@ export function checkMortality(ped, tick) {
 export function isAlleyForager(ped) {
   return !!ped && ped.laneIndex === 0;
 }
+// Daily ecological metabolism (P017.9-S01): at each ecological day
+// boundary, every sim-owned patch metabolizes exactly once through the
+// tested tickPatch path — rot, bloom, turnover — BEFORE any foraging
+// decision of that tick can observe it. The day derives from the
+// simulation tick, never the wall clock. Exactly-once per day: a patch
+// already at the current day is skipped (repeat calls are no-ops); a
+// patch AHEAD of the clock fails closed (time never runs backward); a
+// patch BEHIND advances day-by-day so restores and clock skips apply
+// each missing day exactly once, deterministically.
+//
+// Armed by the object roster, not by patches alone: state.objects is the
+// marker of the sim-owned alley (P017.5/7 roster, checkpointed with revs).
+// Restored sidecar ecology without a pinned roster keeps the legacy
+// manual-tickPatch discipline — the sim never seizes a foreign clock.
+// No sanitation schedules and no supply here — metabolism only.
+export function applyEcologicalDay(state) {
+  if (!Array.isArray(state.objects)) return state; // no roster: legacy path untouched
+  if (!Array.isArray(state.patches)) throw new Error('ecology: alley roster without patches');
+  const ecoDay = Math.floor(state.tickCount / TICKS_PER_DAY);
+  for (const p of state.patches) {
+    if (!p || !Number.isInteger(p.day) || p.day < 0) throw new Error('ecology: patch day missing: ' + (p && p.id));
+    if (p.day > ecoDay) throw new Error('ecology: patch day ahead of clock: ' + p.id);
+    for (let d = p.day + 1; d <= ecoDay; d++) tickPatch(p, { day: d });
+  }
+  return state;
+}
 export function tickLivingCity(state) {
   state.tickCount += 1;
+  applyEcologicalDay(state);
   tickCity(state.zones, state.world);
   const context = crowdContext(state.tickCount % 24);
   // Natural foraging pressure (P017.8e): when the simulation owns an alley
@@ -231,7 +259,9 @@ export function citySnapshot(state) {
   // Traits ride along (seed-derived but explicit for audit); motives and vitals are live.
   // `objects` rides the snapshot ONLY when the alley is established — legacy
   // states (no alley) serialize exactly as before. Patches keep traveling
-  // via the resume record's ecology section, not the snapshot.
+  // via the resume record's ecology section, not the snapshot: the snapshot
+  // contract is frozen, and mass enters the hashed world state through
+  // hashableWorldState() below instead of a second serialized copy.
   const snap = {
     seed: state.seed, tick: state.tickCount,
     zones: state.zones.map(({ id, lat, lon, type, radiusKm, pop, jobs, money, happy }) =>
@@ -240,6 +270,18 @@ export function citySnapshot(state) {
       ({ id, laneIndex, segmentIndex, fraction, direction, speed, x, z, traits, motives, memory: memory || { visits: {} }, ageTicks, injury, starveTicks, alive, death })),
   };
   if (state.objects !== undefined && state.objects !== null) snap.objects = JSON.parse(JSON.stringify(state.objects));
+  return snap;
+}
+
+// Hash input for the journaled world state: the frozen snapshot plus, when
+// the sim owns an alley, its live mass. Legacy states hash byte-identically
+// to citySnapshot; established states additionally bind fresh/rot/biomass/
+// residue/eatenKg so the sealed checksum moves when food rots or is eaten.
+export function hashableWorldState(state) {
+  const snap = citySnapshot(state);
+  if (state.patches !== undefined && state.patches !== null) {
+    snap.patches = JSON.parse(JSON.stringify(state.patches));
+  }
   return snap;
 }
 

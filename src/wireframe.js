@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { interpret, runQuery, describe } from './ask.js';
 import { createJournal, projectEnu, JournalEventType, hashWorldState } from './core-journal.js';
-import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS, TICKS_PER_DAY, establishAlley } from './living-city.js';
+import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS, TICKS_PER_DAY, establishAlley, hashableWorldState } from './living-city.js';
 import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
@@ -308,7 +308,7 @@ async function advanceCityTick() {
     // The tick's state hash is computed AFTER autonomous actions, so the
     // journaled record covers the world the rat actually changed.
     const summary = citySummary(livingCity);
-    const stateHash = await hashWorldState(citySnapshot(livingCity));
+    const stateHash = await hashWorldState(hashableWorldState(livingCity));
     await journal.append(JournalEventType.ACTION, tick, {
       kind: 'city_tick',
       simTick: summary.tick,
@@ -316,6 +316,12 @@ async function advanceCityTick() {
       walkers: summary.people,
       zones: summary.zones,
       city_state_hash: stateHash,
+      // Day-transition evidence: the ecological day and per-patch mass
+      // state that the hash above seals. Read-only record, never a driver.
+      ecoDay: Math.floor(livingCity.tickCount / TICKS_PER_DAY),
+      patches: livingCity.patches
+        ? livingCity.patches.map((p) => ({ id: p.id, fresh: p.fresh, day: p.day }))
+        : [],
     });
     // Existing world_hash remains the immutable NYC ground-data digest.
     // The mutable simulation gets its own hash in the ACTION record above.
