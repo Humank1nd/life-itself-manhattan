@@ -247,4 +247,18 @@ assert.deepEqual(diffRecords([{ id: 'a', v: 1 }], [{ id: 'a', v: 1 }], ['id'], '
   writeFileSync(join(partial, datasetId, 'latest.json'), JSON.stringify(lied) + '\n');
   await assert.rejects(() => loadLatest(partial, datasetId), /content-addressed/);
 }
-console.log('PASS evidence refresh — versioned manifests, immutable revisions, exact diffs, stale preservation; identical bytes never mint false changes');
+// Atomic publication: pointers and status are never half-written, and no
+// temp residue is left behind anywhere in the archive.
+{
+  const checkNoTmp = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      assert.equal(entry.name.includes('.tmp'), false, 'temp residue left behind: ' + join(dir, entry.name));
+      if (entry.isDirectory()) checkNoTmp(join(dir, entry.name));
+    }
+  };
+  checkNoTmp(archive);
+  JSON.parse(readFileSync(join(archive, 'status.json'), 'utf8'));
+  JSON.parse(readFileSync(join(archive, 'rv63-53db', 'latest.json'), 'utf8'));
+  JSON.parse(readFileSync(join(archive, '8ev8-jjxq', 'latest.json'), 'utf8'));
+}
+console.log('PASS evidence refresh — versioned manifests, immutable revisions, atomic pointers, exact diffs, stale preservation; identical bytes never mint false changes');

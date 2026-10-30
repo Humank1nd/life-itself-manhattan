@@ -148,12 +148,24 @@ export async function loadLatest(archiveDir, datasetId) {
   need(Array.isArray(records), 'archived raw response is not a record array for ' + datasetId);
   return { ...pointer, records };
 }
+// Atomic file publication: write a uniquely-named temp file, then rename it
+// over the destination. Readers never observe a half-written pointer, and a
+// crash leaves either the previous file or the complete new one — plus an
+// orphaned temp file that is never trusted.
+async function writeAtomically(path, text) {
+  const tmp = path + '.tmp-' + randomBytes(8).toString('hex');
+  await writeFile(tmp, text, { flag: 'wx' });
+  try {
+    await rename(tmp, path);
+  } catch (err) {
+    await rm(tmp, { force: true });
+    throw err;
+  }
+}
 async function publishLatest(archiveDir, datasetId, pointer) {
   const root = join(archiveDir, datasetId);
   await mkdir(root, { recursive: true });
-  const tmp = join(root, '.latest-' + randomBytes(8).toString('hex') + '.tmp');
-  await writeFile(tmp, JSON.stringify(pointer, null, 2) + '\n', { flag: 'wx' });
-  await rename(tmp, latestPath(archiveDir, datasetId));
+  await writeAtomically(latestPath(archiveDir, datasetId), JSON.stringify(pointer, null, 2) + '\n');
 }
 // Content-addressed and exclusive. The directory name is the digest of the
 // raw bytes. Files are created with wx inside a private staging directory
@@ -305,6 +317,6 @@ export async function refreshAll({ archiveDir, manifest, fetchFn, metaByDataset 
   }
   const status = { updatedAt: new Date().toISOString(), results };
   await mkdir(archiveDir, { recursive: true });
-  await writeFile(join(archiveDir, 'status.json'), JSON.stringify(status, null, 2) + '\n');
+  await writeAtomically(join(archiveDir, 'status.json'), JSON.stringify(status, null, 2) + '\n');
   return status;
 }
