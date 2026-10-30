@@ -12,7 +12,7 @@ import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
 import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, renderRatAbsence, NO_DECISION_TEXT } from './rat-perception.js';
-import { stepRatAutonomy, stepPlayerRatAction, reconcileIntegrityFault } from './rat-autonomy.js';
+import { stepRatAutonomy, stepPlayerRatAction, reconcileIntegrityFault, HUNGER_ACT_THRESHOLD } from './rat-autonomy.js';
 import { stepSanitation } from './sanitation.js';
 import { sha256Hex } from './journal.js';
 import { mountTemporalLayer } from './temporal-layer.js';
@@ -317,7 +317,14 @@ function renderRatPanel() {
       if (eligible.some((entry) => entry.objectId === previous)) ratChoiceEl.value = previous;
       ratChoiceEl.dataset.options = signature;
     }
-    if (ratActEl) ratActEl.disabled = eligible.length === 0;
+    // The button predicts the validator: selectPlayerRatAction rejects dead
+    // and satiated rats, so offering the commit then would only ever fail.
+    const hungry = rat.motives && Number.isFinite(rat.motives.hunger) && rat.motives.hunger < HUNGER_ACT_THRESHOLD;
+    if (ratActEl) {
+      ratActEl.disabled = eligible.length === 0 || !hungry;
+      ratActEl.title = eligible.length === 0 ? 'No lawful scavenge available'
+        : (!hungry ? 'Rat is satiated — no action needed' : 'Commit this scavenge');
+    }
     ratViewEl.textContent = liveRatStatus(rat) + '\n' +
       renderRatPanelText(view, live, ratCtx.integrity.fault) +
       `\njournal: ${journal.entries.length} entries · head ${head} (read-only context)`;
