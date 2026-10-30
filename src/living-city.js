@@ -207,7 +207,13 @@ export function isAlleyForager(ped) {
 // patch AHEAD of the clock fails closed (time never runs backward); a
 // patch BEHIND advances day-by-day so restores and clock skips apply
 // each missing day exactly once, deterministically.
-//
+// ATOMICITY (S01a): phase 1 validates the complete roster and every
+// patch-day relationship without mutating anything; phase 2 computes each
+// patch's transitions against temporary copies and publishes them only
+// after every patch succeeds. A rejected transition leaves every patch —
+// and, via the tick rollback in tickLivingCity, the clock — exactly as
+// they were: no half-applied days, ever. Repeat calls within a day are
+// no-ops (a second call finds every patch already at the current day).
 // Armed by the object roster, not by patches alone: state.objects is the
 // marker of the sim-owned alley (P017.5/7 roster, checkpointed with revs).
 // Restored sidecar ecology without a pinned roster keeps the legacy
@@ -217,16 +223,38 @@ export function applyEcologicalDay(state) {
   if (!Array.isArray(state.objects)) return state; // no roster: legacy path untouched
   if (!Array.isArray(state.patches)) throw new Error('ecology: alley roster without patches');
   const ecoDay = Math.floor(state.tickCount / TICKS_PER_DAY);
+  // Phase 1 — validate everything, mutate nothing. A single bad patch
+  // rejects the whole day before any patch changes.
   for (const p of state.patches) {
     if (!p || !Number.isInteger(p.day) || p.day < 0) throw new Error('ecology: patch day missing: ' + (p && p.id));
     if (p.day > ecoDay) throw new Error('ecology: patch day ahead of clock: ' + p.id);
-    for (let d = p.day + 1; d <= ecoDay; d++) tickPatch(p, { day: d });
+  }
+  // Phase 2 — compute each patch's transitions against temporary copies,
+  // publishing into live state only after every patch succeeds. Patch
+  // identity is preserved (in-place key replacement) so existing holders
+  // of patch references keep reading current state.
+  const computed = state.patches.map((p) => {
+    const c = JSON.parse(JSON.stringify(p));
+    for (let d = c.day + 1; d <= ecoDay; d++) tickPatch(c, { day: d });
+    return c;
+  });
+  for (let i = 0; i < state.patches.length; i++) {
+    for (const k of Object.keys(state.patches[i])) delete state.patches[i][k];
+    for (const [k, v] of Object.entries(computed[i])) state.patches[i][k] = v;
   }
   return state;
 }
 export function tickLivingCity(state) {
   state.tickCount += 1;
-  applyEcologicalDay(state);
+  // A rejected day transition must not advance the clock: the tick is the
+  // only mutation so far, so rewinding it restores the exact entry state.
+  // Anything later in the tick never runs — never silently continue.
+  try {
+    applyEcologicalDay(state);
+  } catch (e) {
+    state.tickCount -= 1;
+    throw e;
+  }
   tickCity(state.zones, state.world);
   const context = crowdContext(state.tickCount % 24);
   // Natural foraging pressure (P017.8e): when the simulation owns an alley
@@ -274,12 +302,15 @@ export function citySnapshot(state) {
 }
 
 // Hash input for the journaled world state: the frozen snapshot plus, when
-// the sim owns an alley, its live mass. Legacy states hash byte-identically
-// to citySnapshot; established states additionally bind fresh/rot/biomass/
-// residue/eatenKg so the sealed checksum moves when food rots or is eaten.
+// the simulation owns the alley, its live mass. Gated on the authoritative
+// object roster — not on patch presence — so legacy sidecar states (which
+// may carry patches without a pinned roster) hash byte-identically to
+// citySnapshot: no silent hash extension for unowned ecology. Established
+// states additionally bind fresh/rot/biomass/residue/eatenKg so the sealed
+// checksum moves when food rots or is eaten.
 export function hashableWorldState(state) {
   const snap = citySnapshot(state);
-  if (state.patches !== undefined && state.patches !== null) {
+  if (Array.isArray(state.objects) && state.patches !== undefined && state.patches !== null) {
     snap.patches = JSON.parse(JSON.stringify(state.patches));
   }
   return snap;

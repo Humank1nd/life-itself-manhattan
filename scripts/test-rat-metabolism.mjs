@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { createLivingCity, tickLivingCity, citySnapshot, establishAlley, applyEcologicalDay, hashableWorldState } from '../src/living-city.js';
-import { addWaste, seedRoaches, forageValue, patchTotals, patchAdded } from '../src/ecology.js';
+import { createPatch, addWaste, seedRoaches, forageValue, patchTotals, patchAdded } from '../src/ecology.js';
 import { buildResumptionRecord, resumeLivingCity } from '../src/city-resume.js';
 import { decideForRat } from '../src/object-affordances.js';
 import { hashWorldState } from '../src/journal.js';
@@ -128,3 +128,45 @@ const ecoDayOf = (city) => Math.floor(city.tickCount / 288);
 }
 
 console.log('PASS rat metabolism — day-boundary rot/bloom exactly once, empty stays empty, decisions read current state, mass hashed and restored, legacy untouched');
+
+// ---- P017.9-S01a: atomic day transitions, roster-gated hashing ----
+{
+  // 1. Mixed validity at the boundary: first patch valid, second ahead of
+  // the clock. The tick must reject with tick AND every patch untouched.
+  const city = createLivingCity(corridors, { seed: 11, pedestrians: 8 });
+  establishAlley(city);
+  city.tickCount = 287;
+  addWaste(city.patches[0], 5);
+  city.patches[1].day = 5; // malformed roster member: ahead of the clock
+  const freshBefore = JSON.stringify(city.patches.map((p) => [p.fresh, p.day]));
+  assert.throws(() => tickLivingCity(city), /ahead of clock/, 'second patch fails the day');
+  assert.equal(city.tickCount, 287, 'clock does not advance on rejection');
+  assert.equal(JSON.stringify(city.patches.map((p) => [p.fresh, p.day])), freshBefore,
+    'no partial mutation: first patch untouched');
+  // Direct repeated application is equally all-or-nothing.
+  assert.throws(() => applyEcologicalDay(city), /ahead of clock/);
+  assert.equal(JSON.stringify(city.patches.map((p) => [p.fresh, p.day])), freshBefore);
+  // Repair the roster and the same tick commits cleanly.
+  city.patches[1].day = 0;
+  tickLivingCity(city);
+  assert.equal(city.tickCount, 288);
+  assert(city.patches.every((p) => p.day === 1), 'repaired roster advances together');
+}
+
+{
+  // 2. Legacy sidecar ecology never enters the hashed state, even when the
+  // snapshot contract is otherwise identical — the roster owns the hash
+  // extension, not patch presence. The sim also never seizes foreign
+  // patches: manual sidecars tick by hand, untouched by the clock.
+  const legacy = createLivingCity(corridors, { seed: 11, pedestrians: 8 });
+  legacy.patches = [createPatch({ id: 'sidecar', x: 0, z: 0, wasteKg: 4, moisture: 0.8, warmth: 0.7, disturbance: 0.1 })];
+  legacy.patches[0].day = 99; // ahead of any clock: ignored, not adopted or rejected
+  const hashed = hashableWorldState(legacy);
+  assert(!('patches' in hashed), 'rosterless mass stays out of the hash');
+  assert.deepEqual(hashed, citySnapshot(legacy), 'legacy hash input identical to the frozen snapshot');
+  for (let n = 0; n < 300; n++) tickLivingCity(legacy); // crosses day 1 with the sidecar present
+  assert.equal(legacy.patches[0].day, 99, 'foreign clock untouched by the sim');
+  assert.equal(legacy.patches[0].fresh, 4, 'foreign stock untouched by the sim');
+  assert(!('patches' in citySnapshot(legacy)), 'still no patches key after crossing the boundary');
+}
+console.log('PASS rat metabolism atomicity — rejected transitions leave tick and patches untouched; sidecar mass stays out of the hash');
