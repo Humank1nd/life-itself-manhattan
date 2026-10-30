@@ -20,3 +20,22 @@ export function sanitationDue(day, periodDays = 7) {
 export function reportIdFor(source, day, seq) {
   return `${source}-d${day}-${seq}`;
 }
+// Deterministic simulated collection report for one patch on one
+// ecological day. Simulation-labeled (provenance 'simulated'):
+// self-consistent and hashable, but never a claim about any real-world
+// truck. `seq` is the patch's roster-order index, keeping report
+// construction deterministic.
+export function sanitationPulse({ patchId, day, seq }) {
+  assert(typeof patchId === 'string' && patchId.length > 0, 'patchId required');
+  assert(Number.isInteger(day) && day > 0, 'day must be a positive integer (no day-0 collections)');
+  assert(Number.isInteger(seq) && seq >= 0, 'seq must be a non-negative integer');
+  return { patchId, day, seq, provenance: 'simulated' };
+}
+// Canonical report identity, derived from day + patch: any alias ID for
+// the same collection is rejected by the contract, so one patch-day can
+// never be collected twice under two names.
+export function sanitationReportId(day, patchId) {
+  assert(Number.isInteger(day) && day > 0, 'day must be a positive integer');
+  assert(typeof patchId === 'string' && patchId.length > 0, 'patchId required');
+  return `sanitation-schedule-d${day}-${patchId}`;
+}

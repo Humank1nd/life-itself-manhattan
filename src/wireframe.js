@@ -13,6 +13,8 @@ import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
 import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, NO_DECISION_TEXT } from './rat-perception.js';
 import { stepRatAutonomy, reconcileIntegrityFault } from './rat-autonomy.js';
+import { dueSanitationReports, attestSanitationReports, commitSanitationBatch, reconcileSanitation } from './sanitation.js';
+import { sha256Hex, canonical } from './journal.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 
@@ -213,6 +215,13 @@ const ratCtx = { applied: new Set(), lastTick: { n: -1 }, ledger: [],
   // ID and canonical payload — duplicates and conflicting records are
   // rejected, never adopted or papered over.
   journalEntries: async () => journal.entries };
+// P017.9-S02 sanitation: caller-owned exactly-once set (checkpointed via
+// appliedReports in gates), verified ledger, integrity fault with the same
+// blocked-until-reconciled semantics as the rat path. Sanitation runs
+// after the tick's metabolism and before autonomous foraging, so rats
+// observe the cleared world.
+const sanCtx = { seenIds: new Set(), ledger: [], integrity: { fault: null }, journalAppend: null,
+  journalEntries: async () => journal.entries };
 function ratReceiptsFor(actorId) {
   const found = [];
   for (let i = ratCtx.ledger.length - 1; i >= 0 && found.length === 0; i--) {
@@ -288,6 +297,32 @@ async function advanceCityTick() {
     // UI-triggered); the fault stays visible in the panel meanwhile.
     if (livingCity.patches && livingCity.objects) {
       try {
+        if (!sanCtx.journalAppend) sanCtx.journalAppend = (t, k, p) => journal.append(t, k, p);
+        if (sanCtx.integrity.fault) {
+          try {
+            await reconcileSanitation(sanCtx);
+          } catch (recErr) {
+            console.error('Sanitation reconciliation deferred:', recErr);
+          }
+        }
+        if (!sanCtx.integrity.fault) {
+          const ecoDay = Math.floor(livingCity.tickCount / TICKS_PER_DAY);
+          const due = dueSanitationReports(livingCity, ecoDay);
+          if (due.length > 0) {
+            const reports = await attestSanitationReports(due, {
+              hashHex: (s) => sha256Hex(s), tick: livingCity.tickCount });
+            const unseen = reports.filter((r) => !sanCtx.seenIds.has(r.attestation.reportId));
+            if (unseen.length > 0) {
+              const sanOut = await commitSanitationBatch(livingCity, unseen, sanCtx);
+              if (sanOut.status === 'fault') console.error('Sanitation integrity fault:', sanOut.fault.reportIds, sanOut.fault.failedStage);
+              void sanOut;
+            }
+          }
+        }
+      } catch (sanErr) {
+        console.error('Sanitation skipped this tick:', sanErr);
+      }
+      try {
         if (!ratCtx.journalAppend) ratCtx.journalAppend = (t, k, p) => journal.append(t, k, p);
         if (ratCtx.integrity.fault) {
           try {
@@ -317,10 +352,11 @@ async function advanceCityTick() {
       zones: summary.zones,
       city_state_hash: stateHash,
       // Day-transition evidence: the ecological day and per-patch mass
-      // state that the hash above seals. Read-only record, never a driver.
+      // state that the hash above seals, including sanitation removal.
+      // Read-only record, never a driver.
       ecoDay: Math.floor(livingCity.tickCount / TICKS_PER_DAY),
       patches: livingCity.patches
-        ? livingCity.patches.map((p) => ({ id: p.id, fresh: p.fresh, day: p.day }))
+        ? livingCity.patches.map((p) => ({ id: p.id, fresh: p.fresh, day: p.day, removedKg: p.removedKg }))
         : [],
     });
     // Existing world_hash remains the immutable NYC ground-data digest.
@@ -350,6 +386,9 @@ function startLivingCity(corridors) {
   ratCtx.ledger.length = 0;
   ratCtx.lastTick.n = -1;
   ratCtx.integrity.fault = null;
+  sanCtx.seenIds.clear();
+  sanCtx.ledger.length = 0;
+  sanCtx.integrity.fault = null;
   selectedRatId = null;
   const positions = new Float32Array(livingCity.pedestrians.length * 3);
   const geometry = new THREE.BufferGeometry();

@@ -5,7 +5,7 @@
 // world untouched. No model, no provider.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { createPatch, addWaste, seedRoaches, tickPatch, forageValue } from '../src/ecology.js';
+import { createPatch, addWaste, seedRoaches, tickPatch, forageValue, patchTotals, patchAdded } from '../src/ecology.js';
 import { attestReport, verifyReportHash, reconcileReport } from '../src/grounding-contract.js';
 import { restaurantPulse, sanitationDue, reportIdFor } from '../src/grounding-producer.js';
 import { proposeForage } from '../src/rat-foraging.js';
@@ -54,5 +54,56 @@ assert.throws(() => sanitationDue(-1), /non-negative/);
   assert.throws(() => reconcileReport(world, noPatch, new Set(), shaOf(noPatch.payload)), /unknown patch/);
   const neg = attestReport({ sourceId: 'restaurant-pulse', reportId: 'rr-10', payload: { patchId: 'deli-1', wasteKg: -5 }, sha256: shaOf({ patchId: 'deli-1', wasteKg: -5 }), tick: 0 });
   assert.throws(() => reconcileReport(world, neg, new Set(), shaOf(neg.payload)), /wasteKg/);
+}
+// 5. Sanitation adapter: verified, reconciled, mass-accounted; every
+// malformed class fails closed. The producer stays simulation-labeled.
+{
+  const { sanitationPulse, sanitationReportId } = await import('../src/grounding-producer.js');
+  assert.throws(() => sanitationPulse({ patchId: '', day: 7, seq: 0 }), /patchId/);
+  assert.throws(() => sanitationPulse({ patchId: 'deli-1', day: 0, seq: 0 }), /positive integer/);
+  const mkWorldAt = (day) => {
+    const p = createPatch({ id: 'deli-1', x: 0, z: 0, moisture: 0.8, warmth: 0.7, disturbance: 0.1 });
+    addWaste(p, 4); seedRoaches(p, 2);
+    for (let d = 0; d <= day; d++) tickPatch(p, { day: d });
+    return { patches: [p] };
+  };
+  const payload = sanitationPulse({ patchId: 'deli-1', day: 7, seq: 0 });
+  assert.deepEqual(payload.provenance, 'simulated', 'no real-world claim smuggled in');
+  const id = sanitationReportId(7, 'deli-1');
+  const att = attestReport({ sourceId: 'sanitation-schedule', reportId: id, payload, sha256: shaOf(payload), tick: 7 });
+  const w = mkWorldAt(7);
+  const before = patchTotals(w.patches[0]);
+  assert(w.patches[0].fresh > 0 || w.patches[0].rot > 0 || w.patches[0].biomass > 0, 'fixture carries mass to remove');
+  const bioBefore = w.patches[0].biomass;
+  const seen = new Set();
+  const fx = reconcileReport(w, att, seen, shaOf(payload));
+  assert.deepEqual(fx, { applied: id, source: 'sanitation-schedule' });
+  assert.equal(w.patches[0].fresh, 0, 'fresh cleared');
+  assert.equal(w.patches[0].rot, 0, 'rot cleared');
+  assert(w.patches[0].biomass >= 0 && w.patches[0].biomass < bioBefore, 'refuge fraction survives, smaller than before');
+  assert(Math.abs(patchTotals(w.patches[0]) - patchAdded(w.patches[0])) < 1e-9, 'removal conserves: mass booked to removedKg');
+  assert(seen.has(id), 'report id recorded');
+  // Duplicates, tampering, unknown patches, day violations: all rejected.
+  assert.throws(() => reconcileReport(w, att, seen, shaOf(payload)), /duplicate report/);
+  const tampered = { ...JSON.parse(JSON.stringify(att)) };
+  assert.throws(() => reconcileReport(mkWorldAt(7), tampered, new Set(), shaOf({ other: 1 })), /hash mismatch/);
+  const ghost = sanitationPulse({ patchId: 'ghost', day: 7, seq: 0 });
+  const gAtt = attestReport({ sourceId: 'sanitation-schedule', reportId: sanitationReportId(7, 'ghost'), payload: ghost, sha256: shaOf(ghost), tick: 7 });
+  assert.throws(() => reconcileReport(mkWorldAt(7), gAtt, new Set(), shaOf(ghost)), /unknown patch/);
+  const mkDay = (day) => {
+    const q = sanitationPulse({ patchId: 'deli-1', day, seq: 0 });
+    return attestReport({ sourceId: 'sanitation-schedule', reportId: 'sanitation-schedule-d' + day + '-deli-1', payload: q, sha256: shaOf(q), tick: day });
+  };
+  assert.throws(() => reconcileReport(mkWorldAt(7), mkDay(6), new Set(), shaOf(mkDay(6).payload)), /stale sanitation report/);
+  assert.throws(() => reconcileReport(mkWorldAt(7), mkDay(9), new Set(), shaOf(mkDay(9).payload)), /future sanitation report/);
+  const unsched = sanitationPulse({ patchId: 'deli-1', day: 8, seq: 0 });
+  const uAtt = attestReport({ sourceId: 'sanitation-schedule', reportId: sanitationReportId(8, 'deli-1'), payload: unsched, sha256: shaOf(unsched), tick: 8 });
+  assert.throws(() => reconcileReport(mkWorldAt(8), uAtt, new Set(), shaOf(unsched)), /unscheduled/);
+  const alias = sanitationPulse({ patchId: 'deli-1', day: 7, seq: 0 });
+  const aAtt = attestReport({ sourceId: 'sanitation-schedule', reportId: 'sanitation-schedule-d7-deli-1-ALIAS', payload: alias, sha256: shaOf(alias), tick: 7 });
+  assert.throws(() => reconcileReport(mkWorldAt(7), aAtt, new Set(), shaOf(alias)), /canonical/);
+  const noground = { patchId: 'deli-1', day: 7, seq: 0, provenance: 'grounded' };
+  const nAtt = attestReport({ sourceId: 'sanitation-schedule', reportId: sanitationReportId(7, 'deli-1'), payload: noground, sha256: shaOf(noground), tick: 7 });
+  assert.throws(() => reconcileReport(mkWorldAt(7), nAtt, new Set(), shaOf(noground)), /simulation-labeled/);
 }
 console.log('PASS grounding contract — typed attested component data verified, reconciled, and shown moving the next rat decision; tampered/unknown/duplicate/unimplemented all fail closed, verification inseparable from reconcile');
