@@ -7,11 +7,36 @@
 <title>Life Itself — Manhattan Wireframe</title>
 <style>
   html, body, #app { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #05070a; }
+  #play-bar {
+    position: absolute; top: 12px; left: 12px; right: 12px; z-index: 15;
+    display: flex; align-items: flex-start; gap: 10px; pointer-events: none;
+  }
+  #play-bar > * { pointer-events: auto; }
+  #menu-open, #menu-close {
+    background: #13202f; color: #cfe6ff; border: 1px solid #2b6cb0;
+    border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer;
+    font-family: system-ui, sans-serif;
+  }
+  #pick {
+    margin: 4px 0 0; max-width: 640px; color: #f2f7fb;
+    font: 13px/1.4 system-ui, sans-serif;
+    text-shadow: 0 1px 2px #000, 0 0 8px #000;
+  }
+  body:has(#menu:not([hidden])) #play-bar { display: none; }
+  #menu {
+    position: fixed; inset: 0; z-index: 40; overflow: auto;
+    background: #070b10; color: #f2f2f2;
+    font-family: system-ui, sans-serif;
+  }
+  #menu[hidden] { display: none; }
+  #menu-sheet { max-width: 920px; margin: 0 auto; padding: 20px 16px 48px; }
+  #menu-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  #menu-bar h2 { margin: 0; font-size: 20px; font-weight: 650; }
   #hud {
-    position: absolute; top: 12px; left: 12px; z-index: 10;
+    position: static; max-width: none;
     background: rgba(10, 12, 16, 0.78); color: #f2f2f2;
     font-family: system-ui, sans-serif; padding: 10px 14px; border-radius: 8px;
-    max-width: 460px; line-height: 1.45;
+    line-height: 1.45; border: 1px solid #1d3344;
   }
   #hud h1 { font-size: 16px; margin: 0 0 4px; }
   #hud p { font-size: 13px; margin: 0; opacity: 0.85; }
@@ -36,7 +61,7 @@
     padding: 7px 12px; font-size: 13px; cursor: pointer;
   }
   #answer { margin-top: 8px; opacity: 1; }
-  #pick { margin-top: 6px; }
+
   #city-status { margin-top: 8px; font-size: 12px; opacity: 0.85; }
   #motive-strip { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 6px; font-size: 11px; opacity: 0.9; }
   .motive { display: flex; align-items: center; gap: 4px; }
@@ -67,10 +92,10 @@
     border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer;
   }
   /* Read-only temporal evidence rail; year determines which photo plates exist. */
-  #timeline { position:fixed;left:10px;right:10px;bottom:8px;z-index:20;
+  #timeline { position:static; margin-top:12px;
     background:rgba(8,14,22,.94);color:#e7f5ff;border:1px solid #245267;
     border-radius:12px;padding:9px 12px;font:12px/1.3 system-ui,sans-serif;
-    max-height:38vh; overflow:auto; }
+    overflow:auto; }
   #timeline[hidden] { display:none; }
   #timeline-header {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
   #timeline-header strong {font-size:14px;}
@@ -105,8 +130,8 @@
   .spatial-memory-result a{color:#99dcff;}
   #timeline-businesses a {color:#82d9f5;}
   @media(max-width:550px) {
-    #timeline {left:4px;right:4px;bottom:4px;max-height:34vh;}
-    #hud {max-height:52vh;overflow:auto;}
+    #play-bar { flex-wrap: wrap; }
+    #menu-sheet { padding: 14px 10px 32px; }
   }
 </style>
 <script>
@@ -126,6 +151,16 @@
 </head>
 <body>
 <div id="app"></div>
+<div id="play-bar">
+  <button type="button" id="menu-open" aria-expanded="false" aria-controls="menu">Menu</button>
+  <p id="pick">Drag to look. Click a building.</p>
+</div>
+<div id="menu" hidden>
+  <div id="menu-sheet">
+    <div id="menu-bar">
+      <h2>Menu</h2>
+      <button type="button" id="menu-close">Back to the city</button>
+    </div>
 <div id="hud">
   <h1>Life Itself — Manhattan</h1>
   <p id="status">Drawing the island…</p>
@@ -161,7 +196,6 @@
       </div>
       <pre id="rat-view" aria-live="polite">No rat decision available</pre>
     </details>
-  <p id="pick">Click any building to see its record.</p>
   <p id="journal">Journal: the island's history is starting…</p>
   <button type="button" id="verify">Verify the island's history</button>
   <p id="pipeline-status" aria-live="polite">Capture pipeline: loading verified manifests…</p>
@@ -200,6 +234,23 @@
   </details>
   <div id="timeline-photos" aria-label="Photos captured during the selected year"></div>
 </section>
+  </div>
+</div>
+<script>
+  const menuEl = document.getElementById('menu');
+  const menuOpen = document.getElementById('menu-open');
+  const menuClose = document.getElementById('menu-close');
+  function setMenu(open) {
+    menuEl.hidden = !open;
+    menuOpen.setAttribute('aria-expanded', open ? 'true' : 'false');
+    (open ? menuClose : menuOpen).focus();
+  }
+  menuOpen.addEventListener('click', () => setMenu(true));
+  menuClose.addEventListener('click', () => setMenu(false));
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menuEl.hidden) setMenu(false);
+  });
+</script>
 <script type="module" src="src/wireframe.js"></script>
 </body>
 </html>
