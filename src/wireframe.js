@@ -11,7 +11,7 @@ import { createLivingCity, tickLivingCity, citySnapshot, citySummary, TICK_MS, T
 import { sampleTraits, motiveRateModifiers } from './traits.js';
 import { MOTIVES, initMotives, tickMotives, crowdContext } from './motives.js';
 import { tourLegs } from './camera-tour.js';
-import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, NO_DECISION_TEXT } from './rat-perception.js';
+import { snapshotLiveRat, refreshLiveAvailability, renderRatPanelText, renderRatAbsence, NO_DECISION_TEXT } from './rat-perception.js';
 import { stepRatAutonomy, reconcileIntegrityFault } from './rat-autonomy.js';
 import { stepSanitation } from './sanitation.js';
 import { sha256Hex } from './journal.js';
@@ -224,10 +224,18 @@ const sanCtx = { seenIds: new Set(), ledger: [], integrity: { fault: null }, jou
   journalEntries: async () => journal.entries };
 function ratReceiptsFor(actorId) {
   const found = [];
-  for (let i = ratCtx.ledger.length - 1; i >= 0 && found.length === 0; i--) {
-    if (ratCtx.ledger[i].decision.actorId === actorId) found.push(ratCtx.ledger[i].receipt);
+  for (const entry of ratCtx.ledger) {
+    if (!entry || !entry.decision || entry.decision.actorId !== actorId || !entry.receipt) continue;
+    found.push(entry.receipt);
   }
   return found;
+}
+function liveRatStatus(rat) {
+  const motives = rat && rat.motives ? rat.motives : {};
+  const num = (value) => (typeof value === 'number' && Number.isFinite(value) ? value : 'unknown');
+  const day = livingCity ? Math.floor(livingCity.tickCount / TICKS_PER_DAY) : 'unknown';
+  const dead = livingCity ? livingCity.pedestrians.filter((p) => !p.alive).length : 0;
+  return `live status: ${rat && rat.alive ? 'alive' : 'dead'} · world day ${day} · hunger ${num(motives.hunger)} · thirst ${num(motives.thirst)} · energy ${num(motives.energy)} · dead on the roster ${dead}`;
 }
 // Page-level selection only — never sim state.
 let selectedRatId = null;
@@ -235,11 +243,16 @@ const ratDetailsEl = document.getElementById('rat-perception');
 const ratSelectEl = document.getElementById('rat-select');
 const ratViewEl = document.getElementById('rat-view');
 function renderRatPanel() {
+  const committedCount = ratCtx.ledger.length;
   try {
     // Authoritative sim state or nothing: the panel reads the world's own
     // patches/objects and never reconstructs them.
-    if (!livingCity || !livingCity.patches || !livingCity.objects) { ratViewEl.textContent = NO_DECISION_TEXT; return; }
+    if (!livingCity || !livingCity.patches || !livingCity.objects) {
+      ratViewEl.textContent = renderRatAbsence({ cityLoaded: false });
+      return;
+    }
     const alive = livingCity.pedestrians.filter((p) => p.alive);
+    const deadCount = livingCity.pedestrians.length - alive.length;
     if (ratSelectEl.options.length !== alive.length) {
       ratSelectEl.textContent = '';
       for (const p of alive) {
@@ -251,18 +264,35 @@ function renderRatPanel() {
     }
     const rat = alive.find((p) => p.id === ratSelectEl.value) || alive[0] || null;
     selectedRatId = rat ? rat.id : null;
-    const view = snapshotLiveRat({ rat, tick: livingCity.tickCount,
-      ecoDay: Math.floor(livingCity.tickCount / TICKS_PER_DAY),
-      patches: livingCity.patches, objects: livingCity.objects,
-      receipts: ratReceiptsFor(rat.id) });
+    if (!rat) {
+      ratViewEl.textContent = renderRatAbsence({ cityLoaded: true, livingCount: 0, deadCount, committedCount });
+      return;
+    }
+    let view = null;
+    try {
+      view = snapshotLiveRat({ rat, tick: livingCity.tickCount,
+        ecoDay: Math.floor(livingCity.tickCount / TICKS_PER_DAY),
+        patches: livingCity.patches, objects: livingCity.objects,
+        receipts: ratReceiptsFor(rat.id) });
+    } catch (err) {
+      ratViewEl.textContent = renderRatAbsence({
+        cityLoaded: true, livingCount: alive.length, deadCount, committedCount,
+        actorId: rat.id, readError: err && err.message ? err.message : String(err),
+      });
+      return;
+    }
     if (!view) { ratViewEl.textContent = NO_DECISION_TEXT; return; }
     const patchesById = Object.fromEntries(livingCity.patches.map((p) => [p.id, p]));
     const live = refreshLiveAvailability(view, patchesById, livingCity.tickCount);
     const head = journal.lastChecksum ? journal.lastChecksum.slice(0, 12) : 'none';
-    ratViewEl.textContent = renderRatPanelText(view, live, ratCtx.integrity.fault) +
+    ratViewEl.textContent = liveRatStatus(rat) + '\n' +
+      renderRatPanelText(view, live, ratCtx.integrity.fault) +
       `\njournal: ${journal.entries.length} entries · head ${head} (read-only context)`;
-  } catch {
-    ratViewEl.textContent = NO_DECISION_TEXT;
+  } catch (err) {
+    ratViewEl.textContent = renderRatAbsence({
+      cityLoaded: true, committedCount, actorId: 'panel',
+      readError: err && err.message ? err.message : String(err),
+    });
   }
 }
 if (ratSelectEl && document.getElementById('rat-refresh')) {

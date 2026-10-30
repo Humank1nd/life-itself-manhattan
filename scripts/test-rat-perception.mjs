@@ -17,7 +17,7 @@ import { buildResumptionRecord, resumeLivingCity } from '../src/city-resume.js';
 import { StateJournal } from '../src/journal.js';
 import { buildScavengeAction } from '../src/object-affordances.js';
 import {
-  RAT_VIEW_CONTRACT, NO_DECISION_TEXT,
+  RAT_VIEW_CONTRACT, NO_DECISION_TEXT, renderRatAbsence,
   buildAlley, snapshotLiveRat, refreshLiveAvailability, renderRatPanelText,
 } from '../src/rat-perception.js';
 
@@ -100,6 +100,16 @@ assert(staleText.includes('live now 0kg'), 'current truth alongside, snapshot no
 assert.equal(snapshotLiveRat({ rat: null, tick: TICK, ecoDay: ECO_DAY, patches: alley.patches, objects: alley.objects }), null);
 assert.equal(renderRatPanelText(null, null), NO_DECISION_TEXT);
 assert.equal(renderRatPanelText(null, null), 'No rat decision available');
+const unread = renderRatAbsence({ cityLoaded: false });
+const colonyDead = renderRatAbsence({ cityLoaded: true, livingCount: 0, deadCount: 4, committedCount: 2 });
+const readFailed = renderRatAbsence({ cityLoaded: true, livingCount: 1, actorId: 'ped_89', readError: 'perception: snapshot needs a tick' });
+assert.notEqual(unread, NO_DECISION_TEXT);
+assert.notEqual(colonyDead, NO_DECISION_TEXT);
+assert.notEqual(readFailed, NO_DECISION_TEXT);
+assert.ok(colonyDead.includes('Dead on the roster: 4'));
+assert.ok(colonyDead.includes('2 committed decision(s)') && colonyDead.includes('not a live reading'));
+assert.ok(readFailed.includes('ped_89') && readFailed.includes('missing information') && !readFailed.includes(NO_DECISION_TEXT));
+assert.ok(unread.includes('not loaded'));
 {
   const gone = { ...patchesById };
   delete gone['deli-2'];

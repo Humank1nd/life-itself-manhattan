@@ -24,6 +24,26 @@ export { buildAlley } from './object-affordances.js';
 export const RAT_VIEW_CONTRACT = 'life-itself-rat-view/1.0.0';
 export const NO_DECISION_TEXT = 'No rat decision available';
 
+// Empty states the player can tell apart. A missing rat, a failed reading,
+// and an unloaded city are not the abstention sentence. Null view models
+// still render NO_DECISION_TEXT from renderRatPanelText.
+export function renderRatAbsence({ cityLoaded = false, livingCount = 0, deadCount = 0, committedCount = 0, actorId = null, readError = null } = {}) {
+  if (!cityLoaded) {
+    return 'Living city is not loaded. There is no live rat state, no committed action, and nothing missing to name yet.';
+  }
+  if (readError) {
+    const who = actorId || 'the selected rat';
+    return `Reading failed for ${who}: ${readError}. This is missing information, not a live decision and not an abstention.`;
+  }
+  if (livingCount === 0) {
+    const history = committedCount > 0
+      ? `${committedCount} committed decision(s) remain in the ledger. That history is not a live reading.`
+      : 'The ledger has no committed rat decision.';
+    return `No living rat. Dead on the roster: ${deadCount}. ${history}`;
+  }
+  return NO_DECISION_TEXT;
+}
+
 const assert = (ok, why) => { if (!ok) throw new Error('perception: ' + why); };
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
