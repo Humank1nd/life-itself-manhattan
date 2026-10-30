@@ -82,9 +82,15 @@ def ask_api():
         )
 
     @web.get("/health")
-    def health():
+    def health(request: Request):
         # No model call, no credential dependency. Safe to poll; spends nothing.
-        return {"ok": True, "model": model}
+        # origin is echoed so a host mismatch is visible without spending a credit.
+        return {
+            "ok": True,
+            "model": model,
+            "origin": request.headers.get("origin"),
+            "allowed": ALLOWED_ORIGINS,
+        }
 
     @web.post("/ask")
     async def ask(req: Request):

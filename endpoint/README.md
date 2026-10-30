@@ -33,5 +33,6 @@ falls back to its local interpreter — the island never goes mute.
    origins, plus `https://humank1nd.github.io`, are the CORS allowlist in
    `modal_app.py`. A new host needs a new allowlist entry and a redeploy.
 5. **Smoke test without spending:** `GET /health` returns
-   `{ "ok": true, "model": ... }` and makes no model call. The first real
-   question asked on the live page is the first credit spent.
+   `{ "ok": true, "model": ..., "allowed": [...] }` and makes no model call.
+   `allowed` is the CORS list the running app is actually using. The first
+   real question asked on the live page is the first credit spent.
