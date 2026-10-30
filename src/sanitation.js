@@ -74,11 +74,6 @@ function journalEntryMatchesSanitationMarker(entry, markerId) {
   const p = entry.payload;
   return !!p && p.kind === 'sanitation-reconciliation' && p.markerId === markerId;
 }
-function journalEntryMatchesSanitationMissed(entry, day, patchId) {
-  if (!entry || entry.event_type !== 'action') return false;
-  const p = entry.payload;
-  return !!p && p.kind === 'sanitation-missed' && p.day === day && p.patchId === patchId;
-}
 
 // Resolve one journal stage against actual contents: 'missing' (append
 // it), 'adopted' (exactly one payload-consistent record — skip it), or
@@ -86,20 +81,34 @@ function journalEntryMatchesSanitationMissed(entry, day, patchId) {
 // Strict verification is required: without a journal reader the step
 // fails closed instead of reporting success it cannot prove. There is no
 // trust fallback — a failed append with no reader is a fault, never an
-// assumed landing.
+// assumed landing. Identity derives from the expected payload itself:
+// collection stages by report ID, the marker by marker ID, missed records
+// by patch + day. Tick scoping: collection and marker records must sit at
+// the fault tick (same-tick journaling); missed records carry their day
+// inside the payload, so only content identity is required.
 async function resolveStage(ctx, payloads, f, name) {
   assert(typeof ctx.journalEntries === 'function', 'sanitation needs a journal reader');
+  const payload = payloads[name];
+  if (!payload || typeof payload !== 'object') throw stageError('missing', name);
+  let match;
+  let checkTick = true;
+  if (name === 'marker') {
+    match = (e) => journalEntryMatchesSanitationMarker(e, f.markerId);
+  } else if (payload.kind === 'sanitation-missed') {
+    match = (e) => !!e && !!e.payload && e.payload.kind === 'sanitation-missed'
+      && e.payload.patchId === payload.patchId && e.payload.day === payload.day;
+    checkTick = false;
+  } else {
+    match = (e) => journalEntryMatchesSanitation(e, { reportId: name });
+  }
   const entries = await ctx.journalEntries();
-  const isMarker = name === 'marker';
-  const match = (e) => isMarker
-    ? journalEntryMatchesSanitationMarker(e, f.markerId)
-    : journalEntryMatchesSanitation(e, { reportId: name });
   const cands = entries.filter(match);
   if (cands.length === 0) return 'missing';
   let good = 0;
   for (const e of cands) {
     try {
-      if (e.tick === f.tick && canonical(e.payload) === canonical(payloads[name])) good++;
+      const tickOk = checkTick ? e.tick === f.tick : true;
+      if (tickOk && canonical(e.payload) === canonical(payloads[name])) good++;
     } catch { /* uncomparable counts as conflicting, never as matching */ }
   }
   return (cands.length === 1 && good === 1) ? 'adopted' : 'conflicted';
@@ -201,7 +210,7 @@ export async function commitSanitationBatch(state, reports, ctx) {
     await verifyAllStages(ctx, tick, payloads, f, effects.map((e) => e.reportId));
   } catch (err) {
     const frozen = JSON.parse(JSON.stringify({ effects, payloads }));
-    ctx.integrity.fault = { reportIds: effects.map((e) => e.reportId),
+    ctx.integrity.fault = { kind: 'sanitation-batch', reportIds: effects.map((e) => e.reportId),
       patchIds: effects.map((e) => e.patchId), tick,
       failedStage: err.failedStage || null, completedStages: [...f.completedStages],
       ...frozen, error: String((err && err.message) || err) };
@@ -213,31 +222,64 @@ export async function commitSanitationBatch(state, reports, ctx) {
 
 // Explicit missed-collection records. A due day the world metabolized
 // past WITHOUT a reconciled collection is a fact, not a silent gap: it is
-// journaled as such, once. This never backfills mass or invents a
-// collection — the metabolized day stays metabolized; only the absence of
-// collection is recorded. Idempotent: an existing record for the same
-// patch+day is adopted, never duplicated. No ledger (nothing applied), no
-// fault (nothing partial): failures here throw, leaving everything
-// untouched for the next attempt.
+// journaled as such, once — verified present afterwards, never assumed.
+// This never backfills mass or invents a collection: the metabolized day
+// stays metabolized; only the absence of collection is recorded.
+// Strict verification mirrors the collection path:
+// - already recorded and payload-identical → adopted, no duplicate;
+// - duplicates or contradictory content → conflict (held, never papered over);
+// - an existing completed collection for the same patch+day does NOT make
+//   a missed record wrong — it makes it unnecessary, so the day is skipped
+//   as collected *unless* the dedup set disagrees, in which case that
+//   contradiction is itself reported as a conflict for review.
+// Returns { recorded, conflicts }. Throws on journal failure (nothing to
+// reconcile yet — the next call re-resolves from journal contents).
 export async function noteMissedSanitation(state, ecoDay, ctx, periodDays = 7) {
   assert(state && Array.isArray(state.objects), 'missed sanitation needs the sim-owned roster');
   assert(Array.isArray(state.patches), 'missed sanitation needs sim-owned patches');
   assert(Number.isInteger(ecoDay) && ecoDay >= 0, 'missed sanitation needs an ecological day');
+  assert(ctx && ctx.seenIds instanceof Set, 'missed sanitation needs a seen-ids set');
   assert(typeof ctx.journalAppend === 'function', 'missed sanitation needs a journal sink');
   assert(typeof ctx.journalEntries === 'function', 'missed sanitation needs a journal reader');
-  const entries = await ctx.journalEntries();
   const recorded = [];
+  const conflicts = [];
   for (const p of state.patches) {
     for (let d = 1; d <= ecoDay && d < p.day; d++) {
       if (!sanitationDue(d, periodDays)) continue;
-      if (ctx.seenIds && ctx.seenIds.has(sanitationReportId(d, p.id))) continue;
-      if (entries.some((e) => journalEntryMatchesSanitationMissed(e, d, p.id))) continue;
-      await ctx.journalAppend('action', ecoDay, { kind: 'sanitation-missed', patchId: p.id,
-        day: d, reason: 'due day metabolized without a reconciled collection', provenance: 'simulated' });
+      const reportId = sanitationReportId(d, p.id);
+      if (ctx.seenIds.has(reportId)) continue; // reconciled collection: nothing missed
+      const entries = await ctx.journalEntries();
+      const completed = entries.filter((e) => !!e && e.event_type === 'action' && e.payload
+        && e.payload.kind === 'sanitation' && e.payload.patchId === p.id && e.payload.day === d);
+      if (completed.length > 0) {
+        // The journal claims this day was collected but the dedup set has
+        // no record of it: contradictory history. Hold it for review rather
+        // than writing a missed record over a completed one.
+        conflicts.push({ patchId: p.id, day: d, reason: 'collection-record-without-dedup-entry' });
+        continue;
+      }
+      const payload = { kind: 'sanitation-missed', patchId: p.id, day: d,
+        reason: 'due day metabolized without a reconciled collection', provenance: 'simulated' };
+      const existing = entries.filter((e) => !!e && e.event_type === 'action' && e.payload
+        && e.payload.kind === 'sanitation-missed' && e.payload.patchId === p.id && e.payload.day === d);
+      const good = existing.filter((e) => { try { return canonical(e.payload) === canonical(payload); } catch { return false; } });
+      if (existing.length === 1 && good.length === 1) continue; // adopted
+      if (existing.length > 0) {
+        conflicts.push({ patchId: p.id, day: d, reason: 'conflicting-missed-record' });
+        continue;
+      }
+      await ctx.journalAppend('action', ecoDay, payload);
+      const after = await ctx.journalEntries();
+      const landed = after.filter((e) => !!e && e.event_type === 'action' && e.payload
+        && e.payload.kind === 'sanitation-missed' && e.payload.patchId === p.id && e.payload.day === d);
+      const verified = landed.filter((e) => { try { return canonical(e.payload) === canonical(payload); } catch { return false; } });
+      if (landed.length !== 1 || verified.length !== 1) {
+        throw new Error('sanitation missed record unverified: ' + p.id + ' day ' + d);
+      }
       recorded.push({ patchId: p.id, day: d });
     }
   }
-  return recorded;
+  return { recorded, conflicts };
 }
 
 // One scheduled tick: reconcile any fault, record missed days, then
@@ -250,6 +292,8 @@ export async function stepSanitation(state, ecoDay, ctx, deps) {
   assert(ctx && ctx.integrity && typeof ctx.integrity === 'object', 'sanitation step needs an integrity holder');
   assert(ctx && ctx.seenIds instanceof Set, 'sanitation step needs a seen-ids set');
   assert(Array.isArray(ctx.ledger), 'sanitation step needs a ledger');
+  assert(typeof ctx.journalAppend === 'function', 'sanitation step needs a journal sink');
+  assert(typeof ctx.journalEntries === 'function', 'sanitation needs a journal reader');
   assert(deps && typeof deps.hashHex === 'function' && Number.isInteger(deps.tick) && deps.tick >= 0,
     'sanitation step needs a hash function and tick');
   if (ctx.integrity.fault) {
@@ -259,31 +303,49 @@ export async function stepSanitation(state, ecoDay, ctx, deps) {
       return { status: 'blocked', fault: ctx.integrity.fault, error: String((e && e.message) || e) };
     }
   }
-  let missed = [], missedError = null;
+  let missed = [], missedConflicts = [], missedError = null;
   try {
-    missed = await noteMissedSanitation(state, ecoDay, ctx);
+    const note = await noteMissedSanitation(state, ecoDay, ctx);
+    missed = note.recorded;
+    missedConflicts = note.conflicts;
   } catch (e) {
-    missedError = String((e && e.message) || e);
+    return { status: 'deferred', error: String((e && e.message) || e), missed: [], missedConflicts: [], missedError: null };
+  }
+  if (missedConflicts.length > 0) {
+    // Contradictory history blocks further collection until review: a
+    // missed day that the journal claims was collected (or recorded
+    // inconsistently) must be resolved by an operator, never papered over.
+    ctx.integrity.fault = { kind: 'sanitation-missed-conflict', missed: missedConflicts,
+      tick: ecoDay, failedStage: 'missed:' + missedConflicts[0].patchId + ':' + missedConflicts[0].day,
+      completedStages: [], payloads: {}, effects: [],
+      error: 'contradictory sanitation history for ' + missedConflicts.map((m) => m.patchId + ' day ' + m.day).join(', ') };
+    return { status: 'fault', fault: ctx.integrity.fault, missed, missedConflicts, missedError: null };
   }
   const due = dueSanitationReports(state, ecoDay).filter((d) => !ctx.seenIds.has(sanitationReportId(d.day, d.patchId)));
-  if (due.length === 0) return { status: missed.length ? 'noted-missed' : 'abstained', missed, missedError };
+  if (due.length === 0) return { status: missed.length ? 'noted-missed' : 'abstained', missed, missedError: null };
   let reports;
   try {
     reports = await attestSanitationReports(due, { hashHex: deps.hashHex, tick: deps.tick });
   } catch (e) {
-    return { status: 'deferred', error: String((e && e.message) || e), missed, missedError };
+    return { status: 'deferred', error: String((e && e.message) || e), missed, missedError: null };
   }
   try {
     const out = await commitSanitationBatch(state, reports, ctx);
-    return { ...out, missed, missedError };
+    return { ...out, missed, missedError: null };
   } catch (e) {
-    return { status: 'deferred', error: String((e && e.message) || e), missed, missedError };
+    return { status: 'deferred', error: String((e && e.message) || e), missed, missedError: null };
   }
 }
 export async function reconcileSanitation(ctx) {
   assert(ctx && ctx.integrity, 'reconcile needs an integrity holder');
   const f = ctx.integrity.fault;
   if (!f) throw new Error('sanitation: nothing to reconcile');
+  // Contradictory history has no automatic repair path: a missed record
+  // that conflicts with journaled evidence (or vice versa) stays held
+  // until an operator resolves the underlying records.
+  if (f.kind === 'sanitation-missed-conflict') {
+    throw new Error('reconciliation deferred: contradictory sanitation history requires review');
+  }
   assert(typeof ctx.journalAppend === 'function', 'reconcile needs a journal sink');
   assert(Array.isArray(ctx.ledger), 'reconcile needs a ledger');
   if (!f.markerId) f.markerId = 'sanitation-reconciliation:' + [...f.reportIds].sort().join(',');

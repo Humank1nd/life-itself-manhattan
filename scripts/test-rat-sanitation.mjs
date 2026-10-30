@@ -301,7 +301,8 @@ console.log('PASS rat sanitation — scheduled collection validated, applied, jo
     journalAppend: async (t, k, p) => j.append(t, k, p), journalEntries: async () => j.entries };
   assert(city.patches.every((p) => p.day === 8), 'metabolism kept ticking through the missed day');
   const missed = await noteMissedSanitation(city, 8, ctx);
-  assert.deepEqual(missed, [{ patchId: 'deli-1', day: 7 }, { patchId: 'deli-2', day: 7 }], 'both missed collections named');
+  assert.deepEqual(missed.recorded, [{ patchId: 'deli-1', day: 7 }, { patchId: 'deli-2', day: 7 }], 'both missed collections named');
+  assert.deepEqual(missed.conflicts, [], 'no false conflicts on a clean miss');
   assert.equal(ctx.ledger.length, 0, 'missed days release no ledger');
   // A late day-7 report is stale — the metabolized day stays metabolized.
   const late = await attestSanitationReports([{ patchId: 'deli-1', day: 7, seq: 0 }], { hashHex, tick: city.tickCount });
@@ -416,3 +417,86 @@ console.log('PASS rat sanitation S02a — period pinned, strict journal required
 }
 
 console.log('PASS rat sanitation step — acted/abstained/fault/blocked/deferred all explicit; missed days journaled, never backfilled');
+
+{
+  // S02b-1: a custom period is rejected even when the day would be due
+  // under it. The weekly cadence is pinned, not suggested.
+  const city = stockedAlley();
+  for (let n = 0; n < 7 * 288; n++) tickLivingCity(city);
+  const custom = sanitationPulse({ patchId: 'deli-1', day: 7, seq: 0, periodDays: 3 });
+  const cAtt = attestReport({ sourceId: 'sanitation-schedule',
+    reportId: sanitationReportId(7, 'deli-1'), payload: custom, sha256: shaOf(custom), tick: city.tickCount });
+  assert.throws(() => reconcileReport({ patches: city.patches }, cAtt, new Set(), shaOf(custom)), /custom sanitation period not supported/);
+  assert(city.patches.every((p) => p.removedKg === 0), 'rejected schedule touches nothing');
+}
+
+{
+  // S02b-2: without a journal reader the step fails closed — success can
+  // no longer be reported without somewhere to verify it against.
+  const city = stockedAlley();
+  for (let n = 0; n < 7 * 288; n++) tickLivingCity(city);
+  const blind = { seenIds: new Set(), ledger: [], integrity: { fault: null },
+    journalAppend: async () => { throw new Error('no journal here'); } };
+  await assert.rejects(stepSanitation(city, 7, blind,
+    { hashHex: (s) => createHash('sha256').update(s, 'utf8').digest('hex'), tick: city.tickCount }),
+    /needs a journal reader/);
+  assert(city.patches.every((p) => p.fresh > 0), 'failed verification applies nothing');
+  assert(blind.ledger.length === 0, 'no ledger without verification');
+}
+
+{
+  // S02b-3: missed-event integrity — drop, ambiguity, and contradiction.
+  // (a) Silent drop: append reports success but nothing lands. The miss
+  // is neither recorded nor claimed — the throw forces a retry, which
+  // will verify-then-adopt rather than duplicate.
+  const c1 = stockedAlley();
+  for (let n = 0; n < 8 * 288; n++) tickLivingCity(c1);
+  const j1 = new StateJournal();
+  const silent = { seenIds: new Set(), ledger: [], integrity: { fault: null },
+    journalAppend: async () => { /* succeeds without writing */ },
+    journalEntries: async () => j1.entries };
+  await assert.rejects(noteMissedSanitation(c1, 8, silent), /unverified/);
+  assert.equal(j1.entries.length, 0, 'nothing verifiable, nothing recorded, nothing claimed');
+  // (b) Second-record failure: first lands, second throws before writing.
+  const c2 = stockedAlley();
+  for (let n = 0; n < 8 * 288; n++) tickLivingCity(c2);
+  const j2 = new StateJournal();
+  let n2 = 0;
+  const flaky = { seenIds: new Set(), ledger: [], integrity: { fault: null },
+    journalAppend: async (t, k, p) => { n2++; if (n2 === 2) throw new Error('drop @2'); return j2.append(t, k, p); },
+    journalEntries: async () => j2.entries };
+  await assert.rejects(noteMissedSanitation(c2, 8, flaky), /drop @2/);
+  const j2count = j2.entries.filter((e) => e.payload && e.payload.kind === 'sanitation-missed').length;
+  assert.equal(j2count, 1, 'first record stands alone; the second was never claimed');
+  // A retry adopts the verified first record instead of duplicating it.
+  flaky.journalAppend = async (t, k, p) => j2.append(t, k, p);
+  const retry = await noteMissedSanitation(c2, 8, flaky);
+  assert.deepEqual(retry.recorded, [{ patchId: 'deli-2', day: 7 }], 'retry completes only the missing half');
+  assert.equal(j2.entries.filter((e) => e.payload && e.payload.kind === 'sanitation-missed').length, 2);
+  // (c) Contradictory history: collection record present but unseen.
+  // Completed sanitation exists in the journal without a dedup entry —
+  // the classic lost-checkpoint case. Recording a miss over it would lie.
+  // Tick past the due day so day 7 is genuinely in the past.
+  const c3 = stockedAlley();
+  for (let n = 0; n < 8 * 288; n++) tickLivingCity(c3);
+  const j3 = new StateJournal();
+  const real = sanitationPulse({ patchId: 'deli-1', day: 7, seq: 0 });
+  await j3.append('action', c3.tickCount, { kind: 'sanitation', reportId: sanitationReportId(7, 'deli-1'),
+    patchId: 'deli-1', day: 7, removedKg: 9.9, freshBefore: 1.0, freshAfter: 0, provenance: 'simulated' });
+  const w3 = { seenIds: new Set(), ledger: [], integrity: { fault: null },
+    journalAppend: async (t, k, p) => j3.append(t, k, p), journalEntries: async () => j3.entries };
+  const m3 = await noteMissedSanitation(c3, 8, w3);
+  assert.deepEqual(m3.recorded, [{ patchId: 'deli-2', day: 7 }], 'deli-2 missed honestly; deli-1 held for review');
+  assert.equal(m3.conflicts.length, 1, 'contradiction named, not silently skipped');
+  assert.equal(m3.conflicts[0].reason, 'collection-record-without-dedup-entry');
+  // (d) The step surfaces missed conflicts as faults and holds them there.
+  const out3 = await stepSanitation(c3, 8, w3, { hashHex: (s) => createHash('sha256').update(s, 'utf8').digest('hex'), tick: c3.tickCount });
+  assert.equal(out3.status, 'fault', 'contradictory history blocks collection');
+  assert.equal(out3.fault.kind, 'sanitation-missed-conflict');
+  const out3b = await stepSanitation(c3, 8, w3, { hashHex: (s) => createHash('sha256').update(s, 'utf8').digest('hex'), tick: c3.tickCount });
+  assert.equal(out3b.status, 'blocked', 'still contradictory stays blocked');
+  await assert.rejects(reconcileSanitation(w3), /requires review/);
+  assert(w3.integrity.fault, 'no auto-repair of contradictory history');
+}
+
+console.log('PASS rat sanitation S02b — period pinned, no silent journaling, missed records verified-or-held, conflicts block until reviewed');
