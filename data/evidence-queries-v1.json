@@ -1,0 +1,26 @@
+{
+  "manifestVersion": "life-itself-evidence-queries/1.0.0",
+  "queries": [
+    {
+      "name": "dsny-frequencies-manhattan",
+      "datasetId": "rv63-53db",
+      "params": {
+        "$select": "district,section,frequency,schedulecode,freq_refuse,multipolygon",
+        "$where": "district in('MN01','MN02','MN03','MN04','MN05','MN06','MN07','MN08','MN09','MN10','MN11','MN12')",
+        "$order": "district,section,frequency",
+        "$limit": "5000"
+      },
+      "recordKey": ["schedulecode"],
+      "sampleQuery": "Manhattan districts MN01..MN12, ordered, with multipolygon"
+    },
+    {
+      "name": "dsny-commercial-zones",
+      "datasetId": "8ev8-jjxq",
+      "params": {
+        "$limit": "50000"
+      },
+      "recordKey": ["zone"],
+      "sampleQuery": "full pull of 8ev8-jjxq ($limit 50000)"
+    }
+  ]
+}

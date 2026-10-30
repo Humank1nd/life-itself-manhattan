@@ -13,6 +13,8 @@
     "test:evidence": "node scripts/test-evidence-graph.mjs",
     "test:external-evidence": "node scripts/test-external-evidence.mjs",
     "test:nyc-retrieval": "node scripts/test-nyc-retrieval.mjs",
+    "test:evidence-refresh": "node scripts/test-evidence-refresh.mjs",
+    "refresh:evidence": "node scripts/run-evidence-refresh.mjs",
     "fetch:nyc-evidence": "node scripts/fetch-nyc-evidence.mjs",
     "test:atlas": "node scripts/test-commons-atlas.mjs",
     "test:catalog": "node scripts/test-photo-catalog.mjs",
