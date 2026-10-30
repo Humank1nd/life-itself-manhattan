@@ -2,13 +2,15 @@
 // One on-demand refresh cycle per invocation: read a versioned query
 // manifest, retrieve each dataset through the authenticated boundary,
 // verify the bytes, diff the covered records against the last archived
-// revision, and persist an immutable revision plus a latest pointer.
+// revision, and persist a content-addressed revision. The latest pointer
+// is published by rename only after the bytes are sealed, and every read
+// recomputes the digest before trusting the archive.
 // This module emits no simulation events and mutates no world state. It only
 // archives observed bytes and reports what changed between observations.
 // Scheduling is deliberately absent: schedulers invoke the runner; the
 // runner itself runs exactly one cycle and exits.
-import { createHash } from 'node:crypto';
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { createHash, randomBytes } from 'node:crypto';
+import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { retrieveEvidenceEnvelope } from './nyc-retrieval.js';
 export const REFRESH_MANIFEST_VERSION = 'life-itself-evidence-queries/1.0.0';
@@ -112,29 +114,97 @@ export function buildRevision({ query, retrieval, envelope, previous, changes })
     changes: clone(changes),
   };
 }
-const sanitizeStamp = (iso) => iso.replace(/[:.]/g, '-');
 const latestPath = (archiveDir, datasetId) => join(archiveDir, datasetId, 'latest.json');
-const revisionDir = (archiveDir, datasetId, retrievedAt) => join(archiveDir, datasetId, sanitizeStamp(retrievedAt));
+const sha256OfBuffer = (buf) => createHash('sha256').update(buf).digest('hex');
+const contentDir = (archiveDir, datasetId, digest) => join(archiveDir, datasetId, digest);
+// A missing latest pointer is an empty archive. A present pointer that does
+// not hash back to its bytes is corruption, never a fresh baseline.
 export async function loadLatest(archiveDir, datasetId) {
+  let pointerText = null;
   try {
-    const pointer = JSON.parse(await readFile(latestPath(archiveDir, datasetId), 'utf8'));
-    need(pointer && typeof pointer.revisionDir === 'string' && typeof pointer.sha256 === 'string', 'latest pointer is corrupt for ' + datasetId);
-    const raw = await readFile(join(pointer.revisionDir, 'raw.json'), 'utf8');
-    const records = JSON.parse(raw);
-    need(Array.isArray(records), 'archived raw response is not a record array for ' + datasetId);
-    return { ...pointer, records };
+    pointerText = await readFile(latestPath(archiveDir, datasetId), 'utf8');
   } catch (err) {
     if (err && err.code === 'ENOENT') return null;
     fail('cannot load latest snapshot for ' + datasetId + ': ' + (err && err.message ? err.message : String(err)));
   }
+  let pointer = null;
+  try { pointer = JSON.parse(pointerText); } catch { pointer = null; }
+  need(pointer && typeof pointer.revisionDir === 'string' && /^[a-f0-9]{64}$/.test(pointer.sha256 || ''), 'latest pointer is corrupt for ' + datasetId);
+  const expectedDir = contentDir(archiveDir, datasetId, pointer.sha256);
+  need(pointer.revisionDir === expectedDir, 'latest pointer is not the content-addressed revision for ' + datasetId);
+  let rawBuf = null;
+  try {
+    rawBuf = await readFile(join(expectedDir, 'raw.json'));
+  } catch (err) {
+    fail('archived raw response is missing for ' + datasetId + ': ' + (err && err.message ? err.message : String(err)));
+  }
+  const digest = sha256OfBuffer(rawBuf);
+  need(digest === pointer.sha256, 'archived bytes do not match the stored digest for ' + datasetId);
+  let sealed = null;
+  try { sealed = JSON.parse(await readFile(join(expectedDir, 'revision.json'), 'utf8')); } catch { sealed = null; }
+  need(sealed && sealed.sha256 === pointer.sha256, 'revision manifest digest does not match the pointer for ' + datasetId);
+  let records = null;
+  try { records = JSON.parse(rawBuf.toString('utf8')); } catch { records = null; }
+  need(Array.isArray(records), 'archived raw response is not a record array for ' + datasetId);
+  return { ...pointer, records };
 }
+async function publishLatest(archiveDir, datasetId, pointer) {
+  const root = join(archiveDir, datasetId);
+  await mkdir(root, { recursive: true });
+  const tmp = join(root, '.latest-' + randomBytes(8).toString('hex') + '.tmp');
+  await writeFile(tmp, JSON.stringify(pointer, null, 2) + '\n', { flag: 'wx' });
+  await rename(tmp, latestPath(archiveDir, datasetId));
+}
+// Content-addressed and exclusive. The directory name is the digest of the
+// raw bytes. Files are created with wx inside a private staging directory
+// and renamed into place only when both are complete. A second write of the
+// same bytes does not open the sealed files. A different body under the same
+// claimed digest is rejected. The latest pointer is replaced by rename last,
+// so a crash leaves either the previous pointer or a complete revision.
 export async function storeRevision(archiveDir, datasetId, rawResponse, revision) {
-  const dir = revisionDir(archiveDir, datasetId, revision.retrievedAt);
-  await mkdir(dir, { recursive: true });
-  await writeFile(join(dir, 'raw.json'), rawResponse);
-  await writeFile(join(dir, 'revision.json'), JSON.stringify(revision, null, 2) + '\n');
-  await writeFile(latestPath(archiveDir, datasetId), JSON.stringify({ revisionDir: dir, sha256: revision.sha256, retrievedAt: revision.retrievedAt, recordCount: revision.recordCount }, null, 2) + '\n');
-  return dir;
+  need(typeof rawResponse === 'string' && rawResponse.length > 0, 'revision needs the raw response');
+  need(revision && typeof revision === 'object', 'revision manifest required');
+  const rawBuf = Buffer.from(rawResponse, 'utf8');
+  const digest = sha256OfBuffer(rawBuf);
+  need(revision.sha256 === digest, 'revision digest does not match the raw bytes');
+  const root = join(archiveDir, datasetId);
+  await mkdir(root, { recursive: true });
+  const finalDir = contentDir(archiveDir, datasetId, digest);
+  let sealedRaw = null;
+  try {
+    sealedRaw = await readFile(join(finalDir, 'raw.json'));
+  } catch (err) {
+    if (!err || err.code !== 'ENOENT') throw err;
+  }
+  if (sealedRaw) {
+    need(sha256OfBuffer(sealedRaw) === digest, 'existing revision bytes do not match its content address');
+  } else {
+    const staging = join(root, '.staging-' + digest + '-' + randomBytes(6).toString('hex'));
+    await mkdir(staging);
+    try {
+      await writeFile(join(staging, 'raw.json'), rawBuf, { flag: 'wx' });
+      await writeFile(join(staging, 'revision.json'), JSON.stringify(revision, null, 2) + '\n', { flag: 'wx' });
+      try {
+        await rename(staging, finalDir);
+      } catch (err) {
+        if (!(err && (err.code === 'EEXIST' || err.code === 'ENOTEMPTY'))) throw err;
+        const raced = await readFile(join(finalDir, 'raw.json'));
+        need(sha256OfBuffer(raced) === digest, 'existing revision bytes do not match its content address');
+      }
+    } finally {
+      await rm(staging, { recursive: true, force: true });
+    }
+  }
+  let sealed = null;
+  try { sealed = JSON.parse(await readFile(join(finalDir, 'revision.json'), 'utf8')); } catch { sealed = null; }
+  need(sealed && sealed.sha256 === digest, 'revision manifest digest does not match the stored bytes');
+  await publishLatest(archiveDir, datasetId, {
+    revisionDir: finalDir,
+    sha256: digest,
+    retrievedAt: sealed.retrievedAt,
+    recordCount: sealed.recordCount,
+  });
+  return finalDir;
 }
 // One dataset refresh: retrieve, verify, diff, and persist — or, on any
 // retrieval failure, preserve the last verified snapshot untouched and report

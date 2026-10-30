@@ -2,15 +2,18 @@
 // exact record-level diffs, and stale-source preservation — all against
 // controlled stub responses in a temporary archive. No live network.
 import assert from 'node:assert/strict';
-import { mkdtempSync, readdirSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { chmodSync, mkdtempSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import {
   diffRecords,
   indexByKey,
+  loadLatest,
   refreshAll,
   refreshDataset,
+  storeRevision,
   validateRefreshManifest,
 } from '../src/evidence-refresh.js';
 import { buildEvidenceUrl } from '../src/nyc-retrieval.js';
@@ -183,5 +186,65 @@ assert.deepEqual(diffRecords([{ id: 'a', v: 1 }], [{ id: 'a', v: 1 }], ['id'], '
   assert.equal(status.preserved.sha256, latestBefore.sha256);
   const latestAfter = JSON.parse(readFileSync(join(archive, 'rv63-53db', 'latest.json'), 'utf8'));
   assert.equal(latestAfter.sha256, latestBefore.sha256);
+}
+// Archive durability: same timestamp cannot replace bytes, a sealed file is
+// not reopened, corruption fails the read, and a partial write is not latest.
+{
+  const durable = mkdtempSync(join(tmpdir(), 's03d-durable-'));
+  const datasetId = 'rv63-53db';
+  const sha256 = (text) => createHash('sha256').update(text, 'utf8').digest('hex');
+  const rawA = JSON.stringify([{ schedulecode: '1052A', freq_refuse: 'Mon' }]);
+  const rawB = JSON.stringify([{ schedulecode: '1052B', freq_refuse: 'Tue' }]);
+  const stamp = '2026-10-30T12:00:00.000Z';
+  const revisionFor = (raw) => ({
+    revisionVersion: 'life-itself-evidence-revision/1.0.0',
+    queryName: 'freq-test', datasetId, retrievedAt: stamp,
+    sourceUrl: 'https://data.cityofnewyork.us/resource/rv63-53db.json',
+    finalUrl: 'https://data.cityofnewyork.us/resource/rv63-53db.json',
+    rowsUpdatedAt: '2026-10-30T10:00:00Z', fullRowCount: 610,
+    sampleQuery: 'synthetic sample', sha256: sha256(raw), recordCount: 1,
+    prevSha256: null, firstSeen: true,
+    changes: { added: ['1052A'], removed: [], changed: [], unchanged: 0 },
+  });
+  const dirA = await storeRevision(durable, datasetId, rawA, revisionFor(rawA));
+  chmodSync(join(dirA, 'raw.json'), 0o444);
+  chmodSync(join(dirA, 'revision.json'), 0o444);
+  const again = await storeRevision(durable, datasetId, rawA, revisionFor(rawA));
+  assert.equal(again, dirA, 'the same bytes republish the sealed directory');
+  assert.equal(readFileSync(join(dirA, 'raw.json'), 'utf8'), rawA);
+  const dirB = await storeRevision(durable, datasetId, rawB, revisionFor(rawB));
+  assert.notEqual(dirB, dirA);
+  assert.equal(readFileSync(join(dirA, 'raw.json'), 'utf8'), rawA, 'same timestamp must not replace the first snapshot');
+  await assert.rejects(
+    () => storeRevision(durable, datasetId, rawB, revisionFor(rawA)),
+    /digest does not match/,
+  );
+  assert.equal(readFileSync(join(dirA, 'raw.json'), 'utf8'), rawA);
+  const loaded = await loadLatest(durable, datasetId);
+  assert.equal(loaded.sha256, sha256(rawB));
+  assert.equal(loaded.records[0].schedulecode, '1052B');
+  writeFileSync(join(dirB, 'raw.json'), rawB + ' ');
+  await assert.rejects(() => loadLatest(durable, datasetId), /digest/);
+  const partial = mkdtempSync(join(tmpdir(), 's03d-partial-'));
+  await storeRevision(partial, datasetId, rawA, revisionFor(rawA));
+  const latestBefore = readFileSync(join(partial, datasetId, 'latest.json'), 'utf8');
+  const staging = join(partial, datasetId, '.staging-dead');
+  mkdirSync(staging);
+  writeFileSync(join(staging, 'raw.json'), '{"partial":true}');
+  const still = await loadLatest(partial, datasetId);
+  assert.equal(still.sha256, sha256(rawA), 'an unfinished staging directory is not the latest snapshot');
+  assert.equal(readFileSync(join(partial, datasetId, 'latest.json'), 'utf8'), latestBefore);
+  const missingSha = 'b'.repeat(64);
+  writeFileSync(join(partial, datasetId, 'latest.json'), JSON.stringify({
+    revisionDir: join(partial, datasetId, missingSha),
+    sha256: missingSha,
+    retrievedAt: stamp,
+    recordCount: 1,
+  }) + '\n');
+  await assert.rejects(() => loadLatest(partial, datasetId), /missing/);
+  const lied = JSON.parse(latestBefore);
+  lied.revisionDir = lied.revisionDir + '-other';
+  writeFileSync(join(partial, datasetId, 'latest.json'), JSON.stringify(lied) + '\n');
+  await assert.rejects(() => loadLatest(partial, datasetId), /content-addressed/);
 }
 console.log('PASS evidence refresh — versioned manifests, immutable revisions, exact diffs, stale preservation; identical bytes never mint false changes');
