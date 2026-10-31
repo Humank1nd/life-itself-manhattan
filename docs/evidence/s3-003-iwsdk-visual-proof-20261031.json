@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-31",
+  "status": "isolated browser-verified visual recovery, not gameplay-complete",
+  "sourceApp": "uncommitted snapshot of Muse's life-itself-manhattan/app on 2026-10-31",
+  "previewWorktree": "/tmp/openai/life-s3-muse-rig-preview-20261031",
+  "previewUrlOnHouston": "https://localhost:8195/",
+  "simulationActor": "ped_1",
+  "sampleActorENU": { "x": -2157.141070146872, "z": 5697.814210812197 },
+  "ratLoaded": true,
+  "ratBoundsMeters": { "x": 0.136504, "y": 0.132710, "lengthZ": 0.559830 },
+  "ratCenterNDC": [0.019433, -0.109316, 0.993082],
+  "cameraWorldENU": [-2156.291016, 1.7, 5699.914063],
+  "playerOriginENU": [-2156.291016, 0, 5699.914063],
+  "cameraDistanceFromRatMetersXZ": 2.265,
+  "initialFrameVerified": true,
+  "sustainedRafSample": { "callbackFramesInTwoSeconds": 7, "gameFrameCount": 8 },
+  "manhattanSourceBuildingRecords": 45172,
+  "cityOverview": "available via explicit lazy 45k-building geometry mode; latest post-lazy screenshot not yet independently verified",
+  "originalPageErrors": [],
+  "tests": { "typescript": "passed", "limAdapter": "passed", "ratRig": "passed" },
+  "notVerified": [
+    "Quest hardware",
+    "IWER headset interaction",
+    "10-15-minute playthrough",
+    "continuous navmesh collision enforcement",
+    "production frame-rate budget",
+    "finished Manhattan environment art"
+  ]
+}
