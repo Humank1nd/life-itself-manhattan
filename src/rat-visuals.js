@@ -194,9 +194,21 @@ export function createRatVisuals({
   load.then((ok) => { if (ok) update(latest, latestFocus); });
   return Object.freeze({
     load, update, advance, focus,
+    // Camera can track a visual position while the world/journal remains
+    // authoritative. This returns a copy, never a mutable scene handle.
+    displayPositionOf: (id) => {
+      const v = instances.get(id)?.root.position;
+      return v ? Object.freeze({ x: v.x, y: v.y, z: v.z }) : null;
+    },
     stats: () => Object.freeze({
       ready: Boolean(gltf), error: failed, visible: instances.size,
       ids: [...instances.keys()],
+      actors: [...instances].map(([id, entity]) => ({
+        id, state: entity.state,
+        activeClip: entity.current?.getClip().name || null,
+        simulatedTarget: entity.target.toArray(),
+        displayPosition: entity.root.position.toArray(),
+      })),
       clipNames: gltf ? gltf.animations.map((a) => a.name) : [],
       modelScale, modelDimensionsInput: worldSize.toArray(), modelGroundOffset,
       source: 'Nestaeric Black Rat CC BY 4.0 / Sketchfab',

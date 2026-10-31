@@ -69,3 +69,71 @@ that match their target nodes' rest transforms.
 This is a first playable visual integration, NOT final AAA art. No GPU frame
 budget, Quest, ground collision, root-motion synchronization, feeding clip,
 full crowd mesh LOD or deployment gate is claimed complete.
+
+## S3 + Muse integration replay — 2026-10-31, verified on Houston
+
+The isolated preview contains a COPY of Muse's still-uncommitted S3 control
+work (overlay on local Muse HEAD a77cb7e), the model from this PR, and the
+P017 movement preflight from PR #36. **This is a tested snapshot, not a
+merge or publish of Muse's unfinished code.**
+
+On the actual Manhattan page, headless Chrome:
+1. Enabled the existing test-only forced-tick setting (not on normal pages).
+2. Paused the world, selected living rat ped_45 and took player control.
+3. Turned on Muse's follow camera and focused the textured hero rig.
+4. Pressed KeyW, admitted exactly one intent through the existing P017 writer
+   AFTER lane-segment preflight, and observed a committed move-effect receipt.
+5. Checked that the authoritative rat moved, the AnimationMixer switched to
+   walk_A2, the visual target equaled the actor's authoritative coordinates,
+   and the journal's hash chain verified.
+6. Checked there were zero page errors, then captured the live view.
+
+Proof files:
+- docs/evidence/rat-muse-combined-preview-20261031.json
+- docs/media/rat-muse-combined-preview-20261031.png
+- docs/evidence/rat-muse-combined-SHA256SUMS
+- docs/evidence/rat-muse-visual-reconciliation.patch.gz (gzip, Muse-snapshot-specific, review before applying)
+
+The reported ~10.91 m total actor displacement includes movement from the
+world's normal city tick; do NOT mistake it for a 10.91 m keyboard step.
+The input action itself is still bounded through the P017 move contract.
+
+### Camera reconciliation from replay
+
+In Muse's current S3 follow-camera loop, tracking the *simulation* target
+directly can outrun the visibly interpolating rig and leave it outside frame.
+This was reproduced and then fixed in the isolated combined preview.
+
+The visual manager now exposes a read-only, immutable
+displayPositionOf(actorId) result. The UI owner should follow that display
+position when it exists; fallback to the authoritative position when it does
+not. The camera may move using interpolated world presentation without ever
+writing the simulation, gameplay state, or journal.
+
+Suggested visual-only integration at Muse's follow-camera admission point:
+
+    const shown = ratVisuals.displayPositionOf(playerControlledRatId);
+    const want = shown
+      ? new THREE.Vector3(shown.x, shown.y + 0.14, shown.z)
+      : new THREE.Vector3(followed.x, 2.74, followed.z);
+    const delta = want.clone().sub(controls.target);
+    controls.target.copy(want);
+    camera.position.add(delta);
+
+The isolated browser replay passed again, and the screenshot visibly contains
+the textured, animated rat after the movement.
+
+### Merge boundary
+
+Do NOT automatically cherry-pick src/wireframe.js from this PR over Muse's
+active dirty working tree. The UI reconciliation lives only inside the
+separate preview at /tmp/openai/life-s3-muse-rig-preview-20261031.
+Muse must commit/hand off its S3 UI work before this shared-file merge is
+reconciled. PR #36 preflight is also required for the demonstrated combined
+browser path; prior zero-displacement P017 receipts must remain rejected.
+
+The preview's verified unit gates include: test:player-panel,
+test:rat-player, test:action-contract, test:citizen-consequence,
+test:rat-integrity, test:rat-survival, test:world-checkpoint,
+test:public-tree, test:licensed-content, test:solid-buildings,
+test:player-embodiment, test:rat-visuals, and test:player-input.
