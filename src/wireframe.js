@@ -19,6 +19,7 @@ import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 import { verifyGEVWorldSnapshot } from './gev-world-bridge.js';
 import { makeLIMJournalPublisher } from './lim-journal-export.js';
+import { createRatVisuals } from './rat-visuals.js';
 
 const statusEl = document.getElementById('status');
 
@@ -81,6 +82,42 @@ controls.maxDistance = 45000;
 const grid = new THREE.GridHelper(26000, 52, 0x1d2b3a, 0x111a24);
 grid.position.z = -2600;
 scene.add(grid);
+// CC BY 4.0 character mesh presentation. Rendering is an observer of LIM.
+const ratVisuals = createRatVisuals({
+  scene,
+  onStatus: (message) => console.info('[rat visuals]', message),
+});
+window.__ratVisualStats = () => ratVisuals.stats();
+const ratCreditHost = document.getElementById('rat-perception');
+if (ratCreditHost) {
+  const credit = document.createElement('div');
+  credit.id = 'rat-asset-credit';
+  credit.style.cssText = 'font:11px/1.4 system-ui,sans-serif;color:#97acc2;margin:4px 0;';
+  credit.append('Black Rat model by ');
+  const authorLink = document.createElement('a');
+  authorLink.href = 'https://sketchfab.com/3d-models/black-rat-free-download-3db3acb4140d4de8bd62a171212bad9c';
+  authorLink.textContent = 'Nestaeric';
+  authorLink.rel = 'noopener noreferrer';
+  authorLink.target = '_blank';
+  authorLink.style.color = '#8bd5ff';
+  credit.append(authorLink, ' · CC BY 4.0 · adapted for Life Itself');
+  ratCreditHost.appendChild(credit);
+}
+const rat3dControls = document.getElementById('rat-perception-controls');
+if (rat3dControls && !document.getElementById('rat-view-3d')) {
+  const ratViewButton = document.createElement('button');
+  ratViewButton.type = 'button';
+  ratViewButton.id = 'rat-view-3d';
+  ratViewButton.textContent = 'View 3D Rat';
+  ratViewButton.title = 'Frame the selected rat at creature scale (camera only)';
+  ratViewButton.addEventListener('click', () => {
+    if (!ratVisuals.focus(camera, controls, selectedRatId)) {
+      ratViewButton.title = 'Select a living rat first';
+    }
+  });
+  rat3dControls.appendChild(ratViewButton);
+}
+
 
 // Wire color ramps with height: deep blue at the street, pale ice at the towers.
 const LOW = new THREE.Color(0x2b6cb0);
@@ -452,6 +489,8 @@ function renderCityPeople() {
     buffer.setXYZ(i, ped.x, 3, ped.z);
   });
   buffer.needsUpdate = true;
+  // Existing 96-dot crowd stays authoritative; detailed skinned visuals are capped.
+  ratVisuals.update(livingCity.pedestrians, selectedRatId);
 }
 async function advanceCityTick() {
   if (!livingCity || cityPaused || livingCityBusy || !worldHash || document.hidden) return;
@@ -996,8 +1035,10 @@ addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight);
 });
 
+const ratVisualClock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
   stepFlight();
+  ratVisuals.advance(ratVisualClock.getDelta());
   controls.update();
   renderer.render(scene, camera);
 });
