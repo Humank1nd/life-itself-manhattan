@@ -1,7 +1,7 @@
 // S3-001: pure input sampler -> P017 lawful movement -> exactly-once apply.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createPlayerInputSampler, axesFromHeldKeys, selectPlayerMove, PLAYER_MOVE_LIMIT_M } from '../src/player-input.js';
+import { createPlayerInputSampler, axesFromHeldKeys, selectPlayerMove, selectPlayerMoveTarget, PLAYER_MOVE_LIMIT_M } from '../src/player-input.js';
 import { validateAction, commitAction, MAX_MOVE_M } from '../src/action-contract.js';
 import { applyEventOnce } from '../src/citizen-agency.js';
 import { createLivingCity } from '../src/living-city.js';
@@ -107,6 +107,48 @@ assert.equal(request(noMotives).reason,'observation-unavailable');
 const zero=city();zero.lanes[0].waypoints=[[0,0],[0,0]];
 assert.equal(request(zero).reason,'degenerate-lane');
 
+// Muse's queued absolute step can be 7m perpendicular to a lane. Legacy
+// P017 proximity validation accepts it but applyEvent projects to the SAME
+// prior fraction: a COMMITTED receipt with zero movement. This preflight
+// must refuse to produce an action for that exact class of false success.
+const noopWorld = city();
+const actorBefore = clone(noopWorld.pedestrians[0]);
+const rawNoop = {
+  schemaVersion:'life-itself-action/1.0.0',actionId:'known-legacy-noop',
+  actorId:'ped_1',tick:noopWorld.tickCount,type:'move',
+  params:{to:{x:actorBefore.x,z:actorBefore.z+7}},basis:[],
+};
+const noopCtx = {
+  citizenIds:noopWorld.pedestrians.map((p)=>p.id),
+  positions:Object.fromEntries(noopWorld.pedestrians.map((p)=>[p.id,{x:p.x,z:p.z}])),
+  tick:noopWorld.tickCount,lanes:noopWorld.lanes,
+};
+assert.equal(validateAction(rawNoop,noopCtx),true, 'exposes broad P017 lane gate');
+const counterexample = commitAction(rawNoop,noopCtx,new Set(),-1);
+const appliedCounterexample = new Set();
+applyEventOnce(noopWorld,counterexample,appliedCounterexample);
+assert.deepEqual(noopWorld.pedestrians[0],actorBefore, 'false-success legacy projection does not move actor');
+assert.equal(selectPlayerMoveTarget(city(), {actorId:'ped_1',to:{x:5,z:7}}).reason,'target-out-of-bounds');
+assert.equal(selectPlayerMoveTarget(city(), {actorId:'ped_1',to:{x:5,z:4}}).status,'abstained');
+const selectedAbsolute = selectPlayerMoveTarget(city(), {actorId:'ped_1',to:{x:8,z:4}});
+assert.equal(selectedAbsolute.status,'selected');
+assert(Math.abs(selectedAbsolute.action.params.to.x-8)<1e-9);
+assert.equal(selectedAbsolute.action.params.to.z,0, 'absolute target reprojected onto actor lane');
+assert(Math.abs(selectedAbsolute.stepM-3)<1e-9);
+assert.equal(selectPlayerMoveTarget(city(), {actorId:'ped_1',to:{x:50,z:0}}).reason,'target-out-of-bounds');
+assert.equal(selectPlayerMoveTarget(city(), {actorId:'ped_1',to:{x:NaN,z:0}}).reason,'invalid-target');
+assert.equal(selectPlayerMoveTarget(city(), {actorId:'ped_1',to:{x:5,z:0}}).status,'abstained');
+assert.equal(selectPlayerMoveTarget(city(), {actorId:'missing',to:{x:1,z:2}}).reason,'unknown-actor');
+assert.equal(selectPlayerMoveTarget(city(), {actorId:'ped_1',to:null}).reason,'invalid-target');
+const diagonalWorld=city();
+const diagonalSelected=selectPlayerMoveTarget(diagonalWorld,{actorId:'ped_1',to:{x:8,z:4}});
+const diagonalApplied=new Set();
+const diagonalCtx={...noopCtx,positions:Object.fromEntries(diagonalWorld.pedestrians.map((p)=>[p.id,{x:p.x,z:p.z}]))};
+const diagonalEvent=commitAction(diagonalSelected.action,diagonalCtx,diagonalApplied,-1);
+applyEventOnce(diagonalWorld,diagonalEvent,diagonalApplied);
+assert.equal(diagonalWorld.pedestrians[0].x,8);
+assert.equal(diagonalWorld.pedestrians[0].z,0);
+
 // A genuinely projected Manhattan sidewalk, no hard-coded fake gameplay coords.
 const corridors=JSON.parse(readFileSync(new URL('../data/streets-enu.json',import.meta.url),'utf8'));
 const real=createLivingCity(corridors,{seed:7,pedestrians:2});
@@ -126,4 +168,4 @@ if(realMove.status==='selected'){
  assert.equal(seen.size,1);
  assert(Math.hypot(actor.x-realMove.action.params.to.x,actor.z-realMove.action.params.to.z)<1e-6);
 }
-console.log('PASS S3-001 player input — held-key lifecycle, normalized controls, camera-relative lane movement, fail-closed authority, deterministic selection, actual Manhattan lane, exactly-once P017 effect');
+console.log('PASS S3-001 player input — held-key lifecycle, normalized controls, camera-relative lane movement, absolute-step no-op protection, fail-closed authority, deterministic selection, actual Manhattan lane, exactly-once P017 effect');

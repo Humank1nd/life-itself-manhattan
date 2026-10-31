@@ -48,6 +48,52 @@ code. Integration must be done by the owner of those files after review.
 8. Sample gamepad axes into the same `right`/`forward` envelope later;
    do not create a parallel controller-authority path.
 
+## Interoperability with Muse's current S3 movement code
+
+Muse's active checkout already has `src/player-intent.js`,
+`selectPlayerMoveAction`/`stepPlayerMoveAction` in `src/rat-autonomy.js`,
+and a queued keyboard-control implementation in `src/wireframe.js`.
+**Do not replace those files.** The contribution here is independent
+preflight, not a competing renderer or keyboard mapping.
+
+A black-box test against Muse's uncommitted runtime reproduced a false
+movement success: a rat at (10, 0) on a straight x-aligned lane may submit
+(10, 7). Shared P017 distance and lane-tolerance gates accept it; the
+current-segment movement effect projects back to (10, 0), yet records a
+committed, valid-journal move.
+
+`selectPlayerMoveTarget` is a pure compatibility adapter for Muse's
+existing `stepToTarget` output. It returns:
+- `selected`: `action.params.to` is projected onto the *actor's own*
+  current lane segment and is a nonzero, lawful P017 movement;
+- `abstained`: perpendicular or zero-length requested travel, or current
+  segment boundary; no journal action should be submitted;
+- `rejected`: malformed, over-5m, missing/dead/ambiguous actor, invalid
+  basis or geometry; no journal action should be submitted.
+
+Example **for gameplay-owner review**, not applied to Muse's files:
+
+```js
+const requested = stepToTarget({ x: rat.x, z: rat.z }, intent);
+const proof = selectPlayerMoveTarget(livingCity, {
+  actorId: controlledRatId,
+  to: requested,
+});
+if (proof.status === 'selected') {
+  // Use Muse's existing authoritative journaled transaction.
+  await stepPlayerMoveAction(livingCity, ratCtx, livingCity.tickCount, {
+    actorId: controlledRatId,
+    to: proof.action.params.to,
+  });
+} else {
+  // Surface a truthful abstention/rejection, never a committed move.
+}
+```
+
+The test deliberately proves the legacy false-success counterexample and
+verifies preflight prevents it. The shared `action-contract.js` remains
+untouched; the simulation authority remains Muse's existing P017 path.
+
 ### Important limitations
 
 This is an **input contract + movement-selection slice**, not a playable

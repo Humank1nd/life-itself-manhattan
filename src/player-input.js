@@ -119,3 +119,33 @@ export function selectPlayerMove(state, { actorId, right = 0, forward = 0, yawRa
   }
   return Object.freeze({ status: 'selected', action, nextFraction: fraction, stepM });
 }
+
+// Adapter for existing S3 keyboard handlers that already produce an absolute
+// target (e.g. Muse's stepToTarget). Re-project the requested displacement onto
+// the actor's *own* lane before P017's broad tolerance can accept an apparent
+// move that would apply as a zero-distance event. This does not commit/journal.
+// The gameplay owner can pass selected.action.params.to to its existing writer.
+export function selectPlayerMoveTarget(state, { actorId, to } = {}) {
+  if (!to || !finite(to.x) || !finite(to.z)) return reject('invalid-target');
+  if (!state || !Array.isArray(state.pedestrians)) return reject('world-unavailable');
+  const ped = state.pedestrians.find((entry) => entry?.id === actorId);
+  if (!ped || !finite(ped.x) || !finite(ped.z)) {
+    // Let the canonical movement selector distinguish unavailable, dead,
+    // or ambiguous actors without ever manufacturing a target.
+    return selectPlayerMove(state, { actorId, right: 0, forward: 0 });
+  }
+  const dx = to.x - ped.x;
+  const dz = to.z - ped.z;
+  const distanceM = Math.hypot(dx, dz);
+  if (!finite(distanceM) || distanceM > PLAYER_MOVE_LIMIT_M + EPS)
+    return reject('target-out-of-bounds');
+  if (distanceM <= EPS)
+    return Object.freeze({ status: 'abstained', reason: 'no-displacement' });
+  return selectPlayerMove(state, {
+    actorId,
+    right: dx / distanceM,
+    forward: dz / distanceM,
+    yawRadians: 0,
+    distanceM: Math.min(distanceM, PLAYER_MOVE_LIMIT_M),
+  });
+}
