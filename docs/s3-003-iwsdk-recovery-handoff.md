@@ -16,13 +16,17 @@ The patch `docs/patches/s3-003-iwsdk-visual-recovery.patch.gz` contains
 **only edits to four existing files from Muse's uncommitted app snapshot**:
 - `app/src/main.ts`: IWSDK player origin rather than tracked child camera,
   synchronous spawn before first RAF tick, camera tracking of visual rat,
-  brighter daylight and fog, lazy map-mode toggle, no duplicate XR button.
+  balanced daylight/fog, a street-facing third-person camera, lazy map-mode
+  toggle, no duplicate XR button.
   It does NOT author movement or alter LIM state. Includes dev-only
   read-only `__limVisualProof` for screenshot assertions.
 - `app/src/environment/manhattan.ts`: don't compile 45k-building island
   wireframe until user requests City View; correct building extrusion
   ENU sign; replace 4.4m amber debug diamond with a grounded, 1m
-  green dumpster *visual* at the existing simulation-owned position.
+  green dumpster *visual* at the existing simulation-owned position. New source-derived sidewalk ribbons
+  and procedural facade floor bands are purely presentation geometry;
+  they do not authorize collision, imply observed windows, or add gameplay
+  objects.
 - `app/src/ui/game-hud.ts`: player HUD omits journal engineering fields
   unless the URL includes `?debug`. Still displays actual hunger.
 - `app/public/hud.css`: brighten page, style one camera-mode control.
@@ -50,7 +54,8 @@ independent. The rat is the original CC BY 4.0 Nestaeric rig.
 ## NOT verified; production gates still open
 
 - The current street image shows the textured rat and cleaner HUD, but
-  the nearby built environment still looks sparse and gray. It does
+  the nearby built environment still looks sparse and gray, even after
+  the pavement ribbon and facade-band pass. It does
   **not** pass final "recognizable Manhattan street" art acceptance.
 - City View is implemented using preserved full source geometry; an
   earlier eager city-mode screenshot was visually inspected, but the
