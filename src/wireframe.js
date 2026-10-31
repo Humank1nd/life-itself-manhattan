@@ -163,10 +163,43 @@ let cityPaused = false;
 const cityStatusEl = document.getElementById('city-status');
 const cityToggleEl = document.getElementById('city-toggle');
 const gevLiveEnabled = new URLSearchParams(location.search).get('gev') === 'live';
+const limBridgeTokenKey = 'life-itself:bridge:lim';
+function limBridgeToken() {
+  try { return sessionStorage.getItem(limBridgeTokenKey) || ''; }
+  catch { return ''; }
+}
+const limPairing = document.createElement('div');
+limPairing.id = 'lim-bridge-pairing';
+limPairing.hidden = true;
+const limPairingInput = document.createElement('input');
+limPairingInput.type = 'password';
+limPairingInput.placeholder = 'Paste LIM bridge token';
+limPairingInput.setAttribute('aria-label','LIM bridge pairing token');
+const limPairingButton = document.createElement('button');
+limPairingButton.type = 'button';
+limPairingButton.textContent = 'Connect live simulation';
+limPairingButton.addEventListener('click', () => {
+  const token = limPairingInput.value.trim();
+  if (!/^[a-f0-9]{64}$/.test(token)) {
+    gevFeedError = 'expected a 64-character local pairing token'; showGEVFeedState(); return;
+  }
+  sessionStorage.setItem(limBridgeTokenKey,token);
+  limPairingInput.value = '';
+  gevFeedError = null; showGEVFeedState();
+  void refreshGEVFeed();
+});
+limPairing.append(limPairingInput,limPairingButton);
+limPairing.style.cssText = 'margin-top:6px;display:flex;gap:5px;';
+const limPairingStyle = document.createElement('style');
+limPairingStyle.textContent = '#lim-bridge-pairing[hidden]{display:none!important} #lim-bridge-pairing input{width:178px;}';
+document.head.appendChild(limPairingStyle);
+document.getElementById('city-status').insertAdjacentElement('afterend',limPairing);
+
 const limJournalPublisher = gevLiveEnabled
   ? makeLIMJournalPublisher({
       endpoint:'http://127.0.0.1:8617/lim/journal',
       getEntries:() => journal.entries,
+      getAuthToken:limBridgeToken,
     })
   : null;
 
@@ -181,6 +214,7 @@ gevFeedStatus.style.display = 'block';
 gevFeedStatus.style.fontSize = '0.85em';
 cityStatusEl.insertAdjacentElement('afterend', gevFeedStatus);
 function showGEVFeedState() {
+  limPairing.hidden = !gevLiveEnabled || /^[a-f0-9]{64}$/.test(limBridgeToken());
   gevFeedStatus.textContent = !gevLiveEnabled ? 'GEV feed: default simulated world (use ?gev=live to connect)' :
     gevFeedError ? 'GEV live feed: ' + gevFeedError + ' — previous world retained' :
     appliedGEVSnapshotId ? 'GEV live feed: applied ' + appliedGEVSnapshotId.slice(0, 18) +
@@ -191,7 +225,12 @@ async function refreshGEVFeed() {
   const ctrl = new AbortController();
   const timeout = setTimeout(() => ctrl.abort(), 12000);
   try {
-    const res = await fetch('http://127.0.0.1:8617/world', { cache: 'no-store', signal: ctrl.signal });
+    const token=limBridgeToken();
+    if (!/^[a-f0-9]{64}$/.test(token)) throw new Error('enter local LIM pairing token');
+    const res = await fetch('http://127.0.0.1:8617/world', {
+      cache:'no-store', signal:ctrl.signal,
+      headers:{Authorization:'Bearer '+token},
+    });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     latestGEVSnapshot = await verifyGEVWorldSnapshot(await res.json());
     gevFeedError = null;

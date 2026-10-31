@@ -10,6 +10,7 @@ import { ZONE_DEFINITIONS } from '../src/living-city.js';
 import { normalizeGEVWorldSnapshot } from '../src/gev-world-bridge.js';
 import { canonical } from '../src/journal.js';
 import { verifyLIMJournalExport } from '../src/lim-journal-export.js';
+import { loadCredentials, loadReceipt, saveReceipt, clearReceipt, bearerMatches } from './gev-bridge-security.mjs';
 
 const gevRoot = resolve(process.env.GEV_REPO || resolve(import.meta.dirname, '../../projects/gods-eye-view'));
 const upstream = process.env.GEV_URL || 'http://127.0.0.1:4173';
@@ -80,10 +81,17 @@ function capture() {
 const allowedOrigin = /^http:\/\/(?:localhost|127\.0\.0\.1):(?:8000|5174|5173|8001)$/;
 const gevReadOrigin = /^http:\/\/(?:localhost|127\.0\.0\.1):(?:4173|4183)$/;
 const limWriterOrigin = /^http:\/\/(?:localhost|127\.0\.0\.1):(?:8000|5174|5173|8001)$/;
-let latestLIM = null;
-let lastLIMHead = null;
-let lastLIMCount = 0;
-let lastLIMSession = null;
+const credentials = loadCredentials();
+const persisted = loadReceipt(credentials);
+let latestLIM = persisted?.latestLIM ?? null;
+let lastLIMHead = persisted?.lastLIMHead ?? null;
+let lastLIMCount = persisted?.lastLIMCount ?? 0;
+let lastLIMSession = persisted?.lastLIMSession ?? null;
+let receiveQueue = Promise.resolve();
+function unauthorized(res) {
+  res.writeHead(401); res.end(JSON.stringify({error:'bridge pairing required'}));
+}
+
 async function readBody(req) {
   let size = 0; const chunks = [];
   for await (const chunk of req) {
@@ -106,34 +114,64 @@ const server = createServer(async (req,res) => {
       res.writeHead(403); res.end(JSON.stringify({error:'origin denied'})); return;
     }
     res.setHeader('Access-Control-Allow-Methods','GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers','Content-Type');
+    res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
     res.writeHead(204); res.end(); return;
+  }
+  // Reset is a privileged local CLI operation, never an origin-authorized browser call.
+  if (req.url === '/admin/reset' && req.method === 'POST') {
+    if (origin || !bearerMatches(req.headers.authorization,credentials.adminToken)) {
+      unauthorized(res); return;
+    }
+    try {
+      await receiveQueue;
+      clearReceipt();
+      latestLIM=null;lastLIMHead=null;lastLIMCount=0;lastLIMSession=null;
+      res.writeHead(200);res.end(JSON.stringify({reset:true,receipt:'cleared',credentials:'retained'}));
+    } catch {
+      res.writeHead(500);res.end(JSON.stringify({error:'reset failed'}));
+    }
+    return;
   }
   if (req.url === '/lim/journal' && req.method === 'POST') {
     if (!origin || !limWriterOrigin.test(origin)) {
       res.writeHead(403); res.end(JSON.stringify({error:'writer origin denied'})); return;
     }
-    try {
+    if (!bearerMatches(req.headers.authorization,credentials.limToken)) {
+      unauthorized(res);return;
+    }
+    const processWrite = async () => {
       const input = await readBody(req);
       const obs = await verifyLIMJournalExport(input);
       if (obs.source.sessionId === lastLIMSession &&
           (obs.journalEntries < lastLIMCount ||
           (lastLIMCount > 0 && input.entries[lastLIMCount - 1]?.checksum !== lastLIMHead)))
         throw new Error('non-monotonic history or changed prior entry');
-      // Preserve only derived receipt; never save or serve raw player history.
-      lastLIMSession = obs.source.sessionId;
-      lastLIMCount = obs.journalEntries;
-      lastLIMHead = obs.journalHead;
-      latestLIM = { ...obs, receivedAt:new Date().toISOString() };
-      res.writeHead(201); res.end(JSON.stringify({accepted:true,simTick:obs.simTick,journalHead:obs.journalHead}));
-    } catch (err) {
-      res.writeHead(422); res.end(JSON.stringify({accepted:false,error:String(err?.message||err)}));
+      const next = {
+        lastLIMSession:obs.source.sessionId, lastLIMCount:obs.journalEntries,
+        lastLIMHead:obs.journalHead,
+        latestLIM:{...obs,receivedAt:new Date().toISOString()},
+      };
+      // Durable, HMAC-protected commit BEFORE publishing the new receipt.
+      saveReceipt(credentials,next);
+      ({lastLIMSession,lastLIMCount,lastLIMHead,latestLIM}=next);
+      return obs;
+    };
+    const work=receiveQueue.then(processWrite);
+    receiveQueue=work.catch(()=>{});
+    try {
+      const obs=await work;
+      res.writeHead(201);res.end(JSON.stringify({accepted:true,simTick:obs.simTick,journalHead:obs.journalHead}));
+    }catch(err){
+      res.writeHead(422);res.end(JSON.stringify({accepted:false,error:String(err?.message||err)}));
     }
     return;
   }
   if (req.url === '/lim/observations' && req.method === 'GET') {
-    if (origin && !(allowedOrigin.test(origin) || gevReadOrigin.test(origin))) {
+    if (origin && !gevReadOrigin.test(origin)) {
       res.writeHead(403); res.end(JSON.stringify({error:'origin denied'})); return;
+    }
+    if (!bearerMatches(req.headers.authorization,credentials.gevToken)) {
+      unauthorized(res);return;
     }
     res.writeHead(200); res.end(JSON.stringify(latestLIM || {status:'awaiting-lim-journal'}));
     return;
@@ -142,6 +180,9 @@ const server = createServer(async (req,res) => {
   if (req.url === '/health') { res.writeHead(200); res.end(JSON.stringify({status:'up',source:'gods-eye-view',revision,cached:!!cached,limObserved:!!latestLIM})); return; }
   if (req.url !== '/world') { res.writeHead(404); res.end(JSON.stringify({error:'not found'})); return; }
   if (origin && !allowedOrigin.test(origin)) { res.writeHead(403); res.end(JSON.stringify({error:'origin not allowed'})); return; }
+  if (!bearerMatches(req.headers.authorization,credentials.limToken)) {
+    unauthorized(res);return;
+  }
   try { const snapshot = await capture(); res.writeHead(200); res.end(JSON.stringify(snapshot)); }
   catch (e) { res.writeHead(503); res.end(JSON.stringify({error:'GEV snapshot unavailable',detail:String(e?.message||e)})); }
 });

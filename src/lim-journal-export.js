@@ -53,7 +53,7 @@ export async function verifyLIMJournalExport(packet) {
 // A single-writer outbound observer. Full history crosses loopback for
 // verification only; the bridge stores/returns only a derived receipt.
 export function makeLIMJournalPublisher({
-  endpoint, getEntries, fetchFn = fetch,
+  endpoint, getEntries, fetchFn = fetch, getAuthToken = () => '',
   sessionId = 'lim-' + crypto.randomUUID().replaceAll('-', ''),
 }) {
   if (typeof getEntries !== 'function' || !/^lim-[a-f0-9]{32}$/.test(sessionId))
@@ -73,8 +73,10 @@ export function makeLIMJournalPublisher({
         const tail = entries.at(-1);
         if (!tail || tail.event_type !== 'tick_end' || tail.tick <= lastPublishedTick) continue;
         const payload = { schemaVersion:'life-itself-journal-transfer/1.0.0', sessionId, entries };
+        const token=getAuthToken();
+        if (!/^[a-f0-9]{64}$/.test(token||'')) throw new Error('bridge pairing required');
         const response = await fetchFn(endpoint, {
-          method:'POST', headers:{ 'Content-Type':'application/json' },
+          method:'POST', headers:{ 'Content-Type':'application/json',Authorization:'Bearer '+token },
           body:JSON.stringify(payload),
         });
         if (!response.ok) throw new Error('return bridge HTTP ' + response.status);

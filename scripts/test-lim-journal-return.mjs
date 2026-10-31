@@ -25,6 +25,7 @@ for(const breakIt of [
 }
 const requests=[];
 const publisher=makeLIMJournalPublisher({getEntries:()=>journal.entries,
+ getAuthToken:()=> 'a'.repeat(64),
  sessionId:good.sessionId,endpoint:'http://loopback.test/lim/journal',
  fetchFn:async(_url,options)=>{
   requests.push(JSON.parse(options.body));

@@ -56,3 +56,40 @@ Verification: `node scripts/test-lim-journal-return.mjs`, then a headless
 browser at LIM :8001 and GEV :4183: 96 walkers, journal valid,
 bridge returns `simulated-observation`, and GEV displays that tick.
 Screenshot: `/tmp/opencode/gev-lim-return-verified.png`.
+
+## Local demo security, persistence, and operator reset
+
+The loopback bridge now **requires** role-specific 256-bit bearer capabilities:
+LIM writer/forward-reader, GEV receipt-reader, and local administrator.
+Credential material is generated on first use in
+`~/.local/state/life-itself/gev-lim-bridge/credentials.json` (0600, parent
+0700), outside Git. No tokens belong in a URL, commit, screenshot, or report.
+
+Run `node scripts/gev-bridge-control.mjs status` to check local key setup.
+On Houston, use `node scripts/gev-bridge-control.mjs pair-lim` to obtain the
+LIM-side token and paste it into the **LIM bridge pairing** input at
+`http://127.0.0.1:8001/index.html?gev=live`.
+For the GEV viewer, run `node scripts/gev-bridge-control.mjs pair-gev` and
+paste into the **GEV viewer pairing** input at
+`http://127.0.0.1:4183/?lim=live`.
+The two browser roles keep their own token in **sessionStorage**, never in
+URLs. Local browser code and authenticated users can still read these
+capabilities; this design is for a trusted local contest demo, **not** a
+public-production authentication solution.
+
+The bridge persists **only the derived receipt and last journal continuity
+metadata**, never the complete submitted history. The latest receipt is
+atomically written to `latest-receipt.json` (0600) with HMAC integrity
+protection, and survives a bridge process restart. Its `receivedAt` value
+identifies its age. For a clean demonstration, run
+`node scripts/gev-bridge-control.mjs reset` **before opening either demo
+page**. Reset is admin-authenticated and clears only the receipt; pairing
+credentials are retained. `GET /lim/observations` then returns
+`{ "status": "awaiting-lim-journal" }` until a genuinely new tick arrives.
+
+All app endpoints except `/health` require bearer authentication. Requests
+are restricted to configured loopback origins and the bridge binds
+127.0.0.1. For repeatable security gates, start a **separate** bridge on
+port 8618 with `GEV_BRIDGE_STATE_DIR` pointed to the isolated test directory;
+then run `node scripts/test-bridge-auth-persistence.mjs` under the same env.
+The test intentionally resets that isolated directory, never the demo state.

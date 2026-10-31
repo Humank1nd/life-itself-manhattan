@@ -1,0 +1,47 @@
+// Integration gate for isolated local bridge; NEVER use the production state directory.
+import assert from 'node:assert/strict';
+import {statSync,existsSync} from 'node:fs';
+import {loadCredentials,loadReceipt,BRIDGE_AUTH_FILE,BRIDGE_RECEIPT_FILE} from './gev-bridge-security.mjs';
+import {StateJournal} from '../src/journal.js';
+if(!process.env.GEV_BRIDGE_STATE_DIR?.includes('isolated-security-test'))
+ throw Error('refusing to test outside dedicated temporary directory');
+const creds=loadCredentials();
+const base='http://127.0.0.1:'+(process.env.GEV_BRIDGE_PORT||8618);
+const r=(path,opts)=>fetch(base+path,opts);
+const auth=(token,origin)=>({Authorization:'Bearer '+token, ...(origin?{Origin:origin}:{})});
+assert.equal(statSync(BRIDGE_AUTH_FILE).mode & 0o777,0o600);
+assert.equal(await (await r('/world')).status,401);
+assert.equal(await (await r('/lim/observations')).status,401);
+assert.equal(await (await r('/world',{headers:auth(creds.gevToken,'http://127.0.0.1:8001')})).status,401);
+assert.equal(await (await r('/world',{headers:auth(creds.limToken,'http://attacker.example')})).status,403);
+const world=await r('/world',{headers:auth(creds.limToken,'http://127.0.0.1:8001')});
+assert.equal(world.status,200);
+assert.equal((await world.json()).source.system,'gods-eye-view');
+const j=new StateJournal();
+await j.append('snapshot',0,{origin:'Times Sq'});
+await j.append('tick_begin',1,{action:'city_tick'});
+await j.append('action',1,{kind:'city_tick',simTick:1,walkers:96,zones:5,city_state_hash:'b'.repeat(64)});
+await j.append('tick_end',1,{world_hash:'c'.repeat(64)});
+const good={schemaVersion:'life-itself-journal-transfer/1.0.0',sessionId:'lim-'+'d'.repeat(32),entries:j.entries};
+const options=(token,payload=good,origin='http://127.0.0.1:8001')=>({
+ method:'POST',headers:{...auth(token,origin),'Content-Type':'application/json'},body:JSON.stringify(payload)});
+assert.equal(await (await r('/lim/journal',options(creds.gevToken))).status,401);
+assert.equal(await (await r('/lim/journal',options(creds.limToken,good,'http://malicious.example'))).status,403);
+const accepted=await r('/lim/journal',options(creds.limToken));
+assert.equal(accepted.status,201);
+const receipt=(await r('/lim/observations',{headers:auth(creds.gevToken,'http://127.0.0.1:4183')}));
+assert.equal(receipt.status,200);
+const data=await receipt.json();
+assert.equal(data.classification,'simulated-observation');
+assert.equal(data.simTick,1);
+assert.equal(data.walkers,96);
+assert(!('entries' in data));
+assert.equal(statSync(BRIDGE_RECEIPT_FILE).mode & 0o777,0o600);
+assert.equal(loadReceipt(creds).latestLIM.journalHead,data.journalHead);
+const cliReset=await r('/admin/reset',{method:'POST',headers:auth(creds.adminToken)});
+assert.equal(cliReset.status,200);
+assert.equal(existsSync(BRIDGE_RECEIPT_FILE),false);
+const awaiting=await r('/lim/observations',{headers:auth(creds.gevToken,'http://127.0.0.1:4183')});
+assert.deepEqual(await awaiting.json(),{status:'awaiting-lim-journal'});
+assert.equal(await (await r('/admin/reset',{method:'POST',headers:auth(creds.limToken)})).status,401);
+console.log('PASS isolated bridge: bearer roles, origin restrictions, 0600 credentials/receipt, verified journal, persisted HMAC, privilege-only reset, empty post-reset');
