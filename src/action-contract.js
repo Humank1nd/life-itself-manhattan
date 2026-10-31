@@ -1,3 +1,4 @@
+import { validateTraversableMove } from './traversability.js';
 // Life Itself Manhattan — autonomous action/event contract (Phase 017,
 // slice 017.2). Versioned Observation → ProposedAction → WorldEvent →
 // Receipt pipeline. Pure: no I/O, no model, no provider. Committed events
@@ -51,7 +52,7 @@ export function distToLanes(x, z, lanes) {
   return best;
 }
 export const LANE_TOLERANCE_M = 8;
-export function validateAction(action, { citizenIds, positions, tick, lanes = null, patchesById = null, objectsById = null, agentsById = null }) {
+export function validateAction(action, { citizenIds, positions, tick, lanes = null, patchesById = null, objectsById = null, agentsById = null, traversability = null }) {
   assert(action && action.schemaVersion === ACTION_CONTRACT, 'action schema');
   assert(isId(action.actionId), 'action id');
   assert(isId(action.actorId) && citizenIds.includes(action.actorId), 'unknown actor');
@@ -70,6 +71,16 @@ export function validateAction(action, { citizenIds, positions, tick, lanes = nu
     assert(Math.hypot(t.x - self.x, t.z - self.z) <= MAX_MOVE_M, 'teleport rejected');
     assert(Array.isArray(lanes) && lanes.length > 0, 'move needs lane geometry');
     assert(distToLanes(t.x, t.z, lanes) <= LANE_TOLERANCE_M, 'target off walkable lanes');
+    // S3-002 opt-in authority gate. Only an explicitly supplied, complete
+    // simulation-owned map + actor lane context enables obstacle validation.
+    // The absent gate preserves historical S2 behavior and journal replay.
+    if (traversability !== null) {
+      const result = validateTraversableMove({
+        ...traversability,
+        actorId: action.actorId, from: self, to: t, lanes,
+      });
+      assert(result.ok, 'traversability: ' + result.reason);
+    }
   }
   if (action.type === 'socialize') {
     const other = action.params && action.params.with;
