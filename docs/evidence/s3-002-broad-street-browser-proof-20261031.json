@@ -1,0 +1,41 @@
+{
+  "pass": true,
+  "error": null,
+  "status": {
+    "ready": true,
+    "center": {
+      "x": -2147.5037091386607,
+      "z": 5677.1273711264475
+    },
+    "schemaVersion": "life-itself-playable-graybox/1.0.0",
+    "buildings": 18,
+    "lanes": 27,
+    "features": 2,
+    "sampled": 1261,
+    "conflicts": 55,
+    "collisionFree": false,
+    "blockedSpans": 6,
+    "featureIds": [
+      "dumpster-1",
+      "dumpster-2"
+    ],
+    "provenance": {
+      "buildings": "data/manhattan-enu.json",
+      "sidewalks": "livingCity.lanes",
+      "features": "livingCity.objects (simulated, not observed)",
+      "measurement": "source projected ENU, no field validation"
+    }
+  },
+  "responses": [
+    {
+      "url": "manhattan-enu.json",
+      "status": 200
+    },
+    {
+      "url": "streets-enu.json",
+      "status": 200
+    }
+  ],
+  "pageErrors": 0,
+  "screenshot": "/tmp/s3-002-broad-street-graybox.png"
+}

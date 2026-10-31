@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Life Itself — S3-002 Grounded Block Graybox</title><link rel="icon" href="data:,">
+<style>
+body{margin:0;background:#080e17;color:#dcecf8;font:14px/1.5 system-ui,sans-serif;overflow:hidden}
+canvas{display:block}
+#hud{position:fixed;top:16px;left:16px;width:min(440px,calc(100vw - 45px));padding:15px 20px;
+background:rgba(7,13,24,.88);border:1px solid #34536b;border-radius:12px;backdrop-filter:blur(7px)}
+h1{font-size:18px;margin:0 0 4px;color:#d4e9fc}
+p{margin:7px 0}.sm{color:#a1bbd2;font-size:12px}
+strong{color:#fff}.warning{color:#ffc36a}
+.swatch{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+#status{font-size:12px;color:#93d8ee}#metrics{font-variant-numeric:tabular-nums}
+</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head><body>
+<div id="hud"><h1>Life Itself · S3-002 Grounded Block</h1>
+<p class="sm">Broad Street / Lower Manhattan · ENU source projection · 180m square pilot</p>
+<p id="status">Loading existing city and map records…</p>
+<p id="metrics">Awaiting audit.</p>
+<p class="sm"><span class="swatch" style="background:#7895b6"></span>Mapped building footprint
+<span class="swatch" style="background:#67d8ff"></span>Derived sidewalk
+<span class="swatch" style="background:#ff7f6b"></span>Map/lane conflict
+<span class="swatch" style="background:#ffd166"></span>Simulated dumpster</p>
+<p class="sm warning">Warning: sidewalk geometry is candidate presentation only, not approved navmesh or collision authority. Dumpsters are simulated, not real-world observations.</p>
+<p class="sm">Drag to orbit · scroll to zoom · camera has no effect on simulation.</p>
+</div>
+<script type="module" src="./src/graybox-viewer.js"></script></body></html>

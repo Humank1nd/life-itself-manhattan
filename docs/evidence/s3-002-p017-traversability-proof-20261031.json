@@ -1,0 +1,33 @@
+{
+    "pass": true,
+    "clear": {
+        "lane": "lane_broadStreetSouth_east",
+        "from": {
+            "x": -2133.319930474323,
+            "z": 5646.6815307021525
+        },
+        "to": {
+            "x": -2133.6099404240035,
+            "z": 5647.304044410127
+        },
+        "stepM": 0.6867525664531388,
+        "eventId": "ev-4-act-clear",
+        "receipt": "committed"
+    },
+    "blocked": {
+        "lane": "lane_pineStreetEast_east",
+        "from": {
+            "x": -2073.1390505143077,
+            "z": 5604.6678177813055
+        },
+        "to": {
+            "x": -2072.218423336509,
+            "z": 5605.437522659488
+        },
+        "stepM": 1.1999999999998676,
+        "reason": "building-obstacle:1001020"
+    },
+    "regressionCases": 10,
+    "sourceBuildingCount": 18,
+    "mode": "explicit opt-in at P017 commitAction (not yet wired into Muse active city)"
+}

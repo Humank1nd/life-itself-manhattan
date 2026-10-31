@@ -1,0 +1,86 @@
+{
+    "schemaVersion": "life-itself-playable-graybox/1.0.0",
+    "center": {
+        "x": -2147.5037091386607,
+        "z": 5677.1273711264475
+    },
+    "bounds": {
+        "minX": -2237.5037091386607,
+        "maxX": -2057.5037091386607,
+        "minZ": 5587.1273711264475,
+        "maxZ": 5767.1273711264475
+    },
+    "buildingCount": 18,
+    "sidewalkSegmentCount": 27,
+    "gameplayObjects": [
+        {
+            "id": "dumpster-1",
+            "kind": "dumpster",
+            "x": -2148.2427197179177,
+            "z": 5678.713676066787,
+            "provenance": "simulated"
+        },
+        {
+            "id": "dumpster-2",
+            "kind": "dumpster",
+            "x": -2146.7646985594038,
+            "z": 5675.541066186108,
+            "provenance": "simulated"
+        }
+    ],
+    "auditSamples": 1261,
+    "blockedSamples": 55,
+    "partitionedSpans": 34,
+    "blockedSpans": 6,
+    "conflictedLanes": [
+        "lane_pineStreetEast_east",
+        "lane_pineStreetEast_west",
+        "lane_wallStreetEast_east",
+        "lane_wallStreetWest_west"
+    ],
+    "sampleConflicts": [
+        {
+            "laneId": "lane_pineStreetEast_east",
+            "segmentIndex": 1,
+            "buildingId": "1001020",
+            "x": -2071.0450686711365,
+            "z": 5606.418524341337
+        },
+        {
+            "laneId": "lane_pineStreetEast_east",
+            "segmentIndex": 1,
+            "buildingId": "1001020",
+            "x": -2070.2927709193323,
+            "z": 5607.047494746919
+        },
+        {
+            "laneId": "lane_pineStreetEast_east",
+            "segmentIndex": 1,
+            "buildingId": "1001020",
+            "x": -2069.540473167528,
+            "z": 5607.676465152501
+        },
+        {
+            "laneId": "lane_pineStreetEast_east",
+            "segmentIndex": 1,
+            "buildingId": "1001020",
+            "x": -2068.788175415724,
+            "z": 5608.305435558083
+        },
+        {
+            "laneId": "lane_pineStreetEast_east",
+            "segmentIndex": 1,
+            "buildingId": "1001020",
+            "x": -2068.0358776639196,
+            "z": 5608.934405963666
+        },
+        {
+            "laneId": "lane_pineStreetEast_east",
+            "segmentIndex": 1,
+            "buildingId": "1001020",
+            "x": -2067.2835799121153,
+            "z": 5609.563376369248
+        }
+    ],
+    "collisionFree": false
+}
