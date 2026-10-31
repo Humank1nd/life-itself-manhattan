@@ -1,0 +1,56 @@
+{
+  "scenario": "Muse snapshot + Black Rat + P017 lane preflight",
+  "errors": [],
+  "actor": "ped_45",
+  "before": {
+    "x": -2207.1344916543717,
+    "z": 6038.536751341794,
+    "alive": true
+  },
+  "pass": true,
+  "movement": {
+    "key": "KeyW",
+    "from": {
+      "x": -2207.1344916543717,
+      "z": 6038.536751341794,
+      "alive": true
+    },
+    "to": {
+      "x": -2207.5309183663185,
+      "z": 6027.632119088069,
+      "alive": true
+    },
+    "distanceM": 10.9118,
+    "actionId": "act-3-ped_45-player-move",
+    "eventId": "ev-3-act-3-ped_45-player-move",
+    "classification": "journaled move-effect",
+    "clip": "walk_A2",
+    "exactVisualTarget": [
+      -2207.5309183663185,
+      2.6,
+      6027.632119088069
+    ],
+    "simTick": 3
+  },
+  "attempts": [
+    {
+      "code": "KeyW",
+      "accepted": true,
+      "branch": "held",
+      "delta": 10.9118,
+      "status": "You control ped_45. Arm a dumpster; the next tick submits it once. Autonomy is suspended. Stepped once (KeyW): ev-3-act-3-ped_45-player",
+      "clip": "walk_A2"
+    }
+  ],
+  "rig": {
+    "visible": 1,
+    "clips": [
+      "idle_A1",
+      "walk_A2",
+      "run_A1"
+    ],
+    "source": "Nestaeric Black Rat CC BY 4.0 / Sketchfab"
+  },
+  "journalVerified": true,
+  "screenshot": "/tmp/rat-muse-combined-20261031.png"
+}
