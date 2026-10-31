@@ -17,6 +17,7 @@ import { stepSanitation } from './sanitation.js';
 import { sha256Hex } from './journal.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
+import { verifyGEVWorldSnapshot } from './gev-world-bridge.js';
 
 const statusEl = document.getElementById('status');
 
@@ -160,6 +161,50 @@ let livingCityBusy = false;
 let cityPaused = false;
 const cityStatusEl = document.getElementById('city-status');
 const cityToggleEl = document.getElementById('city-toggle');
+const gevLiveEnabled = new URLSearchParams(location.search).get('gev') === 'live';
+let latestGEVSnapshot = null;
+let appliedGEVSnapshotId = null;
+let gevFeedError = null;
+let gevPollTimer = null;
+const gevFeedStatus = document.createElement('span');
+gevFeedStatus.id = 'gev-feed-status';
+gevFeedStatus.setAttribute('role', 'status');
+gevFeedStatus.style.display = 'block';
+gevFeedStatus.style.fontSize = '0.85em';
+cityStatusEl.insertAdjacentElement('afterend', gevFeedStatus);
+function showGEVFeedState() {
+  gevFeedStatus.textContent = !gevLiveEnabled ? 'GEV feed: default simulated world (use ?gev=live to connect)' :
+    gevFeedError ? 'GEV live feed: ' + gevFeedError + ' — previous world retained' :
+    appliedGEVSnapshotId ? 'GEV live feed: applied ' + appliedGEVSnapshotId.slice(0, 18) +
+      ' · proxy/default fields explicitly labeled in journal' :
+    latestGEVSnapshot ? 'GEV live feed: staged for next city tick' : 'GEV live feed: connecting…';
+}
+async function refreshGEVFeed() {
+  const ctrl = new AbortController();
+  const timeout = setTimeout(() => ctrl.abort(), 12000);
+  try {
+    const res = await fetch('http://127.0.0.1:8617/world', { cache: 'no-store', signal: ctrl.signal });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    latestGEVSnapshot = await verifyGEVWorldSnapshot(await res.json());
+    gevFeedError = null;
+  } catch (err) {
+    gevFeedError = String(err?.message || err);
+  } finally {
+    clearTimeout(timeout);
+    showGEVFeedState();
+  }
+}
+function startGEVFeed() {
+  showGEVFeedState();
+  if (!gevLiveEnabled || gevPollTimer !== null) return;
+  void refreshGEVFeed();
+  gevPollTimer = setInterval(() => { void refreshGEVFeed(); }, 40000);
+}
+// Read-only diagnostics; world mutation remains inside the existing tick writer.
+Object.defineProperty(window, '__gevFeed', {
+  get: () => ({ enabled: gevLiveEnabled, snapshotId: latestGEVSnapshot?.snapshotId || null,
+    appliedId: appliedGEVSnapshotId, error: gevFeedError })
+});
 function showCityState() {
   if (!livingCity) return;
   const s = citySummary(livingCity);
@@ -367,6 +412,28 @@ async function advanceCityTick() {
   const tick = ++islandTick;
   try {
     await journal.append(JournalEventType.TICK_BEGIN, tick, { action: 'city_tick' });
+    // A provenance-bearing GEV snapshot is journaled before it can affect
+    // the next deterministic LIM tick. There is no external state writer.
+    if (gevLiveEnabled && latestGEVSnapshot &&
+        latestGEVSnapshot.snapshotId !== appliedGEVSnapshotId) {
+      try {
+        const snapshot = await verifyGEVWorldSnapshot(latestGEVSnapshot);
+        await journal.append(JournalEventType.ACTION, tick, {
+          kind: 'gev-world-context', snapshotId: snapshot.snapshotId,
+          source: snapshot.source, recordedAt: snapshot.recordedAt,
+          world: snapshot.world, provenance: snapshot.provenance,
+        });
+        livingCity.world = structuredClone(snapshot.world);
+        appliedGEVSnapshotId = snapshot.snapshotId;
+        gevFeedError = null;
+        showGEVFeedState();
+      } catch (err) {
+        // Failed feeds never pause the city or change its world.
+        gevFeedError = 'snapshot not applied: ' + String(err?.message || err);
+        latestGEVSnapshot = null;
+        showGEVFeedState();
+      }
+    }
     tickLivingCity(livingCity);
     // P017.8: one autonomous rat may then act on sim-owned state. A failure
     // here skips the rat for this tick only — the city itself never pauses
@@ -476,6 +543,7 @@ function startLivingCity(corridors) {
   tourButtonEl.disabled = false;
   if (livingCityTimer !== null) clearInterval(livingCityTimer);
   livingCityTimer = setInterval(() => { advanceCityTick().catch(console.error); }, TICK_MS);
+  startGEVFeed();
 }
 cityToggleEl.addEventListener('click', () => {
   if (!livingCity) return;
