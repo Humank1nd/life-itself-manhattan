@@ -28,3 +28,31 @@ The GEV source uses **proxies and defaults**. `traffic=green` when TomTom has no
 This is a genuine **one-way live context feed** plus LIM's internal deterministic feedback loop. It is **not** a bidirectional GEV↔LIM transport, not Twin proposal/observation ingestion, and not Unreal streaming. Do not describe it as any of those. Production hardening still needs a durable snapshot archive and a deployment-safe origin/transport plan; loopback demo is intentional.
 
 Original S2-PLAY-001 changes, rat authority, P017 history, and Gods Eye View source remain intact. Google Tiles/Cesium credentials are independent of this feed.
+
+## Bidirectional local observations (2026-10-31)
+
+LIM remains the authoritative simulation. Once a `?gev=live` city tick is sealed,
+`makeLIMJournalPublisher()` sends its complete hash-chained journal to the **local**
+verification bridge via `POST /lim/journal`. The bridge checks every link,
+rejects tampering and historical rewrites for the same session, and retains
+only a sanitized, simulated-observation receipt. No raw journal or user messages
+are returned by `GET /lim/observations`.
+
+Run the same bridge from this branch and the isolated GEV branch
+`feat/lim-observation-return-20261031`. The GEV data-layer toggle
+`Life Itself · Verified Observations` (or `?lim=live`) polls the returned
+receipt. It only changes a screen-space status label, never GEV simulation,
+city-state, missions, camera, or entities. The observation summarizes
+the entire city, so it deliberately has **no invented world-space point**.
+
+The full journal crosses loopback for verification, which is a **local development
+trust boundary**, not yet a secure production transport. An authenticated,
+minimal-disclosure inter-process channel and durable receipt archive remain
+release-hardening work. Two local services and a running browser are required
+for the live demo; the application defaults to the original simulation when
+`?gev=live` is absent.
+
+Verification: `node scripts/test-lim-journal-return.mjs`, then a headless
+browser at LIM :8001 and GEV :4183: 96 walkers, journal valid,
+bridge returns `simulated-observation`, and GEV displays that tick.
+Screenshot: `/tmp/opencode/gev-lim-return-verified.png`.

@@ -18,6 +18,7 @@ import { sha256Hex } from './journal.js';
 import { mountTemporalLayer } from './temporal-layer.js';
 import { mountSpatialMemoryViewer } from './spatial-memory-viewer.js';
 import { verifyGEVWorldSnapshot } from './gev-world-bridge.js';
+import { makeLIMJournalPublisher } from './lim-journal-export.js';
 
 const statusEl = document.getElementById('status');
 
@@ -162,6 +163,13 @@ let cityPaused = false;
 const cityStatusEl = document.getElementById('city-status');
 const cityToggleEl = document.getElementById('city-toggle');
 const gevLiveEnabled = new URLSearchParams(location.search).get('gev') === 'live';
+const limJournalPublisher = gevLiveEnabled
+  ? makeLIMJournalPublisher({
+      endpoint:'http://127.0.0.1:8617/lim/journal',
+      getEntries:() => journal.entries,
+    })
+  : null;
+
 let latestGEVSnapshot = null;
 let appliedGEVSnapshotId = null;
 let gevFeedError = null;
@@ -501,6 +509,9 @@ async function advanceCityTick() {
     // Existing world_hash remains the immutable NYC ground-data digest.
     // The mutable simulation gets its own hash in the ACTION record above.
     await journal.append(JournalEventType.TICK_END, tick, { world_hash: worldHash });
+    // Publish a sealed history to the local verification bridge, without
+    // granting the GEV viewer a mutation path into LIM.
+    limJournalPublisher?.schedule();
     renderCityPeople();
     showCityState();
   } catch (err) {
